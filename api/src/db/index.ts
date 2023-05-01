@@ -15,7 +15,7 @@ const dbConnect = async () => {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
 
-    console.log(sequelize.models);
+    console.log("Models", sequelize.models);
 
     await sequelize.sync({ alter: true }); // TODO: remove "alter: true" after the schema is stable
     console.log('All models were synchronized successfully.');

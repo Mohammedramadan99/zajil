@@ -1,10 +1,13 @@
 import Express from 'express';
+import { applyMiddlewaresPost, applyMiddlewaresPre } from './middlewares';
+import { handleErrors } from './middlewares/methods/handleErrors.middleware';
+import mainRouter from './routes';
 
 const app = Express();
 app.use(Express.json());
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+applyMiddlewaresPre(app);
+app.use(mainRouter);
+applyMiddlewaresPost(app);
+app.use(handleErrors);
 
 export default app;
