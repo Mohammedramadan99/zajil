@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
-export class BusinessOwner extends Model {
+export class User extends Model {
     public declare id: number;
     public firstName!: string;
     public lastName!: string;
@@ -12,7 +12,7 @@ export class BusinessOwner extends Model {
 }
 
 export const init = (sequelize: Sequelize) =>
-    BusinessOwner.init(
+    User.init(
         {
             id: {
                 type: DataTypes.INTEGER.UNSIGNED,
@@ -39,6 +39,6 @@ export const init = (sequelize: Sequelize) =>
         },
         {
             sequelize,
-            tableName: 'business_owners',
+            tableName: 'users',
         },
     );

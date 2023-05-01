@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { init as initBusinessOwner } from './models/business-owner.model';
+import { init as initUser } from './models/user.model';
 import config from '../config';
 
 const sequelize = new Sequelize(config.dbUri, {
@@ -7,7 +7,7 @@ const sequelize = new Sequelize(config.dbUri, {
 });
 
 // loop over the models in the models and initialize each one
-const modelInits = [initBusinessOwner];
+const modelInits = [initUser];
 for (const init of modelInits) init(sequelize);
 
 // connect to the database
