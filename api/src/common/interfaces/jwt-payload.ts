@@ -3,4 +3,7 @@ export interface IJWTPayload {
     firstName: string;
     lastName: string;
     email: string;
+    businesses: number[];
+    roles: string[];
+    employedAt: number[];
 }

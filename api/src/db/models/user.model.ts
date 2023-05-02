@@ -1,11 +1,18 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
+export enum UserRole {
+    ADMIN = 'admin',
+    BUSINESS_OWNER = 'business_owner',
+    EMPLOYEE = 'employee',
+}
+
 export class User extends Model {
     public declare id: number;
     public firstName!: string;
     public lastName!: string;
     public email!: string;
     public password!: string;
+    public roles!: UserRole[];
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -35,6 +42,14 @@ export const init = (sequelize: Sequelize) =>
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            roles: {
+                type: DataTypes.ARRAY(DataTypes.STRING),
+                defaultValue: [],
+                allowNull: false,
+                validate: {
+                    notEmpty: true,
+                },
             },
         },
         {

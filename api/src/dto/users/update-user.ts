@@ -1,18 +1,21 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsString, Matches, ValidateNested } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, ValidateNested } from 'class-validator';
 import { UserRole } from '../../db/models/user.model';
 
-export class CreateUserDto {
+export class UpdateUserDto {
     @IsNotEmpty()
     @IsString()
-    firstName: string;
+    @IsOptional()
+    firstName?: string;
 
     @IsNotEmpty()
     @IsString()
-    lastName: string;
+    @IsOptional()
+    lastName?: string;
 
     @IsNotEmpty()
     @IsEmail()
-    email: string;
+    @IsOptional()
+    email?: string;
 
     @IsNotEmpty()
     @IsString()
@@ -20,10 +23,12 @@ export class CreateUserDto {
         message:
             'Password must be at least 8 characters long, contain at least one number, one uppercase letter, one lowercase letter and one special character',
     })
-    password: string;
+    @IsOptional()
+    password?: string;
 
     @IsNotEmpty()
     @IsArray()
     @IsEnum(UserRole, { each: true })
-    roles: UserRole[];
+    @IsOptional()
+    roles?: UserRole[];
 }
