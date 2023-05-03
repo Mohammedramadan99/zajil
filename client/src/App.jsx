@@ -6,6 +6,9 @@ import RootLayout from "./components/Layouts/RootLayout";
 import DashboardLayout from "./components/Layouts/DashboardLayout";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Login from "./components/Auth/Login/Login";
+import i18n from "./utils/i18n";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 const isAdmin = false;
 const router = createBrowserRouter([
@@ -31,6 +34,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    if (i18n.language.indexOf("ar") === 0) {
+      document.body.dir = "rtl";
+    } else {
+      document.body.dir = "ltr";
+    }
+  }, [i18n.language]);
   return <RouterProvider router={router} />;
 }
 
