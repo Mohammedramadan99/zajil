@@ -1,27 +1,34 @@
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Outlet,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
-import Home from "./pages/Home/Home";
-import DashboardHome from "./pages/Dashboard/Home/DashboardHome";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+
+import Home from "./pages/home/Home";
+import DashboardHome from "./pages/dashboard/home/DashboardHome";
 import RootLayout from "./components/Layouts/RootLayout";
 import DashboardLayout from "./components/Layouts/DashboardLayout";
+import PrivateRoutes from "./utils/PrivateRoutes";
+import Login from "./components/Auth/Login/Login";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/">
-      <Route element={<RootLayout />}>
-        <Route index element={<Home />} />
-      </Route>
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<DashboardHome />} />
-      </Route>
-    </Route>
-  )
-);
+const isAdmin = false;
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: isAdmin ? (
+      <DashboardLayout />
+    ) : (
+      <div>only admins can see this page</div>
+    ),
+    children: [],
+  },
+]);
 
 function App() {
   return <RouterProvider router={router} />;
