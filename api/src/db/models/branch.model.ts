@@ -4,7 +4,7 @@ export class Branch extends Model {
     public declare id: number;
     public name!: string;
     public address!: string;
-    public businessId!: string;
+    public businessId!: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;

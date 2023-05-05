@@ -24,26 +24,13 @@ export const findAllUsers = async ({
     offset: number;
     req: RequestMod;
 }) => {
-    return User.findAndCountAll({
-        include: [
-            {
-                model: Business,
-                where: {
-                    id: {
-                        [Op.in]: req.user.businesses.map((business) => business.id),
-                    },
-                },
-                required: true,
-                as: 'businesses',
-            },
-            {
-                model: Branch,
-                as: 'employedAt',
-            },
-        ],
-        limit,
-        offset,
-    });
+    const { businessId, branchId } = req.query;
+
+    if (!businessId && !branchId) throw new HttpError(400, 'businessId or branchId is required');
+    if (businessId && branchId) throw new HttpError(400, 'businessId and branchId cannot be used together');
+
+    if (branchId) return getUsersByBranchId(Number(branchId), limit, offset);
+    return getUsersByBusinessId(Number(businessId), limit, offset);
 };
 
 export const findOneUserById = (userId: number): Promise<User> => {
@@ -78,3 +65,44 @@ export const deleteUserById = async (userId: number) => {
 
     return user.destroy().then(() => ({ message: 'User deleted successfully' }));
 };
+
+function getUsersByBranchId(branchId: number, limit: number, offset: number) {
+    return User.findAndCountAll({
+        include: [
+            {
+                model: Business,
+                as: 'businesses',
+            },
+            {
+                model: Branch,
+                where: {
+                    id: branchId,
+                },
+                required: true,
+                as: 'employedAt',
+            },
+        ],
+        limit,
+        offset,
+    });
+}
+
+function getUsersByBusinessId(businessId: number, limit: number, offset: number) {
+    return User.findAndCountAll({
+        include: [
+            {
+                model: Business,
+                where: {
+                    id: businessId,
+                },
+                as: 'businesses',
+            },
+            {
+                model: Branch,
+                as: 'employedAt',
+            },
+        ],
+        limit,
+        offset,
+    });
+}
