@@ -2,15 +2,8 @@ import { sign, verify } from 'jsonwebtoken';
 import config from '../../config';
 import { IJWTPayload } from '../../common/interfaces/jwt-payload';
 import { User } from '../../db/models/user.model';
-import { Business } from '../../db/models/business.model';
-import { Branch } from '../../db/models/branch.model';
 
-export const signJWT = (
-    user: User & {
-        businesses: Business[];
-        employedAt: Branch[];
-    },
-) => {
+export const signJWT = (user: User) => {
     const payload: IJWTPayload = {
         userId: user.id,
         email: user.email,

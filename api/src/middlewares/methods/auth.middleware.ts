@@ -3,6 +3,7 @@ import { verifyJWT } from '../../services/auth/jwt';
 import { HttpError } from '../../common';
 import { RequestMod } from '../../common/interfaces/request.mod';
 import { IJWTPayload } from '../../common/interfaces/jwt-payload';
+import { findOneUserById } from '../../services/users';
 
 const authMiddleware = async (req: RequestMod, res: Response, next: NextFunction) => {
     try {
@@ -17,8 +18,12 @@ const authMiddleware = async (req: RequestMod, res: Response, next: NextFunction
         // Verify the token
         const decoded: IJWTPayload = verifyJWT(token);
 
+        // Get the user from the database
+        const user = await findOneUserById(decoded.userId);
+        if (!user) throw new Error('User not found');
+
         // Attach the user to the request
-        req.user = decoded;
+        req.user = user;
 
         next();
     } catch (error) {

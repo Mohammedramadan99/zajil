@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { IJWTPayload } from './jwt-payload';
+import { User } from '../../db/models/user.model';
 
 export type RequestMod = Request & {
-    user: IJWTPayload
+    user: User
 };

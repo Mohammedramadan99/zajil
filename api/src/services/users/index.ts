@@ -30,8 +30,8 @@ export const findAllUsers = async ({
                 model: Business,
                 where: {
                     id: {
-                        [Op.in]: req.user.businesses,
-                    }
+                        [Op.in]: req.user.businesses.map((business) => business.id),
+                    },
                 },
                 required: true,
                 as: 'businesses',
@@ -43,7 +43,7 @@ export const findAllUsers = async ({
         ],
         limit,
         offset,
-    })
+    });
 };
 
 export const findOneUserById = (userId: number): Promise<User> => {

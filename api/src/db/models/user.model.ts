@@ -1,4 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Business } from './business.model';
+import { Branch } from './branch.model';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -16,6 +18,9 @@ export class User extends Model {
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+
+    declare businesses: Business[];
+    declare employedAt: Branch[];
 }
 
 export const init = (sequelize: Sequelize) =>
