@@ -1,4 +1,11 @@
 {
+  "navbar": {
+    "links": {
+      "home": "home",
+      "login": "login",
+      "about": "about"
+    }
+  },
   "welcome": "Welcome to my website",
   "about": "About",
   "services": "Services",
