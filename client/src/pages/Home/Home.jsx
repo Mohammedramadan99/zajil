@@ -3,23 +3,26 @@ import { useTranslation } from "react-i18next";
 import "./HomeLight.scss";
 import "./HomeDark.scss";
 import { useSelector } from "react-redux";
+import img_1 from "../../assets/images/final/banner_1.png";
+import img_2 from "../../assets/images/final/banner_2.png";
+import img_3 from "../../assets/images/final/banner_3.png";
 function Home() {
   const { t } = useTranslation();
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const { light } = useSelector((state) => state.mode);
-  // const { t, i18n } = useTranslation();
 
-  // // Set the direction of the content based on the language
-  // React.useEffect(() => {
-  //   if (i18n.language.indexOf("ar") === 0) {
-  //     document.body.dir = "rtl";
-  //   } else {
-  //     document.body.dir = "ltr";
-  //   }
-  // }, [i18n.language]);
   return (
     <div className={!light ? "home-dark-mode" : "home-light-mode"}>
-      <div className="text">{t("about")}</div>
+      <div className="bgs">
+        <div className="p1">
+          <img src={img_1} alt="banner-img" />
+        </div>
+        <div className="p2">
+          <img src={img_2} alt="banner-img" />
+        </div>
+        <div className="p3">
+          <img src={img_3} alt="banner-img" />
+        </div>
+      </div>
     </div>
   );
 }

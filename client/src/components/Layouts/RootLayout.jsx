@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import { useDispatch, useSelector } from "react-redux";
 import { changeMode } from "../../store/modeSlice";
+import Navbar from "./Navbar";
 const RootLayout = () => {
   const dispatch = useDispatch();
   const { light } = useSelector((state) => state.mode);
@@ -10,12 +11,7 @@ const RootLayout = () => {
   };
   return (
     <div className="app">
-      {/* <Navbar /> */}
-      nav
-      <LanguageSelector />
-      <button onClick={changeModeHandler}>
-        {light ? "dark mode" : "light mode"}
-      </button>
+      <Navbar />
       <Outlet />
       footer
       {/* <Footer /> */}

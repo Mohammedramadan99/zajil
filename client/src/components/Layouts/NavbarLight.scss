@@ -1,0 +1,93 @@
+@use "../../Globals.scss" as *;
+.navbar {
+  padding-block: 20px;
+  position: relative;
+  transition: 1s ease;
+  &.dark {
+    background-color: #000;
+    color: #fff;
+    &.active {
+      background: linear-gradient(to bottom, #000, #999);
+    }
+  }
+  &.active {
+    position: sticky;
+    top: 0;
+    padding-block: 40px;
+    background: linear-gradient(to bottom, #eee, #fff);
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    text-transform: capitalize;
+    .logo {
+      font-weight: 800;
+      color: $french-violet;
+    }
+    svg {
+      color: $french-violet;
+    }
+    .block {
+      display: flex;
+      gap: 30px;
+      .links {
+        display: flex;
+        gap: 20px;
+        .link {
+          position: relative;
+          transition: 1s ease;
+
+          a {
+            color: $french-violet;
+            text-shadow: -20px 20px 1px transparent;
+            transition: 0.5s ease-in-out;
+            font-weight: 500;
+
+            &:hover {
+              text-shadow: 0px 2px 1px $heliotrope;
+            }
+          }
+        }
+      }
+      .langus {
+        position: relative;
+        .icon {
+          cursor: pointer;
+        }
+        .items {
+          position: absolute;
+          top: 30px;
+          right: 0;
+          transform: translateY(-250%);
+          opacity: 0;
+          transition: 0.3s ease-out;
+          display: flex;
+          flex-direction: column;
+          background-color: #f4f4f4;
+          border-radius: 10px;
+          scale: 0;
+          z-index: 999;
+          overflow: hidden;
+          &.open {
+            transform: translateY(0);
+            opacity: 1;
+            scale: 1;
+          }
+          button {
+            background-color: transparent;
+            border: unset;
+            transition: 0.3s ease-out;
+            padding: 0.5rem;
+            cursor: pointer;
+            &:last-child {
+              font-family: cairo;
+            }
+            &:hover {
+              background-color: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
