@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { validateDto } from '../helpers';
 import * as branchServices from '../services/branches';
 import { HttpError } from '../common';
 import { RequestMod } from '../common/interfaces/request.mod';
@@ -9,10 +8,7 @@ import { UpdateBranchDto } from '../dto/branches/update-branch';
 
 export const BranchController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const body: CreateBranchDto = validateDto(CreateBranchDto, req.body);
-        console.log('====================================');
-        console.log('body', body);
-        console.log('====================================');
+        const body: CreateBranchDto = req.body;
         branchServices
             .createBranch(body, req)
             .then((branch) => res.status(201).json(branch))
@@ -48,7 +44,7 @@ export const BranchController: ICRUDController = {
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
         const branchId = Number(req.params.id);
-        const body: UpdateBranchDto = validateDto(UpdateBranchDto, req.body);
+        const body: UpdateBranchDto = req.body;
 
         branchServices
             .updateBranchById(branchId, body)

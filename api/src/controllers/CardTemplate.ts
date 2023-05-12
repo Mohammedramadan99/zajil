@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
-import * as businessServices from '../services/businesses';
+import * as cardTemplateServices from '../services/card-templates';
 import { HttpError } from '../common';
 import { RequestMod } from '../common/interfaces/request.mod';
 import ICRUDController from './interfaces/crud.controller';
-import { CreateBusinessDto } from '../dto/business/create-business';
-import { UpdateBusinessDto } from '../dto/business/update-business';
+import { CreateCardTemplateDto } from '../dto/card-template/create-card-template';
+import { UpdateCardTemplateDto } from '../dto/card-template/update-card-template';
 
-export const BusinessController: ICRUDController = {
+export const CardTemplateController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const body: CreateBusinessDto = req.body;
-        businessServices
-            .createBusiness(body, req)
-            .then((business) => res.status(201).json(business))
+        const businessId = Number(req.params.businessId);
+        const body: CreateCardTemplateDto = req.body;
+        cardTemplateServices
+            .createCardTemplate(body, businessId, req)
+            .then((cardTemplate) => res.status(201).json(cardTemplate))
             .catch((err) => {
                 console.error(err);
                 next(new HttpError(500, err.message));
@@ -19,11 +20,12 @@ export const BusinessController: ICRUDController = {
     },
 
     getOne: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
+        const cardTemplateId = Number(req.params.id);
+        const businessId = Number(req.params.businessId);
 
-        businessServices
-            .findOneBusinessById(businessId)
-            .then((business) => res.json(business))
+        cardTemplateServices
+            .findOneCardTemplateById(cardTemplateId, businessId)
+            .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);
                 next(new HttpError(404, err.message));
@@ -32,10 +34,11 @@ export const BusinessController: ICRUDController = {
     getAll: function (req: RequestMod, res: Response, next: NextFunction): void {
         const limit = Number(req.query.limit) || 10;
         const offset = Number(req.query.offset) || 0;
+        const businessId = Number(req.params.businessId);
 
-        businessServices
-            .findAllBusinesses({ limit, offset, req })
-            .then((business) => res.json(business))
+        cardTemplateServices
+            .findAllCardTemplates({ limit, offset, req, businessId })
+            .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);
@@ -43,12 +46,12 @@ export const BusinessController: ICRUDController = {
             });
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
-        const body: UpdateBusinessDto = req.body;
+        const cardTemplateId = Number(req.params.id);
+        const body: UpdateCardTemplateDto = req.body;
 
-        businessServices
-            .updateBusinessById(businessId, body)
-            .then((business) => res.json(business))
+        cardTemplateServices
+            .updateCardTemplateById(cardTemplateId, body)
+            .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);
@@ -56,11 +59,11 @@ export const BusinessController: ICRUDController = {
             });
     },
     delete: function (req: Request, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
+        const cardTemplateId = Number(req.params.id);
 
-        businessServices
-            .deleteBusinessById(businessId)
-            .then((business) => res.json(business))
+        cardTemplateServices
+            .deleteCardTemplateById(cardTemplateId)
+            .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);

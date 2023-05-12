@@ -1,17 +1,15 @@
 import { Sequelize } from 'sequelize';
-import { init as initUser } from './models/user.model';
-import { init as initBusiness } from './models/business.model';
-import { init as initBranch } from './models/branch.model';
 import config from '../config';
+
 import { setAssociations } from './set-associations';
+import { initModels } from './init-models';
 
 const sequelize = new Sequelize(config.dbUri, {
     logging: config.dbLogging ? console.log : false,
 });
 
-// loop over the models in the models and initialize each one
-const modelInits = [initUser, initBusiness, initBranch];
-for (const init of modelInits) init(sequelize);
+// initialize models
+initModels(sequelize);
 
 // setup model associations
 setAssociations();
