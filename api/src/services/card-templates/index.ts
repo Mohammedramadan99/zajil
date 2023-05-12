@@ -67,40 +67,30 @@ export const findAllCardTemplates = async ({
             where: {
                 businessId,
             },
-            include: [
-                {
-                    model: LoyaltyCardTemplate,
-                    as: 'loyaltyCardTemplate',
-                    where: {
-                        '$CardTemplate.cardType$': CardType.LOYALTY,
-                    },
-                    required: false,
-                },
-                {
-                    model: ItemsSubscriptionCardTemplate,
-                    as: 'itemsSubscriptionCardTemplate',
-                    where: {
-                        '$CardTemplate.cardType$': CardType.ITEMS_SUBSCRIPTION,
-                    },
-                    required: false,
-                },
-            ],
+            include: FIND_INCLUDE_OPTIONS,
             limit,
             offset,
         })
             // remove null fields from each row
             .then((result) => {
-                result.rows = result.rows.map((row) => {
-                    row = row.toJSON();
-                    for (const key in row) if (row[key] === null) delete row[key];
-                    return row;
-                });
+                result.rows = result.rows.map(removeRowNullFields);
                 return result;
             })
     );
 };
 
-export const findOneCardTemplateById = async (cardTemplateId: number): Promise<any> => {};
+export const findOneCardTemplateById = async (cardTemplateId: number, businessId: number): Promise<any> => {
+    return CardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+            businessId,
+        },
+        include: FIND_INCLUDE_OPTIONS,
+    }).then((row) => {
+        if (!row) throw new HttpError(404, 'Card template not found');
+        return removeRowNullFields(row);
+    });
+};
 
 export const updateCardTemplateById = async (
     cardTemplateId: number,
@@ -108,3 +98,30 @@ export const updateCardTemplateById = async (
 ): Promise<any> => {};
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {};
+
+// Helpers
+
+const FIND_INCLUDE_OPTIONS = [
+    {
+        model: LoyaltyCardTemplate,
+        as: 'loyaltyCardTemplate',
+        where: {
+            '$CardTemplate.cardType$': CardType.LOYALTY,
+        },
+        required: false,
+    },
+    {
+        model: ItemsSubscriptionCardTemplate,
+        as: 'itemsSubscriptionCardTemplate',
+        where: {
+            '$CardTemplate.cardType$': CardType.ITEMS_SUBSCRIPTION,
+        },
+        required: false,
+    },
+];
+
+const removeRowNullFields = (row) => {
+    row = row.toJSON();
+    for (const key in row) if (row[key] === null) delete row[key];
+    return row;
+};

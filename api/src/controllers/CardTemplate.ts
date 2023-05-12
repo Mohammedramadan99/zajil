@@ -21,9 +21,10 @@ export const CardTemplateController: ICRUDController = {
 
     getOne: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardTemplateId = Number(req.params.id);
+        const businessId = Number(req.params.businessId);
 
         cardTemplateServices
-            .findOneCardTemplateById(cardTemplateId)
+            .findOneCardTemplateById(cardTemplateId, businessId)
             .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);
