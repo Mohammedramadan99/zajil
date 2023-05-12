@@ -6,6 +6,9 @@
       "about": "about"
     }
   },
+  "banner": {
+    "text": "let's improve your loyalty digital card"
+  },
   "welcome": "Welcome to my website",
   "about": "About",
   "services": "Services",

@@ -1,9 +1,10 @@
-import React, { Suspense } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import i18n from "./utils/i18n";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
+
 import store from "./store/store";
 import "./index.scss";
 

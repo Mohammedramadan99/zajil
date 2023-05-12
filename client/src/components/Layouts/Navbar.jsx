@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import "./NavbarLight.scss";
 import LanguageSelector from "./LanguageSelector";
 import { useDispatch, useSelector } from "react-redux";
 import { changeMode } from "../../store/modeSlice";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import "./NavbarLight.scss";
 function Navbar() {
   const dispatch = useDispatch();
   const [active, setActive] = useState(false);
@@ -27,8 +27,8 @@ function Navbar() {
   }, []);
   return (
     <div
-      className={`${!light ? "dark" : ""} ${
-        active ? "navbar active" : "navbar"
+      className={`navbar ${!light ? "dark-mode" : "light-mode"} ${
+        active ? "active" : ""
       } `}
     >
       <div className="container">
