@@ -128,7 +128,13 @@ export const updateCardTemplateById = async (
     return 'Card template updated successfully';
 };
 
-export const deleteCardTemplateById = async (cardTemplateId: number) => {};
+export const deleteCardTemplateById = async (cardTemplateId: number) => {
+    return CardTemplate.destroy({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+};
 
 // Helpers
 

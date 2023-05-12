@@ -55,6 +55,7 @@ export const setAssociations = () => {
     CardTemplate.hasOne(LoyaltyCardTemplate, {
         foreignKey: 'id',
         as: 'loyaltyCardTemplate',
+        onDelete: 'CASCADE',
     });
     LoyaltyCardTemplate.belongsTo(CardTemplate, {
         foreignKey: 'id',
@@ -65,6 +66,7 @@ export const setAssociations = () => {
     CardTemplate.hasOne(ItemsSubscriptionCardTemplate, {
         foreignKey: 'id',
         as: 'itemsSubscriptionCardTemplate',
+        onDelete: 'CASCADE',
     });
     ItemsSubscriptionCardTemplate.belongsTo(CardTemplate, {
         foreignKey: 'id',
@@ -85,11 +87,21 @@ export const setAssociations = () => {
     Card.hasOne(LoyaltyCard, {
         foreignKey: 'id',
         as: 'loyaltyCard',
+        onDelete: 'CASCADE',
+    });
+    LoyaltyCard.belongsTo(Card, {
+        foreignKey: 'id',
+        as: 'card',
     });
 
     // Card | Items Subscription Card
     Card.hasOne(ItemsSubscriptionCard, {
         foreignKey: 'id',
         as: 'itemsSubscriptionCard',
+        onDelete: 'CASCADE',
+    });
+    ItemsSubscriptionCard.belongsTo(Card, {
+        foreignKey: 'id',
+        as: 'card',
     });
 };
