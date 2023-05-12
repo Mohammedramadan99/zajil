@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import { HttpError } from '../../common';
 import { RequestMod } from '../../common/interfaces/request.mod';
 import { CreateCardDto } from '../../dto/card/create-card';
@@ -60,7 +59,6 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
     };
 };
 
-// only select users who share a card with the logged in user
 export const findAllCards = async ({
     limit = 10,
     offset = 0,
@@ -74,10 +72,7 @@ export const findAllCards = async ({
 }) => {
     return (
         Card.findAndCountAll({
-            where: {
-                businessId,
-            },
-            include: FIND_INCLUDE_OPTIONS,
+            include: FIND_INCLUDE_OPTIONS(businessId),
             limit,
             offset,
         })
@@ -95,7 +90,7 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
             id: cardId,
             businessId,
         },
-        include: FIND_INCLUDE_OPTIONS,
+        include: FIND_INCLUDE_OPTIONS(businessId),
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
         return removeRowNullFields(row);
@@ -140,21 +135,23 @@ export const deleteCardById = async (cardId: number) => {
 
 // Helpers
 
-const FIND_INCLUDE_OPTIONS = [
+const FIND_INCLUDE_OPTIONS = (businessId: number) => [
+    {
+        model: CardTemplate,
+        as: 'cardTemplate',
+        where: {
+            businessId,
+        },
+        required: true,
+    },
     {
         model: LoyaltyCard,
         as: 'loyaltyCard',
-        where: {
-            '$Card.cardType$': CardType.LOYALTY,
-        },
         required: false,
     },
     {
         model: ItemsSubscriptionCard,
         as: 'itemsSubscriptionCard',
-        where: {
-            '$Card.cardType$': CardType.ITEMS_SUBSCRIPTION,
-        },
         required: false,
     },
 ];

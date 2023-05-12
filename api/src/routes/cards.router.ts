@@ -4,7 +4,7 @@ import { UpdateCardDto } from '../dto/card/update-card';
 import { CreateCardDto } from '../dto/card/create-card';
 import { CardController } from '../controllers/Card';
 
-const cardsRouter = Router();
+const cardsRouter = Router({ mergeParams: true });
 
 // Create Card
 cardsRouter.post('/', validateMiddleware(CreateCardDto), CardController.create);

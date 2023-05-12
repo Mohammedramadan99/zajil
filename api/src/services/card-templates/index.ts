@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import { HttpError } from '../../common';
 import { RequestMod } from '../../common/interfaces/request.mod';
 import { CardTemplate, CardType } from '../../db/models/card-template/card-template.model';
@@ -50,7 +49,6 @@ export const createCardTemplate = async (
     };
 };
 
-// only select users who share a card template with the logged in user
 export const findAllCardTemplates = async ({
     limit = 10,
     offset = 0,
