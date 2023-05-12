@@ -95,7 +95,38 @@ export const findOneCardTemplateById = async (cardTemplateId: number, businessId
 export const updateCardTemplateById = async (
     cardTemplateId: number,
     updateCardTemplateDto: UpdateCardTemplateDto,
-): Promise<any> => {};
+): Promise<any> => {
+    const baseUpdateDto = updateCardTemplateDto.base;
+
+    const cardTemplate = await CardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!cardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // update the base card template
+    if (baseUpdateDto) await cardTemplate.update(baseUpdateDto);
+
+    // update the sub card template
+    switch (cardTemplate.cardType) {
+        case CardType.LOYALTY:
+            break;
+
+        case CardType.ITEMS_SUBSCRIPTION:
+            const itemsSubscriptionDto = updateCardTemplateDto.itemsSubscription;
+            if (!itemsSubscriptionDto) break;
+            const subTemp = await ItemsSubscriptionCardTemplate.update(itemsSubscriptionDto, {
+                where: {
+                    id: cardTemplateId,
+                },
+            });
+            if (!subTemp) throw new HttpError(404, 'Card template not found');
+            break;
+    }
+
+    return 'Card template updated successfully';
+};
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {};
 

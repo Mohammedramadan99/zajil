@@ -1,16 +1,15 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 
-export class UpdateCardTemplateDto {
+export class UpdateBaseCardTemplateDto {
     // name
     @IsOptional()
     @IsNotEmpty()
     @IsString()
     name?: string;
+}
 
-    /*
-     * Items Subscription Card Template Validation
-     * */
-
+export class UpdateIemsSubscriptionCardTemplateDto {
     // maxDailyUsage
     @IsOptional()
     @IsNotEmpty()
@@ -24,4 +23,25 @@ export class UpdateCardTemplateDto {
     @IsNumber()
     @Min(1)
     subscriptionDurationDays?: number;
+}
+
+export class UpdateCardTemplateDto {
+    // base
+    @IsOptional()
+    @IsNotEmpty()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => UpdateBaseCardTemplateDto)
+    base?: UpdateBaseCardTemplateDto;
+
+    /*
+     * Items Subscription Card Template Validation
+     * */
+    // itemsSubscription
+    @IsOptional()
+    @IsNotEmpty()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => UpdateIemsSubscriptionCardTemplateDto)
+    itemsSubscription?: UpdateIemsSubscriptionCardTemplateDto;
 }
