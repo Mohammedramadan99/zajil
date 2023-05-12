@@ -1,17 +1,10 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
-enum CardType {
-    LOYALTY = 'LOYALTY',
-    ITEMS_SUBSCRIPTION = 'ITEMS_SUBSCRIPTION',
-}
-
 export class Card extends Model {
     public declare id: number;
-    public name!: string;
-    public clientName: string;
-    public clientPhone: string;
-    public cardType: CardType;
-    public businessId!: number;
+    public clientPhone!: string;
+    public clientName!: string;
+    public templateId!: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -25,7 +18,7 @@ export const init = (sequelize: Sequelize) =>
                 autoIncrement: true,
                 primaryKey: true,
             },
-            name: {
+            clientPhone: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -33,21 +26,7 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            clientPhone: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    is: /^(\+7|7|8)?9\d{9}$/i,
-                },
-            },
-            cardType: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    isIn: [Object.values(CardType)],
-                },
-            },
-            businessId: {
+            templateId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },

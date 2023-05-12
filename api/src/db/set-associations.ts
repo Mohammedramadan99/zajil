@@ -1,12 +1,15 @@
 import { Branch } from './models/branch.model';
 import { Business } from './models/business.model';
-import { ItemsSubscriptionCard } from './models/card-types/items-subscription.model';
-import { LoyaltyCard } from './models/card-types/loyalty.model';
-import { Card } from './models/card.model';
+import { CardTemplate } from './models/card-template/card-template.model';
+import { ItemsSubscriptionCardTemplate } from './models/card-template/items-subscription-card-template.model';
+import { LoyaltyCardTemplate } from './models/card-template/loyalty-card-template.model';
+import { Card } from './models/card/card.model';
+import { ItemsSubscriptionCard } from './models/card/items-subscription-card.model';
+import { LoyaltyCard } from './models/card/loyalty-card.model';
 import { User } from './models/user.model';
 
 export const setAssociations = () => {
-    // user owning a business
+    // User | Business
     User.hasMany(Business, {
         foreignKey: 'ownerId',
         as: 'businesses',
@@ -16,7 +19,7 @@ export const setAssociations = () => {
         as: 'owner',
     });
 
-    // business having many branches
+    // Business | Branch
     Business.hasMany(Branch, {
         foreignKey: 'businessId',
         as: 'branches',
@@ -26,7 +29,7 @@ export const setAssociations = () => {
         as: 'business',
     });
 
-    // user working at a branch
+    // User | Branch
     User.belongsToMany(Branch, {
         through: 'UserBranch',
         as: 'employedAt',
@@ -38,33 +41,55 @@ export const setAssociations = () => {
         foreignKey: 'branchId',
     });
 
-    // Cards | Businesses
-    Card.belongsTo(Business, {
+    // Business | Card Template
+    Business.hasMany(CardTemplate, {
+        foreignKey: 'businessId',
+        as: 'cardTemplates',
+    });
+    CardTemplate.belongsTo(Business, {
         foreignKey: 'businessId',
         as: 'business',
     });
-    Business.hasMany(Card, {
-        foreignKey: 'businessId',
+
+    // Card Template | Loyalty Card Template
+    CardTemplate.hasOne(LoyaltyCardTemplate, {
+        foreignKey: 'id',
+        as: 'loyaltyCardTemplate',
+    });
+    LoyaltyCardTemplate.belongsTo(CardTemplate, {
+        foreignKey: 'id',
+        as: 'cardTemplate',
+    });
+
+    // Card Template | Items Subscription Card Template
+    CardTemplate.hasOne(ItemsSubscriptionCardTemplate, {
+        foreignKey: 'id',
+        as: 'itemsSubscriptionCardTemplate',
+    });
+    ItemsSubscriptionCardTemplate.belongsTo(CardTemplate, {
+        foreignKey: 'id',
+        as: 'cardTemplate',
+    });
+
+    // Card Template | Card
+    CardTemplate.hasMany(Card, {
+        foreignKey: 'templateId',
         as: 'cards',
     });
+    Card.belongsTo(CardTemplate, {
+        foreignKey: 'templateId',
+        as: 'cardTemplate',
+    });
 
-    // Cards | Loyalty | 1:1
+    // Card | Loyalty Card
     Card.hasOne(LoyaltyCard, {
         foreignKey: 'id',
-        as: 'loyalty',
-    });
-    LoyaltyCard.belongsTo(Card, {
-        foreignKey: 'id',
-        as: 'card',
+        as: 'loyaltyCard',
     });
 
-    // Cards | ItemsSubscription | 1:1
+    // Card | Items Subscription Card
     Card.hasOne(ItemsSubscriptionCard, {
         foreignKey: 'id',
-        as: 'itemsSubscription',
-    });
-    ItemsSubscriptionCard.belongsTo(Card, {
-        foreignKey: 'id',
-        as: 'card',
+        as: 'itemsSubscriptionCard',
     });
 };

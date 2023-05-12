@@ -1,14 +1,13 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
-export class LoyaltyCard extends Model {
+export class LoyaltyCardTemplate extends Model {
     public declare id: number;
-
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
 export const init = (sequelize: Sequelize) =>
-    LoyaltyCard.init(
+    LoyaltyCardTemplate.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -17,6 +16,6 @@ export const init = (sequelize: Sequelize) =>
         },
         {
             sequelize,
-            tableName: 'loyalty_cards',
+            tableName: 'loyalty_card_templates',
         },
     );
