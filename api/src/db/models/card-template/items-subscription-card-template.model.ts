@@ -4,6 +4,7 @@ export class ItemsSubscriptionCardTemplate extends Model {
     public declare id: number;
     public maxDailyUsage!: number;
     public subscriptionDurationDays!: number;
+    public nItems!: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -24,6 +25,13 @@ export const init = (sequelize: Sequelize) =>
                 },
             },
             subscriptionDurationDays: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    min: 1,
+                },
+            },
+            nItems: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {

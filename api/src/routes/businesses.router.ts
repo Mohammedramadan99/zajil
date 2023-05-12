@@ -4,7 +4,8 @@ import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { CreateBusinessDto } from '../dto/business/create-business';
 import { UpdateBusinessDto } from '../dto/business/update-business';
 import cardTemplatesRouter from './card-templates.router';
-import { canAccessCardsTemplatesMiddleware } from '../middlewares/methods/canAccessCardsTemplates.middleware';
+import { canUseBusinessId } from '../middlewares/methods/canUseBusinessId.middleware';
+import cardsRouter from './cards.router';
 
 const businessesRouter = express.Router();
 businessesRouter.post('/', validateMiddleware(CreateBusinessDto), BusinessController.create);
@@ -14,6 +15,9 @@ businessesRouter.patch('/' + ':id', validateMiddleware(UpdateBusinessDto), Busin
 businessesRouter.delete('/' + ':id', BusinessController.delete);
 
 // Card Templates
-businessesRouter.use('/:businessId/card-templates', canAccessCardsTemplatesMiddleware, cardTemplatesRouter);
+businessesRouter.use('/:businessId/card-templates', canUseBusinessId, cardTemplatesRouter);
+
+// Cards
+businessesRouter.use('/:businessId/cards', canUseBusinessId, cardsRouter);
 
 export default businessesRouter;
