@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { validateDto } from '../helpers';
 import { CreateUserDto } from '../dto/users/create-user';
 import * as usersServices from '../services/users';
 import { HttpError } from '../common';
@@ -9,7 +8,7 @@ import { UpdateUserDto } from '../dto/users/update-user';
 
 export const UsersController: ICRUDController = {
     create: function (req: Request, res: Response, next: NextFunction): void {
-        const body: CreateUserDto = validateDto(CreateUserDto, req.body);
+        const body: CreateUserDto = req.body;
         usersServices
             .createUser(body)
             .then((user) => res.status(201).json(user))
@@ -46,7 +45,7 @@ export const UsersController: ICRUDController = {
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
         const userId = Number(req.params.id);
-        const body: UpdateUserDto = validateDto(UpdateUserDto, req.body);
+        const body: UpdateUserDto = req.body;
 
         usersServices
             .updateUserById(userId, body)

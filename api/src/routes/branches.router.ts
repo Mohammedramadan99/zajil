@@ -1,7 +1,13 @@
 import express from 'express';
-import { setCRUDRoutes } from '../helpers';
 import { BranchController } from '../controllers/Branches';
+import { validateMiddleware } from '../middlewares/methods/validate.middleware';
+import { CreateBranchDto } from '../dto/branches/create-branch';
+import { UpdateBranchDto } from '../dto/branches/update-branch';
 
 const branchesRouter = express.Router();
-setCRUDRoutes(branchesRouter, BranchController)
+branchesRouter.post('/', validateMiddleware(CreateBranchDto), BranchController.create);
+branchesRouter.get('/', BranchController.getAll);
+branchesRouter.get('/' + ':id', BranchController.getOne);
+branchesRouter.patch('/' + ':id', validateMiddleware(UpdateBranchDto), BranchController.update);
+branchesRouter.delete('/' + ':id', BranchController.delete);
 export default branchesRouter;

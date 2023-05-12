@@ -4,9 +4,11 @@ import { UsersController } from '../controllers/Users';
 import usersRouter from './users.router';
 import businessesRouter from './businesses.router';
 import branchesRouter from './branches.router';
+import { validateMiddleware } from '../middlewares/methods/validate.middleware';
+import { CreateUserDto } from '../dto/users/create-user';
 
 const mainRouter = express.Router();
-mainRouter.post('/register', UsersController.create);
+mainRouter.post('/register', validateMiddleware(CreateUserDto), UsersController.create);
 mainRouter.post('/login', AuthController.login);
 
 mainRouter.use('/users', usersRouter);

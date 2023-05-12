@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { validateDto } from '../helpers';
 import * as businessServices from '../services/businesses';
 import { HttpError } from '../common';
 import { RequestMod } from '../common/interfaces/request.mod';
@@ -9,7 +8,7 @@ import { UpdateBusinessDto } from '../dto/business/update-business';
 
 export const BusinessController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const body: CreateBusinessDto = validateDto(CreateBusinessDto, req.body);
+        const body: CreateBusinessDto = req.body;
         businessServices
             .createBusiness(body, req)
             .then((business) => res.status(201).json(business))
@@ -45,7 +44,7 @@ export const BusinessController: ICRUDController = {
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
         const businessId = Number(req.params.id);
-        const body: UpdateBusinessDto = validateDto(UpdateBusinessDto, req.body);
+        const body: UpdateBusinessDto = req.body;
 
         businessServices
             .updateBusinessById(businessId, body)
