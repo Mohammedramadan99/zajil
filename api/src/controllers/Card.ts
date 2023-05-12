@@ -6,7 +6,10 @@ import ICRUDController from './interfaces/crud.controller';
 import { CreateCardDto } from '../dto/card/create-card';
 import { UpdateCardDto } from '../dto/card/update-card';
 
-export const CardController: ICRUDController = {
+export const CardController: ICRUDController & {
+    loyaltyAddPoints: (req: RequestMod, res: Response, next: NextFunction) => void;
+    loyaltySubtractPoints: (req: RequestMod, res: Response, next: NextFunction) => void;
+} = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;
         cardServices
@@ -63,6 +66,36 @@ export const CardController: ICRUDController = {
 
         cardServices
             .deleteCardById(cardId)
+            .then((card) => res.json(card))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    // Custom methods
+
+    loyaltyAddPoints: function (req: Request, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+        const value = req.body.value;
+
+        cardServices
+            .loyaltyAddPoints(cardId, value)
+            .then((card) => res.json(card))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    loyaltySubtractPoints: function (req: Request, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+        const value = req.body.value;
+
+        cardServices
+            .loyaltySubtractPoints(cardId, value)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);

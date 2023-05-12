@@ -150,6 +150,43 @@ export const deleteCardById = async (cardId: number) => {
     });
 };
 
+// loyalty add points
+export const loyaltyAddPoints = async (cardId: number, value: number) => {
+    // find the loyalty card
+    const loyaltyCard = await LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+    // add points
+    loyaltyCard.points += value;
+    await loyaltyCard.save();
+
+    return loyaltyCard;
+};
+
+// loyalty subtract points
+export const loyaltySubtractPoints = async (cardId: number, value: number) => {
+    // find the loyalty card
+    const loyaltyCard = await LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+    // subtract points
+    if (loyaltyCard.points < value) throw new HttpError(400, 'Not enough points');
+    loyaltyCard.points -= value;
+    await loyaltyCard.save();
+
+    return loyaltyCard;
+};
+
+// items subscription use items
+
 // Helpers
 
 const FIND_INCLUDE_OPTIONS = (businessId: number) => [

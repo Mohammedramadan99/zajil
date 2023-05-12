@@ -3,6 +3,7 @@ import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { UpdateCardDto } from '../dto/card/update-card';
 import { CreateCardDto } from '../dto/card/create-card';
 import { CardController } from '../controllers/Card';
+import { LoyaltyAddSubtractPoints } from '../dto/card/loyalty-add-subtract-points';
 
 const cardsRouter = Router({ mergeParams: true });
 
@@ -20,5 +21,20 @@ cardsRouter.patch('/:id', validateMiddleware(UpdateCardDto), CardController.upda
 
 // Delete Card by ID
 cardsRouter.delete('/:id', CardController.delete);
+
+// loyalty functions
+cardsRouter.patch(
+    '/:id/loyalty/add-points',
+    validateMiddleware(LoyaltyAddSubtractPoints),
+    CardController.loyaltyAddPoints,
+);
+cardsRouter.patch(
+    '/:id/loyalty/subtract-points',
+    validateMiddleware(LoyaltyAddSubtractPoints),
+    CardController.loyaltySubtractPoints,
+);
+
+// // items subscription functions
+// cardsRouter.post('/:id/items-subscription/use', CardController.itemsSubscriptionUse);
 
 export default cardsRouter;
