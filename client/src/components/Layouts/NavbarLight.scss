@@ -1,31 +1,56 @@
 @use "../../Globals.scss" as *;
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   padding-block: 20px;
-  position: relative;
   transition: 1s ease;
-  &.dark {
-    background-color: #000;
+  z-index: 999;
+
+  &.light-mode {
+    background-color: rgba(#fff, 0);
+    .block {
+      .logo {
+        color: #fff;
+      }
+      .links {
+        .link {
+          a {
+            color: #fff !important;
+          }
+        }
+      }
+    }
+    &.active {
+      // background: linear-gradient(to bottom, #000, #999);
+      background-color: rgba(#fff, 1);
+    }
+  }
+  &.dark-mode {
+    // background-color: #000;
     color: #fff;
     &.active {
-      background: linear-gradient(to bottom, #000, #999);
+      // background: linear-gradient(to bottom, #000, #999);
+      background-color: rgba($mauve_color-2, 0.5);
+      backdrop-filter: blur(10px);
     }
   }
   &.active {
     position: sticky;
     top: 0;
     padding-block: 40px;
-    background: linear-gradient(to bottom, #eee, #fff);
+    background: rgba($mauve_color-2, 0);
   }
   .container {
     display: flex;
     justify-content: space-between;
     text-transform: capitalize;
+    position: relative;
     .logo {
       font-weight: 800;
-      color: $french-violet;
     }
     svg {
-      color: $french-violet;
     }
     .block {
       display: flex;
@@ -38,13 +63,12 @@
           transition: 1s ease;
 
           a {
-            color: $french-violet;
             text-shadow: -20px 20px 1px transparent;
             transition: 0.5s ease-in-out;
             font-weight: 500;
 
             &:hover {
-              text-shadow: 0px 2px 1px $heliotrope;
+              text-shadow: 0px 2px 1px $mauve_color-4;
             }
           }
         }

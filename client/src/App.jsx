@@ -1,16 +1,17 @@
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 import Home from "./pages/home/Home";
-import DashboardHome from "./pages/dashboard/home/DashboardHome";
+import DashboardHome from "./admin/pages/home/Home";
 import RootLayout from "./components/Layouts/RootLayout";
-import DashboardLayout from "./components/Layouts/DashboardLayout";
-import PrivateRoutes from "./utils/PrivateRoutes";
-import Login from "./components/Auth/Login/Login";
-import i18n from "./utils/i18n";
+import DashboardLayout from "./admin/components/Layout/Layout";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { ColorModeContext, useMode } from "./admin/theme";
 
-const isAdmin = false;
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+
+const isAdmin = true;
 const router = createBrowserRouter([
   {
     path: "/",
@@ -29,12 +30,19 @@ const router = createBrowserRouter([
     ) : (
       <div>only admins can see this page</div>
     ),
-    children: [],
+    children: [
+      {
+        path: "/admin",
+        element: <DashboardHome />,
+      },
+    ],
   },
 ]);
 
 function App() {
   const { t, i18n } = useTranslation();
+  const { light } = useSelector((state) => state.mode);
+  const [theme, colorMode] = useMode();
 
   useEffect(() => {
     if (i18n.language.indexOf("ar") === 0) {
@@ -43,7 +51,16 @@ function App() {
       document.body.dir = "ltr";
     }
   }, [i18n.language]);
-  return <RouterProvider router={router} />;
+  return (
+    <div className={`${light ? "parent-light-mode" : "parent-dark-mode"}`}>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </div>
+  );
 }
 
 export default App;
