@@ -46,10 +46,11 @@ export const CardController: ICRUDController = {
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
+        const businessId = Number(req.params.businessId);
         const body: UpdateCardDto = req.body;
 
         cardServices
-            .updateCardById(cardId, body)
+            .updateCardById(cardId, businessId, body)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);

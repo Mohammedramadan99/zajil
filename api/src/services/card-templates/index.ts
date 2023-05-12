@@ -123,7 +123,7 @@ export const updateCardTemplateById = async (
             break;
     }
 
-    return 'Card template updated successfully';
+    return findOneCardTemplateById(cardTemplateId, cardTemplate.businessId);
 };
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {

@@ -2,11 +2,17 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 
 export class UpdateBaseCardDto {
-    // name
+    // clientName
     @IsOptional()
     @IsNotEmpty()
     @IsString()
-    name?: string;
+    clientName?: string;
+
+    // clientPhone
+    @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    clientPhone?: string;
 }
 
 export class UpdateIemsSubscriptionCardDto {
@@ -44,7 +50,7 @@ export class UpdateCardDto {
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateIemsSubscriptionCardDto)
-    itemsSubscription?: UpdateIemsSubscriptionCardDto;
+    itemsSubscriptionCard?: UpdateIemsSubscriptionCardDto;
 
     /*
      * Loyalty Card Validation
@@ -55,5 +61,5 @@ export class UpdateCardDto {
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateLoyaltyCardDto)
-    loyalty?: UpdateLoyaltyCardDto;
+    loyaltyCard?: UpdateLoyaltyCardDto;
 }

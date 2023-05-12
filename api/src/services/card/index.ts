@@ -88,7 +88,6 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
     return Card.findOne({
         where: {
             id: cardId,
-            businessId,
         },
         include: FIND_INCLUDE_OPTIONS(businessId),
     }).then((row) => {
@@ -97,32 +96,50 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
     });
 };
 
-export const updateCardById = async (cardId: number, updateCardDto: UpdateCardDto): Promise<any> => {
-    // const baseUpdateDto = updateCardDto.base;
-    // const card = await Card.findOne({
-    //     where: {
-    //         id: cardId,
-    //     },
-    // });
-    // if (!card) throw new HttpError(404, 'Card not found');
-    // // update the base card
-    // if (baseUpdateDto) await card.update(baseUpdateDto);
-    // // update the sub card
-    // switch (card.cardType) {
-    //     case CardType.LOYALTY:
-    //         break;
-    //     case CardType.ITEMS_SUBSCRIPTION:
-    //         const itemsSubscriptionDto = updateCardDto.itemsSubscription;
-    //         if (!itemsSubscriptionDto) break;
-    //         const subTemp = await ItemsSubscriptionCard.update(itemsSubscriptionDto, {
-    //             where: {
-    //                 id: cardId,
-    //             },
-    //         });
-    //         if (!subTemp) throw new HttpError(404, 'Card not found');
-    //         break;
-    // }
-    // return 'Card updated successfully';
+export const updateCardById = async (
+    cardId: number,
+    businessId: number,
+    updateCardDto: UpdateCardDto,
+): Promise<any> => {
+    const baseUpdateDto = updateCardDto.base;
+    const card = await Card.findOne({
+        where: {
+            id: cardId,
+        },
+        include: FIND_INCLUDE_OPTIONS(businessId),
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // update the base card
+    if (baseUpdateDto) await card.update(baseUpdateDto);
+
+    const { cardTemplate } = card as Card & { cardTemplate: CardTemplate };
+
+    // update the sub card
+    switch (cardTemplate.cardType) {
+        case CardType.LOYALTY:
+            const loyaltyDto = updateCardDto.loyaltyCard;
+            if (!loyaltyDto) break;
+            const subCard = await LoyaltyCard.update(loyaltyDto, {
+                where: {
+                    id: cardId,
+                },
+            });
+            if (!subCard) throw new HttpError(404, 'Card not found');
+            break;
+
+        case CardType.ITEMS_SUBSCRIPTION:
+            const itemsSubscriptionDto = updateCardDto.itemsSubscriptionCard;
+            if (!itemsSubscriptionDto) break;
+            const subCard2 = await ItemsSubscriptionCard.update(itemsSubscriptionDto, {
+                where: {
+                    id: cardId,
+                },
+            });
+            if (!subCard2) throw new HttpError(404, 'Card not found');
+            break;
+    }
+    return findOneCardById(cardId, businessId);
 };
 
 export const deleteCardById = async (cardId: number) => {
