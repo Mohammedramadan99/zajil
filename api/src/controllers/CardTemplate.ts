@@ -33,9 +33,10 @@ export const CardTemplateController: ICRUDController = {
     getAll: function (req: RequestMod, res: Response, next: NextFunction): void {
         const limit = Number(req.query.limit) || 10;
         const offset = Number(req.query.offset) || 0;
+        const businessId = Number(req.params.businessId);
 
         cardTemplateServices
-            .findAllCardTemplates({ limit, offset, req })
+            .findAllCardTemplates({ limit, offset, req, businessId })
             .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);

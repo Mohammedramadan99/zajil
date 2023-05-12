@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { HttpError } from '../../common';
 import { RequestMod } from '../../common/interfaces/request.mod';
 import { CardTemplate, CardType } from '../../db/models/card-template/card-template.model';
@@ -53,12 +54,51 @@ export const createCardTemplate = async (
 export const findAllCardTemplates = async ({
     limit = 10,
     offset = 0,
+    businessId,
     req,
 }: {
     limit: number;
     offset: number;
+    businessId: number;
     req: RequestMod;
-}) => {};
+}) => {
+    return (
+        CardTemplate.findAndCountAll({
+            where: {
+                businessId,
+            },
+            include: [
+                {
+                    model: LoyaltyCardTemplate,
+                    as: 'loyaltyCardTemplate',
+                    where: {
+                        '$CardTemplate.cardType$': CardType.LOYALTY,
+                    },
+                    required: false,
+                },
+                {
+                    model: ItemsSubscriptionCardTemplate,
+                    as: 'itemsSubscriptionCardTemplate',
+                    where: {
+                        '$CardTemplate.cardType$': CardType.ITEMS_SUBSCRIPTION,
+                    },
+                    required: false,
+                },
+            ],
+            limit,
+            offset,
+        })
+            // remove null fields from each row
+            .then((result) => {
+                result.rows = result.rows.map((row) => {
+                    row = row.toJSON();
+                    for (const key in row) if (row[key] === null) delete row[key];
+                    return row;
+                });
+                return result;
+            })
+    );
+};
 
 export const findOneCardTemplateById = async (cardTemplateId: number): Promise<any> => {};
 
