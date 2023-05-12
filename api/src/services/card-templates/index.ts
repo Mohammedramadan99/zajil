@@ -38,6 +38,7 @@ export const createCardTemplate = async (
                 id: cardTemplate.id,
                 maxDailyUsage: createCardTemplateDto.maxDailyUsage,
                 subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
+                nItems: createCardTemplateDto.nItems,
             });
             break;
     }

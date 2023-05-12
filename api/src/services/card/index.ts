@@ -186,6 +186,22 @@ export const loyaltySubtractPoints = async (cardId: number, value: number) => {
 };
 
 // items subscription use items
+export const itemsSubscriptionUseItems = async (cardId: number, value: number) => {
+    // find the items subscription card
+    const itemsSubscriptionCard = await ItemsSubscriptionCard.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!itemsSubscriptionCard) throw new HttpError(404, 'Card not found');
+
+    // use items
+    if (itemsSubscriptionCard.nItems < value) throw new HttpError(400, 'Not enough items');
+    itemsSubscriptionCard.nItems -= value;
+    await itemsSubscriptionCard.save();
+
+    return itemsSubscriptionCard;
+};
 
 // Helpers
 

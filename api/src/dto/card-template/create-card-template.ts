@@ -30,4 +30,11 @@ export class CreateCardTemplateDto {
     @IsNumber()
     @Min(1)
     subscriptionDurationDays: number;
+
+    // nItems
+    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION)
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(0)
+    nItems: number;
 }

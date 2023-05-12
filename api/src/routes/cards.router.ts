@@ -4,6 +4,7 @@ import { UpdateCardDto } from '../dto/card/update-card';
 import { CreateCardDto } from '../dto/card/create-card';
 import { CardController } from '../controllers/Card';
 import { LoyaltyAddSubtractPoints } from '../dto/card/loyalty-add-subtract-points';
+import { ItemsSubUseDto } from '../dto/card/items-sub-use';
 
 const cardsRouter = Router({ mergeParams: true });
 
@@ -34,7 +35,11 @@ cardsRouter.patch(
     CardController.loyaltySubtractPoints,
 );
 
-// // items subscription functions
-// cardsRouter.post('/:id/items-subscription/use', CardController.itemsSubscriptionUse);
+// items subscription functions
+cardsRouter.patch(
+    '/:id/items-subscription/use',
+    validateMiddleware(ItemsSubUseDto),
+    CardController.itemSubscriptionUse,
+);
 
 export default cardsRouter;

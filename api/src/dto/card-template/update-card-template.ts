@@ -23,6 +23,13 @@ export class UpdateIemsSubscriptionCardTemplateDto {
     @IsNumber()
     @Min(1)
     subscriptionDurationDays?: number;
+
+    // nItems
+    @IsOptional()
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    nItems?: number;
 }
 
 export class UpdateCardTemplateDto {
