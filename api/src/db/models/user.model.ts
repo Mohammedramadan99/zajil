@@ -15,6 +15,7 @@ export class User extends Model {
     public email!: string;
     public password!: string;
     public roles!: UserRole[];
+    public active!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -55,6 +56,11 @@ export const init = (sequelize: Sequelize) =>
                 validate: {
                     notEmpty: true,
                 },
+            },
+            active: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                allowNull: false,
             },
         },
         {

@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import ICRUDController from '../controllers/interfaces/crud.controller';
 import { plainToClassFromExist } from 'class-transformer';
 import { ValidationError, validateSync } from 'class-validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
 import { HttpError } from '../common';
+import { sign, verify } from 'jsonwebtoken';
+import { User } from '../db/models/user.model';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {
@@ -38,4 +38,42 @@ export const hashPassword = (password: string) => {
 
 export const comparePasswords = (password: string, hashedPassword: string) => {
     return bcrypt.compareSync(password, hashedPassword);
+};
+
+// sign JWT for user account activation
+export const signUserAccountActivationToken = (userId: number) => {
+    return sign(
+        {
+            userId,
+            type: 'account-activation',
+        },
+        config.JWT.secret,
+        {
+            // expires in 10 days
+            expiresIn: 864000,
+        },
+    );
+};
+
+// verify JWT for user account activation
+export const verifyUserAccountActivationToken = (token: string) => {
+    let payload: any;
+
+    try {
+        payload = verify(token, config.JWT.secret);
+        if (payload.type !== 'account-activation') throw new Error('Invalid token');
+    } catch (error) {
+        throw new HttpError(400, error.message);
+    }
+
+    return payload.userId;
+};
+
+// send account activation email
+export const sendAccountActivationEmail = async (user: User) => {
+    const token = signUserAccountActivationToken(user.id);
+
+    console.log(`To activate your account, please click on the following link: /activate-account/${token}`);
+
+    // #TODO: send email
 };

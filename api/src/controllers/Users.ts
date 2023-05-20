@@ -6,7 +6,9 @@ import { RequestMod } from '../common/interfaces/request.mod';
 import ICRUDController from './interfaces/crud.controller';
 import { UpdateUserDto } from '../dto/users/update-user';
 
-export const UsersController: ICRUDController = {
+export const UsersController: ICRUDController & {
+    activateAccount: (req: Request, res: Response, next: NextFunction) => void;
+} = {
     create: function (req: Request, res: Response, next: NextFunction): void {
         const body: CreateUserDto = req.body;
         usersServices
@@ -66,6 +68,18 @@ export const UsersController: ICRUDController = {
                 console.error(err);
                 if (err instanceof HttpError) next(err);
                 else next(new HttpError(500, err.message));
+            });
+    },
+
+    activateAccount: function (req: Request, res: Response, next: NextFunction): void {
+        const token = req.params.token;
+
+        usersServices
+            .activateAccount(token)
+            .then((user) => res.json(user))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
             });
     },
 };

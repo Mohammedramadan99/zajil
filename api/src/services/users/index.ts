@@ -6,12 +6,17 @@ import { Business } from '../../db/models/business.model';
 import { User } from '../../db/models/user.model';
 import { CreateUserDto } from '../../dto/users/create-user';
 import { UpdateUserDto } from '../../dto/users/update-user';
-import { hashPassword } from '../../helpers';
+import { hashPassword, sendAccountActivationEmail, verifyUserAccountActivationToken } from '../../helpers';
 
 export const createUser = (createUserDto: CreateUserDto): Promise<User> => {
     createUserDto.password = hashPassword(createUserDto.password);
     const user = new User({ ...createUserDto });
-    return user.save();
+    return user.save().then(async (user) => {
+        // send account activation email
+        await sendAccountActivationEmail(user);
+
+        return user;
+    });
 };
 
 // only select users who share a business with the logged in user
@@ -106,3 +111,21 @@ function getUsersByBusinessId(businessId: number, limit: number, offset: number)
         offset,
     });
 }
+
+export const activateAccount = async (token: string) => {
+    // validate token
+    const userId: string = verifyUserAccountActivationToken(token);
+
+    // find user
+    const user = await User.findOne({
+        where: {
+            id: userId,
+        },
+    });
+    if (!user) throw new HttpError(404, 'User not found');
+
+    // activate user
+    user.active = true;
+
+    return user.save().then(() => ({ message: 'Account activated successfully' }));
+};

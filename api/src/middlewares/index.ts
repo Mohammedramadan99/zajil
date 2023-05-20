@@ -5,8 +5,9 @@ import loggingMiddleware from './methods/logging.middleware';
 import responseFormatterMiddleware from './methods/response-formatter.middleware';
 import authMiddleware from './methods/auth.middleware';
 import handle404Middleware from './methods/handle404.middleware';
+import accountActivationMiddleware from './methods/account-activation.middleware';
 
-const midsPre = [loggingMiddleware, responseFormatterMiddleware, authMiddleware];
+const midsPre = [loggingMiddleware, responseFormatterMiddleware, authMiddleware, accountActivationMiddleware];
 const midsPost = [handle404Middleware];
 
 // applys middlewares before the main router
