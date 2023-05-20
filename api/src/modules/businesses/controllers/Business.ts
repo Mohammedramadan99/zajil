@@ -3,8 +3,8 @@ import * as businessServices from '../services';
 import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
-import { CreateBusinessDto } from '../../../dto/business/create-business';
-import { UpdateBusinessDto } from '../../../dto/business/update-business';
+import { CreateBusinessDto } from '../dto/create-business';
+import { UpdateBusinessDto } from '../dto/update-business';
 
 export const BusinessController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {

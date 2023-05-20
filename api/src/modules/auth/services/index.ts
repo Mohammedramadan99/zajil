@@ -1,4 +1,4 @@
-import { LoginDto } from '../../../dto/auth/login';
+import { LoginDto } from '../dto/login';
 import bcrypt from 'bcrypt';
 import { signJWT } from './jwt';
 import { User } from '../../users/models/user.model';

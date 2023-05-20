@@ -3,8 +3,8 @@ import * as cardServices from '../services';
 import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
-import { CreateCardDto } from '../../../dto/card/create-card';
-import { UpdateCardDto } from '../../../dto/card/update-card';
+import { CreateCardDto } from '../dto/create-card';
+import { UpdateCardDto } from '../dto/update-card';
 
 export const CardController: ICRUDController & {
     loyaltyAddPoints: (req: RequestMod, res: Response, next: NextFunction) => void;

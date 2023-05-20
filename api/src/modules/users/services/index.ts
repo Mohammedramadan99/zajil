@@ -4,8 +4,8 @@ import { RequestMod } from '../../../common/interfaces/request.mod';
 import { Branch } from '../../branches/models/branch.model';
 import { Business } from '../../businesses/models/business.model';
 import { User } from '../models/user.model';
-import { CreateUserDto } from '../../../dto/users/create-user';
-import { UpdateUserDto } from '../../../dto/users/update-user';
+import { CreateUserDto } from '../dto/create-user';
+import { UpdateUserDto } from '../dto/update-user';
 import { hashPassword, sendAccountActivationEmail, verifyUserAccountActivationToken } from '../../../helpers';
 
 export const createUser = (createUserDto: CreateUserDto): Promise<User> => {

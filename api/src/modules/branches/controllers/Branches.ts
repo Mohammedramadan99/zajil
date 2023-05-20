@@ -3,8 +3,8 @@ import * as branchServices from '../services';
 import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
-import { CreateBranchDto } from '../../../dto/branches/create-branch';
-import { UpdateBranchDto } from '../../../dto/branches/update-branch';
+import { CreateBranchDto } from '../dto/create-branch';
+import { UpdateBranchDto } from '../dto/update-branch';
 
 export const BranchController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {

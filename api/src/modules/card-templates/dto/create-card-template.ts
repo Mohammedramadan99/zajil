@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, Min, ValidateIf } from 'class-validator';
-import { CardType } from '../../modules/card-templates/models/card-template.model';
+import { CardType } from '../models/card-template.model';
 
 export class CreateCardTemplateDto {
     // name

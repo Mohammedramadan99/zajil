@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { validateDto } from '../../../helpers';
-import { LoginDto } from '../../../dto/auth/login';
+import { LoginDto } from '../dto/login';
 import { login } from '../services';
 import { HttpError } from '../../../common';
 

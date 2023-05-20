@@ -2,8 +2,8 @@ import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import { Branch } from '../../branches/models/branch.model';
 import { Business } from '../models/business.model';
-import { CreateBusinessDto } from '../../../dto/business/create-business';
-import { UpdateBusinessDto } from '../../../dto/business/update-business';
+import { CreateBusinessDto } from '../dto/create-business';
+import { UpdateBusinessDto } from '../dto/update-business';
 
 export const createBusiness = (createBusinessDto: CreateBusinessDto, req: RequestMod): Promise<Business> => {
     const user = new Business({ ...createBusinessDto, ownerId: req.user.id });

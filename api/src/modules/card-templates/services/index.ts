@@ -3,8 +3,8 @@ import { RequestMod } from "../../../common/interfaces/request.mod";
 import { CardTemplate, CardType } from "../models/card-template.model";
 import { ItemsSubscriptionCardTemplate } from "../models/items-subscription-card-template.model";
 import { LoyaltyCardTemplate } from "../models/loyalty-card-template.model";
-import { CreateCardTemplateDto } from "../../../dto/card-template/create-card-template";
-import { UpdateCardTemplateDto } from "../../../dto/card-template/update-card-template";
+import { CreateCardTemplateDto } from "../dto/create-card-template";
+import { UpdateCardTemplateDto } from "../dto/update-card-template";
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,

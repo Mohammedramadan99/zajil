@@ -3,8 +3,8 @@ import * as cardTemplateServices from '../services';
 import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
-import { CreateCardTemplateDto } from '../../../dto/card-template/create-card-template';
-import { UpdateCardTemplateDto } from '../../../dto/card-template/update-card-template';
+import { CreateCardTemplateDto } from '../dto/create-card-template';
+import { UpdateCardTemplateDto } from '../dto/update-card-template';
 
 export const CardTemplateController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {

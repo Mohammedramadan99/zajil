@@ -1,9 +1,9 @@
 import { HttpError } from '../../../common';
 import { RequestMod } from '../../../common/interfaces/request.mod';
-import { CreateCardDto } from '../../../dto/card/create-card';
+import { CreateCardDto } from '../dto/create-card';
 import { Card } from '../models/card.model';
 import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
-import { UpdateCardDto } from '../../../dto/card/update-card';
+import { UpdateCardDto } from '../dto/update-card';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import { LoyaltyCard } from '../models/loyalty-card.model';
 import { ItemsSubscriptionCard } from '../models/items-subscription-card.model';
