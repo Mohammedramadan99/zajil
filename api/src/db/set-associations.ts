@@ -6,6 +6,8 @@ import { LoyaltyCardTemplate } from './models/card-template/loyalty-card-templat
 import { Card } from './models/card/card.model';
 import { ItemsSubscriptionCard } from './models/card/items-subscription-card.model';
 import { LoyaltyCard } from './models/card/loyalty-card.model';
+import { MenuItem } from './models/menu/menu-item.model';
+import { Menu } from './models/menu/menu.model';
 import { User } from './models/user.model';
 
 export const setAssociations = () => {
@@ -103,5 +105,26 @@ export const setAssociations = () => {
     ItemsSubscriptionCard.belongsTo(Card, {
         foreignKey: 'id',
         as: 'card',
+    });
+
+    // Branch | Menu
+    Branch.hasOne(Menu, {
+        foreignKey: 'branchId',
+        as: 'menu',
+        onDelete: 'CASCADE',
+    });
+    Menu.belongsTo(Branch, {
+        foreignKey: 'branchId',
+        as: 'branch',
+    });
+
+    // Menu | Menu Item
+    Menu.hasMany(MenuItem, {
+        foreignKey: 'menuId',
+        as: 'menuItems',
+    });
+    MenuItem.belongsTo(Menu, {
+        foreignKey: 'menuId',
+        as: 'menu',
     });
 };
