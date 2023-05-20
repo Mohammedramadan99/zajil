@@ -5,6 +5,7 @@ import config from '../config';
 import { HttpError } from '../common';
 import { sign, verify } from 'jsonwebtoken';
 import { User } from '../modules/users/models/user.model';
+import { NextFunction } from 'express';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {
@@ -25,10 +26,25 @@ export const validateDto = (DtoClass: any, body: any) => {
 const formatDtoValidationErrors = (errors: ValidationError[]) => {
     return errors.map((error) => {
         const { property, constraints } = error;
+        let { children } = error;
 
-        const out: any = {};
-        out[property] = Object.values(constraints);
-        return out;
+        if (constraints) {
+            const out: any = {};
+            out[property] = Object.values(constraints);
+            return out;
+        }
+
+        if (children) {
+            // return the index as part of the property name
+            children = children.map((child) => {
+                child.property = `${property}.${child.property}`;
+                return child;
+            });
+
+            return formatDtoValidationErrors(children);
+        }
+
+        return null;
     });
 };
 
@@ -76,4 +92,14 @@ export const sendAccountActivationEmail = async (user: User) => {
     console.log(`To activate your account, please click on the following link: /activate-account/${token}`);
 
     // #TODO: send email
+};
+
+export const handleControllerServiceError = (next: NextFunction) => {
+    return (error: any) => {
+        if (error instanceof HttpError) {
+            next(error);
+        }
+
+        next(new HttpError(500, error.message));
+    };
 };

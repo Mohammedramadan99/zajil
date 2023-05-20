@@ -1,3 +1,4 @@
+import { error } from 'console';
 import { NextFunction, Request, Response } from 'express';
 
 export const handleErrors = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -9,4 +10,6 @@ export const handleErrors = (err: any, req: Request, res: Response, next: NextFu
         status: err.status || 500,
         message: err.message || 'Internal Server Error',
     });
+
+    error(err);
 };

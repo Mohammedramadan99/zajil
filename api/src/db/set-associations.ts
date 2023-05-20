@@ -107,21 +107,22 @@ export const setAssociations = () => {
         as: 'card',
     });
 
-    // Branch | Menu
-    Branch.hasOne(Menu, {
-        foreignKey: 'branchId',
+    // Business | Menu
+    Business.hasOne(Menu, {
+        foreignKey: 'businessId',
         as: 'menu',
         onDelete: 'CASCADE',
     });
-    Menu.belongsTo(Branch, {
-        foreignKey: 'branchId',
-        as: 'branch',
+    Menu.belongsTo(Business, {
+        foreignKey: 'businessId',
+        as: 'business',
     });
 
     // Menu | Menu Item
     Menu.hasMany(MenuItem, {
         foreignKey: 'menuId',
         as: 'menuItems',
+        onDelete: 'CASCADE',
     });
     MenuItem.belongsTo(Menu, {
         foreignKey: 'menuId',
