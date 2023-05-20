@@ -1,14 +1,15 @@
 import { Box, IconButton, useTheme } from "@mui/material";
-import React, { useContext } from "react";
-import { ColorModeContext } from "../../theme";
+import React from "react";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import { useDispatch } from "react-redux";
+import { setMode } from "../../../store/modeSlice";
 function Navbar() {
   const theme = useTheme();
-  const colorMode = useContext(ColorModeContext);
+  const dispatch = useDispatch();
   return (
     <Box>
-      <IconButton onClick={colorMode.toggleColorMode}>
+      <IconButton onClick={() => dispatch(setMode())}>
         {theme.palette.mode === "light" ? (
           <DarkModeOutlinedIcon />
         ) : (

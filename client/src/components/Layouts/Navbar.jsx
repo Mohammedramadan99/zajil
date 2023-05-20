@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import { useDispatch, useSelector } from "react-redux";
-import { changeMode } from "../../store/modeSlice";
+import { setMode } from "../../store/modeSlice";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import "./NavbarLight.scss";
@@ -11,13 +11,13 @@ function Navbar() {
   const dispatch = useDispatch();
   const [active, setActive] = useState(false);
   const { t } = useTranslation();
-  const { light } = useSelector((state) => state.mode);
+  const { mode } = useSelector((state) => state.mode);
 
   const isActive = () => {
     window.scrollY > 100 ? setActive(true) : setActive(false);
   };
   const changeModeHandler = () => {
-    dispatch(changeMode());
+    dispatch(setMode());
   };
   useEffect(() => {
     window.addEventListener("scroll", isActive);
@@ -27,7 +27,7 @@ function Navbar() {
   }, []);
   return (
     <div
-      className={`navbar ${!light ? "dark-mode" : "light-mode"} ${
+      className={`navbar ${mode === "dark" ? "dark-mode" : "light-mode"} ${
         active ? "active" : ""
       } `}
     >
@@ -47,7 +47,7 @@ function Navbar() {
           </ul>
           <LanguageSelector />
 
-          {light ? (
+          {mode === "light" ? (
             <DarkModeIcon onClick={changeModeHandler} />
           ) : (
             <LightModeIcon onClick={changeModeHandler} />

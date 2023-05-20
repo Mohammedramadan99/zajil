@@ -7,9 +7,6 @@ import DashboardLayout from "./admin/components/Layout/Layout";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { ColorModeContext, useMode } from "./admin/theme";
-
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const isAdmin = true;
 const router = createBrowserRouter([
@@ -41,8 +38,7 @@ const router = createBrowserRouter([
 
 function App() {
   const { t, i18n } = useTranslation();
-  const { light } = useSelector((state) => state.mode);
-  const [theme, colorMode] = useMode();
+  const { mode } = useSelector((state) => state.mode);
 
   useEffect(() => {
     if (i18n.language.indexOf("ar") === 0) {
@@ -52,13 +48,12 @@ function App() {
     }
   }, [i18n.language]);
   return (
-    <div className={`${light ? "parent-light-mode" : "parent-dark-mode"}`}>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </ColorModeContext.Provider>
+    <div
+      className={`${
+        mode === "light" ? "parent-light-mode" : "parent-dark-mode"
+      }`}
+    >
+      <RouterProvider router={router} />
     </div>
   );
 }
