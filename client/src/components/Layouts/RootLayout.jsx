@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import { useDispatch, useSelector } from "react-redux";
-import { changeMode } from "../../store/modeSlice";
+import { setMode } from "../../store/modeSlice";
 import Navbar from "./Navbar";
 const RootLayout = () => {
   const dispatch = useDispatch();
-  const { light } = useSelector((state) => state.mode);
+  const { mode } = useSelector((state) => state.mode);
   const changeModeHandler = () => {
-    dispatch(changeMode());
+    dispatch(setMode());
   };
   return (
     <div className="app">
