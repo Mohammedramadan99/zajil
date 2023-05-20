@@ -4,8 +4,8 @@ import { CardTemplate } from '../modules/card-templates/models/card-template.mod
 import { ItemsSubscriptionCardTemplate } from '../modules/card-templates/models/items-subscription-card-template.model';
 import { LoyaltyCardTemplate } from '../modules/card-templates/models/loyalty-card-template.model';
 import { Card } from '../modules/cards/models/card.model';
-import { MenuItem } from './models/menu/menu-item.model';
-import { Menu } from './models/menu/menu.model';
+import { MenuItem } from '../modules/businesses/models/menu/menu-item.model';
+import { Menu } from '../modules/businesses/models/menu/menu.model';
 import { User } from '../modules/users/models/user.model';
 import { LoyaltyCard } from '../modules/cards/models/loyalty-card.model';
 import { ItemsSubscriptionCard } from '../modules/cards/models/items-subscription-card.model';
