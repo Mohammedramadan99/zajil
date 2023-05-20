@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDto } from '../dto/users/create-user';
-import * as usersServices from '../services/users';
-import { HttpError } from '../common';
-import { RequestMod } from '../common/interfaces/request.mod';
-import ICRUDController from './interfaces/crud.controller';
-import { UpdateUserDto } from '../dto/users/update-user';
+import { CreateUserDto } from '../../../dto/users/create-user';
+import * as usersServices from '../services';
+import { HttpError } from '../../../common';
+import { RequestMod } from '../../../common/interfaces/request.mod';
+import ICRUDController from '../../../common/interfaces/crud.controller';
+import { UpdateUserDto } from '../../../dto/users/update-user';
 
 export const UsersController: ICRUDController & {
     activateAccount: (req: Request, res: Response, next: NextFunction) => void;

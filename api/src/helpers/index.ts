@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import config from '../config';
 import { HttpError } from '../common';
 import { sign, verify } from 'jsonwebtoken';
-import { User } from '../db/models/user.model';
+import { User } from '../modules/users/models/user.model';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {

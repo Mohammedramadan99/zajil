@@ -1,9 +1,9 @@
-import { LoginDto } from '../../dto/auth/login';
+import { LoginDto } from '../../../dto/auth/login';
 import bcrypt from 'bcrypt';
 import { signJWT } from './jwt';
-import { User } from '../../db/models/user.model';
-import { Business } from '../../db/models/business.model';
-import { Branch } from '../../db/models/branch.model';
+import { User } from '../../users/models/user.model';
+import { Business } from '../../businesses/models/business.model';
+import { Branch } from '../../branches/models/branch.model';
 
 export const login = async (loginDto: LoginDto) => {
     const { email, password } = loginDto;

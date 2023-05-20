@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { UpdateCardDto } from '../dto/card/update-card';
 import { CreateCardDto } from '../dto/card/create-card';
-import { CardController } from '../controllers/Card';
+import { CardController } from '../modules/cards/controllers/Card';
 import { LoyaltyAddSubtractPoints } from '../dto/card/loyalty-add-subtract-points';
 import { ItemsSubUseDto } from '../dto/card/items-sub-use';
 

@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
-import { HttpError } from '../../common';
-import { RequestMod } from '../../common/interfaces/request.mod';
-import { Branch } from '../../db/models/branch.model';
-import { CreateBranchDto } from '../../dto/branches/create-branch';
-import { UpdateBranchDto } from '../../dto/branches/update-branch';
+import { HttpError } from '../../../common';
+import { RequestMod } from '../../../common/interfaces/request.mod';
+import { Branch } from '../models/branch.model';
+import { CreateBranchDto } from '../../../dto/branches/create-branch';
+import { UpdateBranchDto } from '../../../dto/branches/update-branch';
 
 export const createBranch = (createbranchDto: CreateBranchDto, req: RequestMod): Promise<Branch> => {
     const { businessId } = createbranchDto;

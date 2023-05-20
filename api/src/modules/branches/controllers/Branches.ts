@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import * as businessServices from '../services/businesses';
-import { HttpError } from '../common';
-import { RequestMod } from '../common/interfaces/request.mod';
-import ICRUDController from './interfaces/crud.controller';
-import { CreateBusinessDto } from '../dto/business/create-business';
-import { UpdateBusinessDto } from '../dto/business/update-business';
+import * as branchServices from '../services';
+import { HttpError } from '../../../common';
+import { RequestMod } from '../../../common/interfaces/request.mod';
+import ICRUDController from '../../../common/interfaces/crud.controller';
+import { CreateBranchDto } from '../../../dto/branches/create-branch';
+import { UpdateBranchDto } from '../../../dto/branches/update-branch';
 
-export const BusinessController: ICRUDController = {
+export const BranchController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const body: CreateBusinessDto = req.body;
-        businessServices
-            .createBusiness(body, req)
-            .then((business) => res.status(201).json(business))
+        const body: CreateBranchDto = req.body;
+        branchServices
+            .createBranch(body, req)
+            .then((branch) => res.status(201).json(branch))
             .catch((err) => {
                 console.error(err);
                 next(new HttpError(500, err.message));
@@ -19,11 +19,11 @@ export const BusinessController: ICRUDController = {
     },
 
     getOne: function (req: RequestMod, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
+        const branchId = Number(req.params.id);
 
-        businessServices
-            .findOneBusinessById(businessId)
-            .then((business) => res.json(business))
+        branchServices
+            .findOneBranchById(branchId)
+            .then((branch) => res.json(branch))
             .catch((err) => {
                 console.error(err);
                 next(new HttpError(404, err.message));
@@ -33,9 +33,9 @@ export const BusinessController: ICRUDController = {
         const limit = Number(req.query.limit) || 10;
         const offset = Number(req.query.offset) || 0;
 
-        businessServices
-            .findAllBusinesses({ limit, offset, req })
-            .then((business) => res.json(business))
+        branchServices
+            .findAllBranches({ limit, offset, req })
+            .then((branch) => res.json(branch))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);
@@ -43,12 +43,12 @@ export const BusinessController: ICRUDController = {
             });
     },
     update: function (req: Request, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
-        const body: UpdateBusinessDto = req.body;
+        const branchId = Number(req.params.id);
+        const body: UpdateBranchDto = req.body;
 
-        businessServices
-            .updateBusinessById(businessId, body)
-            .then((business) => res.json(business))
+        branchServices
+            .updateBranchById(branchId, body)
+            .then((branch) => res.json(branch))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);
@@ -56,11 +56,11 @@ export const BusinessController: ICRUDController = {
             });
     },
     delete: function (req: Request, res: Response, next: NextFunction): void {
-        const businessId = Number(req.params.id);
+        const branchId = Number(req.params.id);
 
-        businessServices
-            .deleteBusinessById(businessId)
-            .then((business) => res.json(business))
+        branchServices
+            .deleteBranchById(branchId)
+            .then((branch) => res.json(branch))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);

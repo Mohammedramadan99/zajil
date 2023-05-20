@@ -1,5 +1,5 @@
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, ValidateNested } from 'class-validator';
-import { UserRole } from '../../db/models/user.model';
+import { UserRole } from '../../modules/users/models/user.model';
 
 export class UpdateUserDto {
     @IsNotEmpty()

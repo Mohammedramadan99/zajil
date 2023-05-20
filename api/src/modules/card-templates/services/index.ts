@@ -1,10 +1,10 @@
-import { HttpError } from '../../common';
-import { RequestMod } from '../../common/interfaces/request.mod';
-import { CardTemplate, CardType } from '../../db/models/card-template/card-template.model';
-import { ItemsSubscriptionCardTemplate } from '../../db/models/card-template/items-subscription-card-template.model';
-import { LoyaltyCardTemplate } from '../../db/models/card-template/loyalty-card-template.model';
-import { CreateCardTemplateDto } from '../../dto/card-template/create-card-template';
-import { UpdateCardTemplateDto } from '../../dto/card-template/update-card-template';
+import { HttpError } from "../../../common";
+import { RequestMod } from "../../../common/interfaces/request.mod";
+import { CardTemplate, CardType } from "../models/card-template.model";
+import { ItemsSubscriptionCardTemplate } from "../models/items-subscription-card-template.model";
+import { LoyaltyCardTemplate } from "../models/loyalty-card-template.model";
+import { CreateCardTemplateDto } from "../../../dto/card-template/create-card-template";
+import { UpdateCardTemplateDto } from "../../../dto/card-template/update-card-template";
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,

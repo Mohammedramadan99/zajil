@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { Business } from './business.model';
-import { Branch } from './branch.model';
+import { Business } from '../../businesses/models/business.model';
+import { Branch } from '../../branches/models/branch.model';
 
 export enum UserRole {
     ADMIN = 'admin',

@@ -1,14 +1,14 @@
-import { Branch } from './models/branch.model';
-import { Business } from './models/business.model';
-import { CardTemplate } from './models/card-template/card-template.model';
-import { ItemsSubscriptionCardTemplate } from './models/card-template/items-subscription-card-template.model';
-import { LoyaltyCardTemplate } from './models/card-template/loyalty-card-template.model';
-import { Card } from './models/card/card.model';
-import { ItemsSubscriptionCard } from './models/card/items-subscription-card.model';
-import { LoyaltyCard } from './models/card/loyalty-card.model';
+import { Branch } from '../modules/branches/models/branch.model';
+import { Business } from '../modules/businesses/models/business.model';
+import { CardTemplate } from '../modules/card-templates/models/card-template.model';
+import { ItemsSubscriptionCardTemplate } from '../modules/card-templates/models/items-subscription-card-template.model';
+import { LoyaltyCardTemplate } from '../modules/card-templates/models/loyalty-card-template.model';
+import { Card } from '../modules/cards/models/card.model';
 import { MenuItem } from './models/menu/menu-item.model';
 import { Menu } from './models/menu/menu.model';
-import { User } from './models/user.model';
+import { User } from '../modules/users/models/user.model';
+import { LoyaltyCard } from '../modules/cards/models/loyalty-card.model';
+import { ItemsSubscriptionCard } from '../modules/cards/models/items-subscription-card.model';
 
 export const setAssociations = () => {
     // User | Business

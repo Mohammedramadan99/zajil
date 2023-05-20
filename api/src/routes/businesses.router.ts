@@ -1,5 +1,5 @@
 import express from 'express';
-import { BusinessController } from '../controllers/Business';
+import { BusinessController } from '../modules/businesses/controllers/Business';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { CreateBusinessDto } from '../dto/business/create-business';
 import { UpdateBusinessDto } from '../dto/business/update-business';

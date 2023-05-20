@@ -1,5 +1,5 @@
 import express from 'express';
-import { BranchController } from '../controllers/Branches';
+import { BranchController } from '../modules/branches/controllers/Branches';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { CreateBranchDto } from '../dto/branches/create-branch';
 import { UpdateBranchDto } from '../dto/branches/update-branch';

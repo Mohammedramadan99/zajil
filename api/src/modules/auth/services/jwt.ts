@@ -1,7 +1,7 @@
 import { sign, verify } from 'jsonwebtoken';
-import config from '../../config';
-import { IJWTPayload } from '../../common/interfaces/jwt-payload';
-import { User } from '../../db/models/user.model';
+import { IJWTPayload } from '../../../common/interfaces/jwt-payload';
+import { User } from '../../users/models/user.model';
+import config from '../../../config';
 
 export const signJWT = (user: User) => {
     const payload: IJWTPayload = {

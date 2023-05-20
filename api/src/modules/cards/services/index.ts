@@ -1,12 +1,12 @@
-import { HttpError } from '../../common';
-import { RequestMod } from '../../common/interfaces/request.mod';
-import { CreateCardDto } from '../../dto/card/create-card';
-import { Card } from '../../db/models/card/card.model';
-import { LoyaltyCard } from '../../db/models/card/loyalty-card.model';
-import { ItemsSubscriptionCard } from '../../db/models/card/items-subscription-card.model';
-import { CardTemplate, CardType } from '../../db/models/card-template/card-template.model';
-import { UpdateCardDto } from '../../dto/card/update-card';
-import { ItemsSubscriptionCardTemplate } from '../../db/models/card-template/items-subscription-card-template.model';
+import { HttpError } from '../../../common';
+import { RequestMod } from '../../../common/interfaces/request.mod';
+import { CreateCardDto } from '../../../dto/card/create-card';
+import { Card } from '../models/card.model';
+import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
+import { UpdateCardDto } from '../../../dto/card/update-card';
+import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
+import { LoyaltyCard } from '../models/loyalty-card.model';
+import { ItemsSubscriptionCard } from '../models/items-subscription-card.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
