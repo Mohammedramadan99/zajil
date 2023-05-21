@@ -7,6 +7,8 @@ import DashboardLayout from "./admin/components/Layout/Layout";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
 
 const isAdmin = true;
 const router = createBrowserRouter([
@@ -17,6 +19,24 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+    ],
+  },
+  {
+    path: "/register",
+    element: <Home />,
+  },
+  {
+    path: "/auth",
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/auth/login",
+        element: <Login />,
+      },
+      {
+        path: "/auth/register",
+        element: <Register />,
       },
     ],
   },
@@ -48,13 +68,9 @@ function App() {
     }
   }, [i18n.language]);
   return (
-    <div
-      className={`${
-        mode === "light" ? "parent-light-mode" : "parent-dark-mode"
-      }`}
-    >
+    <>
       <RouterProvider router={router} />
-    </div>
+    </>
   );
 }
 

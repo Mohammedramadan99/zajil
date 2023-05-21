@@ -4,7 +4,7 @@ export const tokensDark = {
     0: "#ffffff", // manually adjusted
     10: "#f6f6f6", // manually adjusted
     50: "#f0f0f0", // manually adjusted
-    100: "#e0e0e0",
+    100: "#edeaf347",
     200: "#c2c2c2",
     300: "#a3a3a3",
     400: "#858585",
@@ -102,7 +102,7 @@ export const themeSettings = (mode) => {
               main: tokensDark.grey[500],
             },
             background: {
-              default: tokensDark.grey[0],
+              default: tokensDark.grey[100],
               alt: tokensDark.grey[50],
             },
           }),
