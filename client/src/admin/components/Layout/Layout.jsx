@@ -56,7 +56,7 @@ const RootLayout = () => {
           height="100%">
           <Box
             sx={{
-              backgroundColor: theme.palette.primary[800],
+              backgroundColor: theme.palette.primary[700],
               position: "absolute",
               maxWidth: "500px",
               width: "100%",
@@ -64,6 +64,7 @@ const RootLayout = () => {
               left: "50%",
               transform: "translateX(-50%)",
               borderRadius: "40px",
+              // border: "1px solid #fff",
             }}>
             <List
               sx={{
@@ -138,6 +139,7 @@ const RootLayout = () => {
                       opacity: 0,
                       scale: ".1",
                       textTransform: "capitalize",
+                      fontWeight: "600",
                       "&:hover": {
                         background: "transparent",
                       },

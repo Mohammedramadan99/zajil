@@ -1,13 +1,17 @@
 @use "./Globals.scss" as *;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 *,
 html,
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color: unset;
 }
+
 body {
   font-family: Poppins;
+  overflow-x: hidden;
 }
 // public
 a {
@@ -17,7 +21,9 @@ a {
 li {
   list-style: none;
 }
-
+input {
+  outline: unset;
+}
 // container
 .container {
   width: min(1250px, 100%);
@@ -27,5 +33,4 @@ li {
 
 .parent-dark-mode {
   // background-color: $mauve_color-1 !important;
-  height: 2000px;
 }

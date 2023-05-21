@@ -9,13 +9,6 @@ const RootLayout = () => {
   const changeModeHandler = () => {
     dispatch(setMode());
   };
-  return (
-    <div className="app">
-      <Navbar />
-      <Outlet />
-      footer
-      {/* <Footer /> */}
-    </div>
-  );
+  return <Outlet />;
 };
 export default RootLayout;
