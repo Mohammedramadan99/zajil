@@ -3,12 +3,12 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import "./Auth.scss";
 import { useDispatch } from "react-redux";
-import { registerAction } from "../../store/authSlice";
+import { loginAction, logoutAction } from "../../store/authSlice";
 import { Link } from "react-router-dom";
+import { Box, Button, Stack, TextField } from "@mui/material";
 function Login() {
   const dispatch = useDispatch();
-  const fields = ["email", "password"];
-  const [inputFocus, setInputFocus] = useState("");
+
   const formik = useFormik({
     initialValues: {},
     validationSchema: yup.object({
@@ -16,14 +16,9 @@ function Login() {
       password: yup.string().required(),
     }),
     onSubmit(values) {
-      dispatch(registerAction({ values }));
+      dispatch(loginAction(values));
     },
   });
-  const func = () => {
-    let text = "mohammed";
-    console.log(text.split(""));
-  };
-  func();
 
   return (
     <div className="auth_page">
@@ -55,29 +50,46 @@ function Login() {
         <div className="logo">logo</div>
         <div className="text">sign up to continue</div>
         <form onSubmit={formik.handleSubmit}>
-          {fields?.map((item, i) => (
-            <div className="form-group">
-              <span class="bar"></span>
-              <label class={`label ${inputFocus === item ? "active" : ""}`}>
-                {item.split("").map((litter, i) => (
-                  <span key={i} class="label-char" style={{ "--index": i }}>
-                    {litter}
-                  </span>
-                ))}
-              </label>
-              <input
-                type={item}
-                name={item}
-                className="input"
-                // placeholder="password"
-                onChange={formik.handleChange}
-                onFocus={() => setInputFocus(item)}
-              />
-              <div className="alert">{formik.errors.password}</div>
-            </div>
-          ))}
-
-          <button type="submit">login</button>
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            gap={2}
+            marginBottom={2}>
+            <TextField
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.email)}
+              helperText={formik.errors.email}
+              sx={{
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#7b2cbfff", // Replace 'green' with your desired color
+                },
+              }}
+            />
+            <TextField
+              name="password"
+              label="Password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.password)}
+              helperText={formik.errors.password}
+              sx={{
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#7b2cbfff", // Replace 'green' with your desired color
+                },
+              }}
+            />
+          </Box>
+          <Button type="submit">Login</Button>
+          <Button onClick={() => dispatch(logoutAction())}>logout</Button>
         </form>
         <div className="block">
           <div>

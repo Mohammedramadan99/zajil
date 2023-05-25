@@ -30,7 +30,20 @@ input {
   margin: auto;
   padding-inline: 1rem;
 }
-
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.items-center {
+  display: flex;
+  align-items: center;
+}
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .parent-dark-mode {
   // background-color: $mauve_color-1 !important;
 }

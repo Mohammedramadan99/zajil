@@ -28,8 +28,8 @@ $steps: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21);
 
       @each $step in $steps {
         &:nth-child(#{$step}) {
-          bottom: $step * 2px /2;
-          left: $step * 10rem;
+          bottom: calc($step * 2px / 2);
+          left: calc($step * 10rem);
           transform: translate(-40%);
         }
         &:nth-child(2) {
@@ -81,152 +81,14 @@ $steps: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21);
       margin-bottom: 20px;
     }
     .text {
-      color: $mauve_color_3;
+      // color: $mauve_color_3;
+      color: #000;
       font-weight: 600;
       font-size: 18px;
       text-transform: capitalize;
       margin-bottom: 20px;
     }
     form {
-      .form-group {
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-
-        input,
-        label,
-        .alert {
-          color: $mauve_color-1;
-          margin-bottom: 10px;
-        }
-        .alert {
-          color: rgb(224, 21, 21);
-          font-weight: 500;
-          font-size: 12px;
-          margin-bottom: 0;
-        }
-        input {
-          // padding: 10px;
-          width: 100%;
-          // border: 1px solid #f4f4f4;
-          font-size: 16px;
-          padding: 10px 10px 10px 5px;
-          display: block;
-          // width: 200px;
-          border: none;
-          border-bottom: 1px solid #515151;
-          background: transparent;
-          &:focus ~ .label .label-char {
-            transform: translateY(-20px);
-            font-size: 14px;
-            color: #5264ae;
-          }
-          &:focus {
-            ~ .label .label-char {
-              transform: translateY(-20px);
-              font-size: 14px;
-              color: #5264ae;
-            }
-          }
-        }
-        .label {
-          color: #999;
-          font-size: 15px;
-          font-weight: normal;
-          position: absolute;
-          pointer-events: none;
-          left: 10px;
-          top: 10px;
-          display: flex;
-          &.active {
-            .label-char {
-              transform: translateY(-20px);
-            }
-          }
-          .label-char {
-            transition: 0.2s ease all;
-            transition-delay: calc(var(--index) * 0.05s);
-          }
-        }
-        .bar {
-          position: relative;
-          display: block;
-          width: 200px;
-        }
-
-        .bar:before,
-        .bar:after {
-          content: "";
-          height: 2px;
-          width: 0;
-          bottom: 1px;
-          position: absolute;
-          background: #5264ae;
-          transition: 0.2s ease all;
-          -moz-transition: 0.2s ease all;
-          -webkit-transition: 0.2s ease all;
-        }
-        .bar:before {
-          left: 50%;
-        }
-
-        .bar:after {
-          right: 50%;
-        }
-
-        .input:focus ~ .bar:before,
-        .input:focus ~ .bar:after {
-          width: 50%;
-        }
-      }
-      .radio-group {
-        .label {
-          text-transform: capitalize;
-          margin-bottom: 20px;
-          color: #000;
-        }
-        .items {
-          display: flex;
-          flex-direction: row;
-          gap: 20px;
-        }
-        .radio {
-          color: #000;
-          display: flex;
-          gap: 10px;
-          cursor: pointer;
-          &.active {
-            .square {
-              &::after {
-                background-color: #000;
-              }
-            }
-          }
-          .square {
-            position: relative;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #000;
-            border-radius: 50%;
-            &::after {
-              content: "";
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              width: 10px;
-              height: 10px;
-              background-color: transparent;
-              border-radius: 50%;
-              transition: 0.3s linear;
-            }
-          }
-          .text {
-            font-size: 15px;
-          }
-        }
-      }
       button {
         color: $mauve_color-1;
         background-color: transparent;
@@ -237,7 +99,7 @@ $steps: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21);
         background-color: $mauve_color_3;
         border: 2px solid transparent;
         color: #fff;
-        font-weight: 900;
+        font-weight: 600;
         border-radius: 50px;
         transition: 0.5s ease;
         cursor: pointer;
@@ -263,13 +125,13 @@ $steps: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21);
   }
 }
 
-.MuiFormControlLabel-root {
-  background-color: $mauve_color-1;
-  margin-bottom: 10px;
-  .MuiTypography-root {
-    color: #fff;
-  }
-}
+// .MuiFormControlLabel-root {
+//   background-color: $mauve_color-1;
+//   margin-bottom: 10px;
+//   .MuiTypography-root {
+//     color: #fff;
+//   }
+// }
 
 @keyframes square {
   0% {
