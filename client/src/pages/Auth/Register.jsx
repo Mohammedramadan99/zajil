@@ -5,13 +5,22 @@ import "./Auth.scss";
 import { useDispatch } from "react-redux";
 import { registerAction } from "../../store/authSlice";
 import { Link } from "react-router-dom";
+import {
+  Alert,
+  Box,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import SquareAnimation from "./SquareAnimation";
 function Register() {
   const dispatch = useDispatch();
-  const rules = ["owner", "client", "user"];
-  const fields = ["first name", "last name", "email", "password"];
-  const [inputFocus, setInputFocus] = useState("");
 
-  const [activeRadio, setActiveRadio] = useState("user");
   const formik = useFormik({
     initialValues: {},
     validationSchema: yup.object({
@@ -21,78 +30,158 @@ function Register() {
       lastName: yup.string().required("last name is required"),
       email: yup.string().email().required(),
       password: yup.string().required(),
-      rules: yup.string(),
+      roles: yup.string().required("roles is required"),
     }),
     onSubmit(values) {
-      dispatch(registerAction({ values }));
+      const roles = [values.roles];
+      const data = { ...values, roles };
+      dispatch(registerAction(data));
     },
   });
   return (
     <div className="auth_page">
-      <div className="square-box">
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-        <div className="square"></div>
-      </div>
+      <SquareAnimation />
       <div className="box">
         <div className="logo">logo</div>
         <div className="text">sign up to continue</div>
         <form onSubmit={formik.handleSubmit}>
-          {fields?.map((item, i) => (
-            <div className="form-group">
-              <span class="bar"></span>
-              <label class={`label ${inputFocus === item ? "active" : ""}`}>
-                {item.split("").map((litter, i) => (
-                  <span key={i} class="label-char" style={{ "--index": i }}>
-                    {litter}
-                  </span>
-                ))}
-              </label>
-              <input
-                type={item}
-                name={item}
-                className="input"
-                // placeholder="password"
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            gap={2}
+            marginBottom={2}>
+            <Stack direction={"row"} spacing={2}>
+              <TextField
+                name="firstName"
+                label="First Name"
+                value={formik.values.firstName}
                 onChange={formik.handleChange}
-                onFocus={() => setInputFocus(item)}
+                error={Boolean(formik.errors.firstName)}
+                helperText={formik.errors.firstName}
+                sx={{
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#7b2cbfff", // Replace '' with your desired color
+                  },
+                }}
               />
-              <div className="alert">{formik.errors.password}</div>
-            </div>
-          ))}
-          <div className="radio-group">
-            <div className="label">rules</div>
-            <div className="items">
-              {rules.map((item, i) => (
-                <div
-                  key={i}
-                  className={activeRadio === item ? "radio active" : "radio"}
-                  onClick={() => setActiveRadio(item)}>
-                  <div className="square"></div>
-                  <div className="text">{item}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <button type="submit">register</button>
+              <TextField
+                name="lastName"
+                label="Last Name"
+                value={formik.values.lastName}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.lastName)}
+                helperText={formik.errors.lastName}
+                sx={{
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#7b2cbfff", // Replace '' with your desired color
+                  },
+                }}
+              />
+            </Stack>
+            <TextField
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.email)}
+              helperText={formik.errors.email}
+              sx={{
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#7b2cbfff", // Replace '' with your desired color
+                },
+              }}
+            />
+            <TextField
+              name="password"
+              label="Password"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.password)}
+              helperText={formik.errors.password}
+              sx={{
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#7b2cbfff", // Replace '' with your desired color
+                },
+              }}
+            />
+            <RadioGroup
+              row
+              defaultValue={formik.values.roles}
+              name="roles"
+              onChange={formik.handleChange}
+              sx={{ flexDirection: "column" }}
+              // sx={{ flexDirection: "column" }}
+            >
+              <FormLabel sx={{ marginRight: "20px" }}>Roles</FormLabel>
+              <Box>
+                <FormControlLabel
+                  value="admin"
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: "#7b2cbfff",
+                        "&.Mui-checked": {
+                          color: "#7b2cbfff",
+                        },
+                      }}
+                    />
+                  }
+                  label="admin"
+                />
+                <FormControlLabel
+                  value="business_owner"
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: "#7b2cbfff",
+                        "&.Mui-checked": {
+                          color: "#7b2cbfff",
+                        },
+                      }}
+                    />
+                  }
+                  label="business owner"
+                />
+                <FormControlLabel
+                  value="employee"
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: "#7b2cbfff",
+                        "&.Mui-checked": {
+                          color: "#7b2cbfff",
+                        },
+                      }}
+                    />
+                  }
+                  label="employee"
+                />
+              </Box>
+              {formik.errors.roles && (
+                <Typography variant="body2" color={"#d32f2f"}>
+                  {" "}
+                  {formik.errors.roles}{" "}
+                </Typography>
+              )}
+            </RadioGroup>
+          </Box>
+          <Button type="submit">Register</Button>
         </form>
         <div className="block">
           <div>

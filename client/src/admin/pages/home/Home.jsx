@@ -1,18 +1,78 @@
-import { Paper, useTheme } from "@mui/material";
-import React from "react";
-
+import {
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  Grid,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
+  ArrowBack,
+  ArrowUpward,
+  StorefrontOutlined,
+  PaymentOutlined,
+} from "@mui/icons-material";
+import CardStats from "../../components/Home/CardStats/CardStats";
 function Home() {
   const theme = useTheme();
-
-  // const colors = tokens(theme.palette.mode);
-  // console.log({ colors });
+  const cards = [
+    {
+      title: "users",
+      number: 200,
+      average: 2.4,
+      icon: <StorefrontOutlined />,
+    },
+    {
+      title: "cards",
+      number: 40,
+      average: -7.4,
+      icon: <PaymentOutlined />,
+    },
+    {
+      title: "users",
+      number: 200,
+      average: 2.4,
+      icon: <StorefrontOutlined />,
+    },
+    {
+      title: "cards",
+      number: 40,
+      average: -7.4,
+      icon: <PaymentOutlined />,
+    },
+  ];
   return (
-    <Paper
+    <Box
       sx={{
-        backgroundColor: theme.palette.primary[900],
+        backgroundColor: theme.palette.background.alt,
       }}>
-      Home
-    </Paper>
+      <Grid container spacing={2} p={2}>
+        {/* <Grid xs={6} item>
+          <Card>
+            <CardContent>
+              <Typography variant="h3">Hi, Welcome Back Mohammed!</Typography>
+              <Typography variant="body2" my={1}>
+                You have used the 85% of free plan storage. Please upgrade your
+                plan to get unlimited storage.
+              </Typography>
+              <Button variant="contained" color="primary">
+                upgrade
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid> */}
+
+        <Grid xs={12} item container spacing={2}>
+          {cards.map((item) => (
+            <Grid xs={6} item>
+              <CardStats />
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 
