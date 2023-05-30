@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import "./Auth.scss";
-import { useDispatch } from "react-redux";
-import { registerAction } from "../../store/authSlice";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerAction, reset } from "../../store/authSlice";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -20,7 +20,10 @@ import {
 import SquareAnimation from "./SquareAnimation";
 function Register() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const { errors, errorMessage, successMessage } = useSelector(
+    (state) => state.auth
+  );
   const formik = useFormik({
     initialValues: {},
     validationSchema: yup.object({
@@ -38,6 +41,12 @@ function Register() {
       dispatch(registerAction(data));
     },
   });
+  useEffect(() => {
+    dispatch(reset());
+  }, []);
+  if (successMessage) {
+    navigate("/auth/login");
+  }
   return (
     <div className="auth_page">
       <SquareAnimation />
@@ -45,6 +54,24 @@ function Register() {
         <div className="logo">logo</div>
         <div className="text">sign up to continue</div>
         <form onSubmit={formik.handleSubmit}>
+          {errors && (
+            <Alert severity="error" sx={{ marginBottom: 4 }}>
+              {errors.map((error) => {
+                return Object.keys(error).map((key) => {
+                  return error[key].map((errorMsg, index) => (
+                    <div className="error" key={`${key}-${index}`}>
+                      <strong>{key}:</strong> {errorMsg}
+                    </div>
+                  ));
+                });
+              })}
+            </Alert>
+          )}
+          {errorMessage && (
+            <Alert severity="error" sx={{ marginBottom: 4 }}>
+              {errorMessage}
+            </Alert>
+          )}
           <Box
             display={"flex"}
             flexDirection={"column"}
@@ -59,11 +86,15 @@ function Register() {
                 error={Boolean(formik.errors.firstName)}
                 helperText={formik.errors.firstName}
                 sx={{
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                  "& .MuiOutlinedInput-root": {
+                    outlineColor: "transparent",
                   },
-                  "& .MuiInputLabel-root": {
-                    color: "#7b2cbfff", // Replace '' with your desired color
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#7b2cbfff !important",
+                  },
+
+                  "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                    color: "#7b2cbfff",
                   },
                 }}
               />
@@ -75,11 +106,14 @@ function Register() {
                 error={Boolean(formik.errors.lastName)}
                 helperText={formik.errors.lastName}
                 sx={{
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                  "& .MuiOutlinedInput-root": {
+                    outlineColor: "transparent",
                   },
-                  "& .MuiInputLabel-root": {
-                    color: "#7b2cbfff", // Replace '' with your desired color
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#7b2cbfff !important",
+                  },
+                  "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                    color: "#7b2cbfff",
                   },
                 }}
               />
@@ -92,11 +126,14 @@ function Register() {
               error={Boolean(formik.errors.email)}
               helperText={formik.errors.email}
               sx={{
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                "& .MuiOutlinedInput-root": {
+                  outlineColor: "transparent",
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#7b2cbfff", // Replace '' with your desired color
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff !important",
+                },
+                "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                  color: "#7b2cbfff",
                 },
               }}
             />
@@ -109,11 +146,14 @@ function Register() {
               error={Boolean(formik.errors.password)}
               helperText={formik.errors.password}
               sx={{
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                "& .MuiOutlinedInput-root": {
+                  outlineColor: "transparent",
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#7b2cbfff", // Replace '' with your desired color
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff !important",
+                },
+                "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                  color: "#7b2cbfff",
                 },
               }}
             />

@@ -9,6 +9,7 @@ import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import Cards from "./admin/pages/cards/Cards";
 
 const isAdmin = true;
 const router = createBrowserRouter([
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <DashboardHome />,
+      },
+      {
+        path: "cards",
+        element: <Cards />,
       },
     ],
   },

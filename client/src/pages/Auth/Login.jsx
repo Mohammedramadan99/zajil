@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import "./Auth.scss";
-import { useDispatch } from "react-redux";
-import { loginAction, logoutAction } from "../../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction, logoutAction, reset } from "../../store/authSlice";
 import { Link } from "react-router-dom";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField, Alert } from "@mui/material";
 function Login() {
   const dispatch = useDispatch();
+  const { errors, errorMessage } = useSelector((state) => state.auth);
 
   const formik = useFormik({
     initialValues: {},
@@ -19,6 +20,9 @@ function Login() {
       dispatch(loginAction(values));
     },
   });
+  useEffect(() => {
+    dispatch(reset());
+  }, []);
 
   return (
     <div className="auth_page">
@@ -50,6 +54,24 @@ function Login() {
         <div className="logo">logo</div>
         <div className="text">sign up to continue</div>
         <form onSubmit={formik.handleSubmit}>
+          {errors && (
+            <Alert severity="error" sx={{ marginBottom: 4 }}>
+              {errors.map((error) => {
+                return Object.keys(error).map((key) => {
+                  return error[key].map((errorerrorMessage, index) => (
+                    <div className="error" key={`${key}-${index}`}>
+                      <strong>{key}:</strong> {errorerrorMessage}
+                    </div>
+                  ));
+                });
+              })}
+            </Alert>
+          )}
+          {errorMessage && (
+            <Alert severity="error" sx={{ marginBottom: 4 }}>
+              {errorMessage}
+            </Alert>
+          )}
           <Box
             display={"flex"}
             flexDirection={"column"}
@@ -63,11 +85,14 @@ function Login() {
               error={Boolean(formik.errors.email)}
               helperText={formik.errors.email}
               sx={{
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                "& .MuiOutlinedInput-root": {
+                  outlineColor: "transparent",
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#7b2cbfff", // Replace 'green' with your desired color
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff !important",
+                },
+                "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                  color: "#7b2cbfff",
                 },
               }}
             />
@@ -79,17 +104,20 @@ function Login() {
               error={Boolean(formik.errors.password)}
               helperText={formik.errors.password}
               sx={{
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#7b2cbfff", // Replace 'red' with your desired color
+                "& .MuiOutlinedInput-root": {
+                  outlineColor: "transparent",
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#7b2cbfff", // Replace 'green' with your desired color
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#7b2cbfff !important",
+                },
+                "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
+                  color: "#7b2cbfff",
                 },
               }}
             />
           </Box>
           <Button type="submit">Login</Button>
-          <Button onClick={() => dispatch(logoutAction())}>logout</Button>
+          {/* <Button onClick={() => dispatch(logoutAction())}>logout</Button> */}
         </form>
         <div className="block">
           <div>
