@@ -7,6 +7,10 @@ import { UpdateCardDto } from '../dto/update-card';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import { LoyaltyCard } from '../models/loyalty-card.model';
 import { ItemsSubscriptionCard } from '../models/items-subscription-card.model';
+import { generatePass } from '../../apple-passes/services';
+import path from 'path';
+import { PKPass } from 'passkit-generator';
+import fs from 'fs';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -52,11 +56,30 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
             break;
     }
 
+    // generate the pass in the public folder
+    const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
+
     // combine the base card with the sub card in a single object
     return {
         ...card.toJSON(),
         ...subCard.toJSON(),
+        cardUri,
     };
+};
+
+const generatePassFromTemplate = async (cardId: number, cardTemplateId: number): Promise<string> => {
+    const pass: PKPass = await generatePass({
+        cardTemplateId: cardTemplateId,
+    });
+
+    // create a folder in the public folder to store the card template files
+    const cardPath = path.join(__dirname, `../../../../public/cards/${cardId}.pkpass`);
+
+    // write the pass to the public folder
+    const passBuffer = pass.getAsBuffer();
+    fs.writeFileSync(cardPath, passBuffer);
+
+    return cardPath
 };
 
 export const findAllCards = async ({

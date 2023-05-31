@@ -1,10 +1,13 @@
-import { HttpError } from "../../../common";
-import { RequestMod } from "../../../common/interfaces/request.mod";
-import { CardTemplate, CardType } from "../models/card-template.model";
-import { ItemsSubscriptionCardTemplate } from "../models/items-subscription-card-template.model";
-import { LoyaltyCardTemplate } from "../models/loyalty-card-template.model";
-import { CreateCardTemplateDto } from "../dto/create-card-template";
-import { UpdateCardTemplateDto } from "../dto/update-card-template";
+import { HttpError } from '../../../common';
+import { RequestMod } from '../../../common/interfaces/request.mod';
+import { CardTemplate, CardType } from '../models/card-template.model';
+import { ItemsSubscriptionCardTemplate } from '../models/items-subscription-card-template.model';
+import { LoyaltyCardTemplate } from '../models/loyalty-card-template.model';
+import { CreateCardTemplateDto } from '../dto/create-card-template';
+import { UpdateCardTemplateDto } from '../dto/update-card-template';
+import path from 'path';
+import fs from 'fs';
+import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -12,7 +15,8 @@ export const createCardTemplate = async (
     req: RequestMod,
 ): Promise<any> => {
     /*
-     * create a card template then create a loyalty card template or items subscription card template based on the card type
+     * create a  base card template
+     * then a sub card template based on the card type
      */
 
     const { cardType } = createCardTemplateDto;
@@ -24,7 +28,7 @@ export const createCardTemplate = async (
         businessId,
     });
 
-    // Create a card template based on the card type
+    // Create a sub card template based on the card type
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
     switch (cardType) {
         case CardType.LOYALTY:
@@ -43,11 +47,28 @@ export const createCardTemplate = async (
             break;
     }
 
+    // create a folder in the public folder to store the card template files
+    createCardTemplateFolder(cardTemplate.id);
+
     // combine the base card template with the sub card template in a single object
     return {
         ...cardTemplate.toJSON(),
         ...subCardTemplate.toJSON(),
     };
+};
+
+const createCardTemplateFolder = (cardTemplateId: number) => {
+    // create a folder in the public folder to store the card template files
+    const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
+    if (!fs.existsSync(cardTemplateFolderPath)) fs.mkdirSync(cardTemplateFolderPath);
+
+    // create JSON files for apple and google passes
+    const applePassJsonPath = path.join(cardTemplateFolderPath, 'applePass.json');
+    const googlePassJsonPath = path.join(cardTemplateFolderPath, 'googlePass.json');
+
+    if (!fs.existsSync(applePassJsonPath))
+        fs.writeFileSync(applePassJsonPath, JSON.stringify(APPLE_PASS_PLACEHOLDER(), null, 4));
+    if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
 };
 
 export const findAllCardTemplates = async ({
