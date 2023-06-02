@@ -70,6 +70,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
 const generatePassFromTemplate = async (cardId: number, cardTemplateId: number): Promise<string> => {
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
+        serialNumber: cardId.toString(),
     });
 
     // create a folder in the public folder to store the card template files
@@ -79,7 +80,9 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
     const passBuffer = pass.getAsBuffer();
     fs.writeFileSync(cardPath, passBuffer);
 
-    return cardPath
+    // return the uri using the public folder as the root
+    return cardPath.replace(path.join(__dirname, '../../../../public'), '');
+    
 };
 
 export const findAllCards = async ({

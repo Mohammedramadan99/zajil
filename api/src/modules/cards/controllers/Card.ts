@@ -13,6 +13,7 @@ export const CardController: ICRUDController & {
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;
+        
         cardServices
             .createCard(body, req)
             .then((card) => res.status(201).json(card))

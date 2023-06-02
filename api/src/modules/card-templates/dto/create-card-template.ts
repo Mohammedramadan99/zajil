@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Min, ValidateIf } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, IsUrl, Min, ValidateIf } from 'class-validator';
 import { CardType } from '../models/card-template.model';
 
 export class CreateCardTemplateDto {
@@ -12,6 +12,35 @@ export class CreateCardTemplateDto {
     @IsString()
     @IsEnum(CardType)
     cardType: CardType;
+
+    // logoUrl
+    @IsNotEmpty()
+    @IsString()
+    @IsUrl()
+    logoUrl: string;
+
+    // logoText
+    @IsNotEmpty()
+    @IsString()
+    logoText: string;
+
+    // iconUrl
+    @IsNotEmpty()
+    @IsString()
+    @IsUrl()
+    iconUrl: string;
+
+    // thumbnailUrl
+    @IsNotEmpty()
+    @IsString()
+    @IsUrl()
+    @IsOptional()
+    thumbnailUrl?: string;
+
+    // cardProps
+    @IsNotEmpty()
+    @IsObject()
+    cardProps: object;
 
     /*
      * Items Subscription Card Template Validation

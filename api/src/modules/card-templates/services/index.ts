@@ -8,56 +8,97 @@ import { UpdateCardTemplateDto } from '../dto/update-card-template';
 import path from 'path';
 import fs from 'fs';
 import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
+import { downloadImageToFolder } from '../../../helpers';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
     businessId: number,
     req: RequestMod,
 ): Promise<any> => {
-    /*
-     * create a  base card template
-     * then a sub card template based on the card type
-     */
-
-    const { cardType } = createCardTemplateDto;
-
-    // Create a base card template
-    const cardTemplate = await CardTemplate.create({
-        name: createCardTemplateDto.name,
-        cardType: createCardTemplateDto.cardType,
-        businessId,
-    });
-
-    // Create a sub card template based on the card type
+    // define variables to be used in the try catch block
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
-    switch (cardType) {
-        case CardType.LOYALTY:
-            subCardTemplate = await LoyaltyCardTemplate.create({
-                id: cardTemplate.id,
-            });
-            break;
+    let cardTemplate: CardTemplate;
+    let cardTemplateFolderPath: string;
 
-        case CardType.ITEMS_SUBSCRIPTION:
-            subCardTemplate = await ItemsSubscriptionCardTemplate.create({
-                id: cardTemplate.id,
-                maxDailyUsage: createCardTemplateDto.maxDailyUsage,
-                subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
-                nItems: createCardTemplateDto.nItems,
-            });
-            break;
+    try {
+        /*
+         * create a  base card template
+         * then a sub card template based on the card type
+         */
+
+        const { cardType } = createCardTemplateDto;
+
+        // Create a base card template
+        cardTemplate = await CardTemplate.create({
+            name: createCardTemplateDto.name,
+            cardType: createCardTemplateDto.cardType,
+            businessId,
+        });
+
+        // Create a sub card template based on the card type
+        switch (cardType) {
+            case CardType.LOYALTY:
+                subCardTemplate = await LoyaltyCardTemplate.create({
+                    id: cardTemplate.id,
+                });
+                break;
+
+            case CardType.ITEMS_SUBSCRIPTION:
+                subCardTemplate = await ItemsSubscriptionCardTemplate.create({
+                    id: cardTemplate.id,
+                    maxDailyUsage: createCardTemplateDto.maxDailyUsage,
+                    subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
+                    nItems: createCardTemplateDto.nItems,
+                });
+                break;
+        }
+
+        // create a folder in the public folder to store the card template files
+        cardTemplateFolderPath = await createCardTemplateFolder({
+            cardTemplateId: cardTemplate.id,
+            iconUrl: createCardTemplateDto.iconUrl,
+            thumbnailUrl: createCardTemplateDto.thumbnailUrl,
+            logoUrl: createCardTemplateDto.logoUrl,
+            logoText: createCardTemplateDto.logoText,
+            cardProps: createCardTemplateDto.cardProps,
+        });
+
+        // combine the base card template with the sub card template in a single object
+        return {
+            ...cardTemplate.toJSON(),
+            ...subCardTemplate.toJSON(),
+        };
+    } catch (error) {
+        console.error(error);
+
+        /* rollback if any error occurs */
+        // delete the sub card template
+        if (subCardTemplate) await subCardTemplate.destroy();
+        // delete the base card template
+        if (cardTemplate) await cardTemplate.destroy();
+        // delete the card template folder
+        if (cardTemplateFolderPath) fs.rmdirSync(cardTemplateFolderPath);
+
+        // continue throwing the error
+        throw error;
     }
-
-    // create a folder in the public folder to store the card template files
-    createCardTemplateFolder(cardTemplate.id);
-
-    // combine the base card template with the sub card template in a single object
-    return {
-        ...cardTemplate.toJSON(),
-        ...subCardTemplate.toJSON(),
-    };
 };
 
-const createCardTemplateFolder = (cardTemplateId: number) => {
+const createCardTemplateFolder = async ({
+    cardTemplateId,
+    thumbnailUrl,
+    logoUrl,
+    logoText,
+    iconUrl,
+    cardProps,
+}: {
+    cardTemplateId: number;
+    thumbnailUrl?: string;
+    logoUrl: string;
+    logoText: string;
+    iconUrl: string;
+    cardProps: object;
+}) => {
     // create a folder in the public folder to store the card template files
     const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
     if (!fs.existsSync(cardTemplateFolderPath)) fs.mkdirSync(cardTemplateFolderPath);
@@ -66,9 +107,40 @@ const createCardTemplateFolder = (cardTemplateId: number) => {
     const applePassJsonPath = path.join(cardTemplateFolderPath, 'applePass.json');
     const googlePassJsonPath = path.join(cardTemplateFolderPath, 'googlePass.json');
 
+    // create the apple pass json file
     if (!fs.existsSync(applePassJsonPath))
-        fs.writeFileSync(applePassJsonPath, JSON.stringify(APPLE_PASS_PLACEHOLDER(), null, 4));
+        fs.writeFileSync(
+            applePassJsonPath,
+            JSON.stringify(
+                {
+                    ...cardProps,
+                    ...APPLE_PASS_PLACEHOLDER({
+                        logoText,
+                        qrCodeMessage: 'QR_CODE_MESSAGE',
+                        serialNumber: 'SERIAL_NUMBER',
+                        description: 'Test Apple Wallet Card',
+                        organizationName: `Test Organization`,
+                    }),
+                },
+                null,
+                4,
+            ),
+        );
+
+    // create the google pass json file
     if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
+
+    // download the logo and icon images
+    const imagesToDownload = [
+        downloadImageToFolder(logoUrl, path.join(cardTemplateFolderPath, 'logo.png')),
+        downloadImageToFolder(iconUrl, path.join(cardTemplateFolderPath, 'icon.png')),
+    ];
+    if (thumbnailUrl)
+        imagesToDownload.push(downloadImageToFolder(thumbnailUrl, path.join(cardTemplateFolderPath, 'thumbnail.png')));
+
+    await Promise.all(imagesToDownload);
+
+    return cardTemplateFolderPath;
 };
 
 export const findAllCardTemplates = async ({

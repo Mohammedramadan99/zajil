@@ -6,6 +6,7 @@ import { HttpError } from '../common';
 import { sign, verify } from 'jsonwebtoken';
 import { User } from '../modules/users/models/user.model';
 import { NextFunction } from 'express';
+import { writeFileSync } from 'fs';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {
@@ -102,4 +103,17 @@ export const handleControllerServiceError = (next: NextFunction) => {
 
         next(new HttpError(500, error.message));
     };
+};
+
+export const downloadImageToFolder = async (imageURL: string, path: string) => {
+    // check if the url is for an image
+    const imageType = await fetch(imageURL, {
+        method: 'HEAD',
+    }).then((res) => res.headers.get('content-type'));
+    if (!imageType || !imageType.includes('image')) throw new HttpError(400, 'Invalid image URL');
+
+    // download the image
+    return fetch(imageURL)
+        .then((x) => x.arrayBuffer())
+        .then((x) => writeFileSync(path, Buffer.from(x)));
 };

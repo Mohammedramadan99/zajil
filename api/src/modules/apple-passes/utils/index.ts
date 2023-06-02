@@ -31,7 +31,6 @@ export async function getCertificates(): Promise<Exclude<Cache['certificates'], 
         signerKey,
         wwdr,
     };
-    
 
     return cache.certificates;
 }

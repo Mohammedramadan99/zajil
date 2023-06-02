@@ -1,5 +1,6 @@
 export interface ConfigInterface {
     port: number;
+    host: string;
     dbUri: string;
     bcrypt: {
         saltRounds: number;

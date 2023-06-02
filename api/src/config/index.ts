@@ -3,6 +3,7 @@ import { ConfigInterface } from './config.interface';
 
 const config: ConfigInterface = {
     port: parseInt(process.env.PORT, 10) || 3000,
+    host: process.env.HOST || 'localhost',
     dbUri: process.env.DB_URI,
     bcrypt: {
         saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10,
