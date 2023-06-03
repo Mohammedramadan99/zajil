@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 
-function Card({ title, bg, icon }) {
+function Card({ title, bg, icon, withControl = true }) {
   const [stampsNumber, setStampsNumber] = useState(10);
   const theme = useTheme();
   return (
-    <Grid item lg={3}>
+    <>
       {/* Card */}
       <Phone>
         <Box
@@ -70,23 +70,27 @@ function Card({ title, bg, icon }) {
           </Box>
         </Box>
       </Phone>
-      <Typography
-        variant="h4"
-        my={2}
-        textTransform={"capitalize"}
-        textAlign={"center"}
-        fontWeight={600}>
-        {title}
-      </Typography>
-      <ButtonGroup
-        sx={{
-          flexDirection: "column",
-          gap: 1,
-          width: "100%",
-        }}>
-        <Button variant="contained">select</Button>
-      </ButtonGroup>
-    </Grid>
+      {withControl && (
+        <>
+          <Typography
+            variant="h4"
+            my={2}
+            textTransform={"capitalize"}
+            textAlign={"center"}
+            fontWeight={600}>
+            {title}
+          </Typography>
+          <ButtonGroup
+            sx={{
+              flexDirection: "column",
+              gap: 1,
+              width: "100%",
+            }}>
+            <Button variant="contained">select</Button>
+          </ButtonGroup>
+        </>
+      )}
+    </>
   );
 }
 

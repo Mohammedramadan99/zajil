@@ -18,28 +18,30 @@ import {
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function MainSidebar() {
   const { mode } = useSelector((state) => state.mode);
   const [activeitem, setActiveItem] = useState("home");
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
-
+  const navigate = useNavigate();
   const transition = "1s ease";
   const links = [
     { icon: <HomeOutlined />, text: "home" },
     { icon: <StyleOutlined />, text: "cards" },
     { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "locations" },
+    { icon: <LocationOnOutlined />, text: "location" },
     { icon: <ForumOutlined />, text: "messages" },
     { icon: <ManageAccountsOutlined />, text: "managers" },
   ];
   const handleClick = (item) => {
     setActiveItem(item.text);
+    navigate(`${item.text}`);
   };
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.primary[700],
+        backgroundColor: theme.palette.primary[900],
         position: "absolute",
         maxWidth: "500px",
         width: "100%",
@@ -47,7 +49,6 @@ function MainSidebar() {
         left: "50%",
         transform: "translateX(-50%)",
         borderRadius: "40px",
-        // border: "1px solid #fff",
       }}>
       <List
         sx={{
@@ -107,7 +108,7 @@ function MainSidebar() {
                 alignItems: "center",
                 justifyContent: "center",
                 "& svg": {
-                  color: theme.palette.background.alt,
+                  color: theme.palette.grey[600],
                   fontSize: "25px",
                 },
               }}>
@@ -135,7 +136,7 @@ function MainSidebar() {
           className="indicator"
           style={{
             backgroundColor: theme.palette.primary[100],
-            borderColor: theme.palette.background.default,
+            borderColor: theme.palette.background.alt,
           }}>
           <span
             style={{
@@ -147,7 +148,7 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopRightRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.default}`,
+              boxShadow: `0 -10px 0 0 ${theme.palette.background.alt}`,
             }}></span>
           <span
             style={{
@@ -159,7 +160,7 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopLeftRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.default}`,
+              boxShadow: `0 -10px 0 0 ${theme.palette.background.alt}`,
             }}></span>
         </div>
       </List>
