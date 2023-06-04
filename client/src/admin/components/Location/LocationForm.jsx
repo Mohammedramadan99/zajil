@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import GoogleMaps from "./GoogleMaps";
 
 function LocationForm() {
   const theme = useTheme();
@@ -78,6 +79,7 @@ function LocationForm() {
               error={Boolean(formik.errors.location)}
               helperText={formik.errors.location}
             />
+            <GoogleMaps />
           </Stack>
           <Button
             // disabled={pending}

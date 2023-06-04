@@ -56,8 +56,9 @@ function MainSidebar() {
           position: "relative",
           justifyContent: "center",
         }}>
-        {links?.map((item) => (
+        {links?.map((item, i) => (
           <ListItem
+            key={item.text}
             onClick={() => handleClick(item)}
             className={activeitem === item.text ? "active" : ""}
             sx={{

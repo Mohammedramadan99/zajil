@@ -32,6 +32,7 @@ function Card({ title, bg, icon, withControl = true }) {
           <Stack direction={"row"} gap={1} p={1} flexWrap={"wrap"}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
               <Box
+                key={item}
                 className="flex"
                 sx={{
                   width: "40px",

@@ -10,7 +10,9 @@ import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Cards from "./admin/pages/cards/Cards";
-import Location from "./pages/Location/Location";
+import Location from "./pages/dashboard/Location/Location";
+import CreateBusiness from "./pages/dashboard/CreateBusiness/CreateBusiness";
+import CreateBranch from "./pages/dashboard/CreateBranch/CreateBranch";
 
 const isAdmin = true;
 const router = createBrowserRouter([
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
       {
         path: "location",
         element: <Location />,
+      },
+      {
+        path: "Business/new",
+        element: <CreateBusiness />,
+      },
+      {
+        path: "Branch/new",
+        element: <CreateBranch />,
       },
     ],
   },
