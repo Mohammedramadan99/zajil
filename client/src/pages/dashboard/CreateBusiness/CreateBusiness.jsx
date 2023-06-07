@@ -1,5 +1,14 @@
 import { useTheme } from "@emotion/react";
-import { Box, Container, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import CreateBusinessForm from "../../../components/Dashboard/CreateBusiness/CreateBusinessForm";
+import CreateBranchForm from "../../../components/Dashboard/CreateBusiness/CreateBranchForm";
 
 function CreateBusiness() {
   const theme = useTheme();
@@ -11,9 +20,14 @@ function CreateBusiness() {
         height: "100vh",
       }}>
       <Container>
-        <Box>
-          <form></form>
-        </Box>
+        <Grid container spacing={2}>
+          <Grid xs={6} item>
+            <CreateBusinessForm />
+          </Grid>
+          <Grid xs={6} item>
+            <CreateBranchForm />
+          </Grid>
+        </Grid>
       </Container>
     </Box>
   );

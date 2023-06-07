@@ -33,62 +33,6 @@ export const registerAction = createAsyncThunk(
     }
   }
 );
-// Login
-export const loginAction = createAsyncThunk(
-  "user/login",
-  async (userData, { rejectWithValue, getState, dispatch }) => {
-    try {
-      const response = await fetch(`http://localhost:3000/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // credentials: "include",
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log(errorData);
-        return rejectWithValue(
-          errorData?.data?.message?.errors
-            ? errorData.data.message.errors
-            : errorData.data.message
-        );
-      }
-      const { data } = await response.json();
-
-      document.cookie =
-        "cookieName=cookieValue; expires=expirationDate; path=pathValue";
-      const expirationDate = new Date(
-        Date.now() + 1 * 24 * 60 * 60 * 1000
-      ).toUTCString();
-      document.cookie =
-        "userInfo=" +
-        JSON.stringify(data) +
-        "; expires=" +
-        expirationDate +
-        "; path=/";
-      return data;
-    } catch (error) {
-      console.error(error);
-      return rejectWithValue({
-        message: "An unknown error occurred. Please try again laterrr.",
-      });
-    }
-  }
-);
-export const logoutAction = createAsyncThunk(
-  "user/logout",
-  async (userData, { rejectWithValue, getState, dispatch }) => {
-    try {
-      document.cookie =
-        "userInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-);
 
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
