@@ -4,11 +4,12 @@ import * as yup from "yup";
 import "./Auth.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction, logoutAction, reset } from "../../store/authSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Box, Button, Stack, TextField, Alert } from "@mui/material";
 function Login() {
   const dispatch = useDispatch();
-  const { errors, errorMessage } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { errors, errorMessage, user } = useSelector((state) => state.auth);
 
   const formik = useFormik({
     initialValues: {},
@@ -22,7 +23,10 @@ function Login() {
   });
   useEffect(() => {
     dispatch(reset());
-  }, []);
+    if (user) {
+      navigate("/admin/business/new");
+    }
+  }, [user]);
 
   return (
     <div className="auth_page">

@@ -7,11 +7,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import CreateBusinessForm from "../../../components/Dashboard/CreateBusiness/CreateBusinessForm";
-import CreateBranchForm from "../../../components/Dashboard/CreateBusiness/CreateBranchForm";
+import CreateBusinessForm from "../../../admin/components/CreateBusiness/CreateBusinessForm";
+// import CreateBusinessForm from "../../../components/Dashboard/CreateBusiness/CreateBusinessForm";
 
 function CreateBusiness() {
   const theme = useTheme();
+
   return (
     <Box
       padding={2}
@@ -20,14 +21,11 @@ function CreateBusiness() {
         height: "100vh",
       }}>
       <Container>
-        <Grid container spacing={2}>
-          <Grid xs={6} item>
-            <CreateBusinessForm />
-          </Grid>
-          <Grid xs={6} item>
+        <CreateBusinessForm />
+
+        {/* <Grid xs={6} item data-aos="fade-left">
             <CreateBranchForm />
-          </Grid>
-        </Grid>
+          </Grid> */}
       </Container>
     </Box>
   );

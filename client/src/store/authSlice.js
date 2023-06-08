@@ -143,7 +143,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.errors = null;
       state.successMessage = null;
-      state.user = action.payload.data;
+      state.user = action.payload;
     });
     builder.addCase(loginAction.rejected, (state, action) => {
       state.loading = false;

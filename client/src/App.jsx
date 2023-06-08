@@ -13,7 +13,8 @@ import Cards from "./admin/pages/cards/Cards";
 import Location from "./pages/dashboard/Location/Location";
 import CreateBusiness from "./pages/dashboard/CreateBusiness/CreateBusiness";
 import CreateBranch from "./pages/dashboard/CreateBranch/CreateBranch";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 const isAdmin = true;
 const router = createBrowserRouter([
   {
@@ -65,11 +66,11 @@ const router = createBrowserRouter([
         element: <Location />,
       },
       {
-        path: "Business/new",
+        path: "business/new",
         element: <CreateBusiness />,
       },
       {
-        path: "Branch/new",
+        path: "branch/new",
         element: <CreateBranch />,
       },
     ],
@@ -87,6 +88,14 @@ function App() {
       document.body.dir = "ltr";
     }
   }, [i18n.language]);
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // animation duration
+      once: false, // animation only once
+      easing: "ease-in-out", // animation easing function
+      offset: 50, // animation start offset
+    });
+  }, []);
   return (
     <>
       <RouterProvider router={router} />

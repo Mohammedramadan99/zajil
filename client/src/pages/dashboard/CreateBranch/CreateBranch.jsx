@@ -1,6 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Box, Container, Grid } from "@mui/material";
 import React from "react";
+import CreateBranchForm from "../../../admin/components/CreateBusiness/CreateBranchForm";
 
 function CreateBranch() {
   const theme = useTheme();
@@ -12,7 +13,7 @@ function CreateBranch() {
         height: "100vh",
       }}>
       <Container>
-        <Grid container spacing={2}></Grid>
+        <CreateBranchForm />
       </Container>
     </Box>
   );
