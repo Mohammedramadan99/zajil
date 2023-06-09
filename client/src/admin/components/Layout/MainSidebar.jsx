@@ -15,6 +15,7 @@ import {
   ForumOutlined,
   LocationOnOutlined,
   ManageAccountsOutlined,
+  Business,
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
@@ -28,20 +29,21 @@ function MainSidebar() {
   const transition = "1s ease";
   const links = [
     { icon: <HomeOutlined />, text: "home" },
-    { icon: <StyleOutlined />, text: "cards" },
+    { icon: <Business />, text: "business", slug: "business/new" },
+    { icon: <StyleOutlined />, text: "cards", slug: "cards" },
     { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "location" },
+    { icon: <LocationOnOutlined />, text: "location", slug: "location" },
     { icon: <ForumOutlined />, text: "messages" },
-    { icon: <ManageAccountsOutlined />, text: "managers" },
   ];
   const handleClick = (item) => {
     setActiveItem(item.text);
-    navigate(`${item.text}`);
+    navigate(`${item.slug}`);
   };
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.primary[900],
+        backgroundColor: `#0002`,
+        backdropFilter: "blur(10px)",
         position: "absolute",
         maxWidth: "500px",
         width: "100%",
@@ -49,6 +51,7 @@ function MainSidebar() {
         left: "50%",
         transform: "translateX(-50%)",
         borderRadius: "40px",
+        zIndex: 10,
       }}>
       <List
         sx={{
@@ -74,12 +77,13 @@ function MainSidebar() {
               },
               "&.active .MuiListItemIcon-root svg path,&.active .MuiListItemIcon-root svg circle":
                 {
-                  color: theme.palette.primary[900],
+                  color: theme.palette.primary[500],
                 },
               "&.active .MuiButtonBase-root": {
                 transform: "translateY(20px)",
                 opacity: 1,
                 scale: "1",
+                color: theme.palette.primary[500],
               },
               "&:nth-child(1).active ~ .indicator": {
                 transform: "translateX(calc(80px * 0))",
@@ -136,8 +140,9 @@ function MainSidebar() {
         <div
           className="indicator"
           style={{
-            backgroundColor: theme.palette.primary[100],
-            borderColor: theme.palette.background.alt,
+            backgroundColor: "#0003",
+            borderColor: "transparent",
+            backdropFilter: "blur(10px)",
           }}>
           <span
             style={{
@@ -149,7 +154,8 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopRightRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.alt}`,
+              boxShadow: `0 -10px 0 0 #0001`,
+              backdropFilter: "blur(10px)",
             }}></span>
           <span
             style={{
@@ -161,7 +167,8 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopLeftRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.alt}`,
+              boxShadow: `0 -10px 0 0 transparent`,
+              backdropFilter: "blur(10px)",
             }}></span>
         </div>
       </List>

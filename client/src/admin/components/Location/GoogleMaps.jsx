@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 
-const center = { lat: 48.8584, lng: 2.2945 };
-
-function GoogleMaps({ w }) {
+function GoogleMaps({ w, selectedAddress, setSelectedAddress }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedAddress, setSelectedAddress] = useState("");
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyA_q_hh_dIv3rTWvWWXYcNn0aY_W0OD4VQ",
-  });
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const center = currentLocation || null;
+  console.log({ center });
+  console.log({ currentLocation });
 
   // Define a callback function to handle the click event on the map
   const handleMapClick = (event) => {
@@ -35,9 +32,26 @@ function GoogleMaps({ w }) {
     );
   };
 
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        () => {
+          console.log("Error: The Geolocation service failed.");
+        }
+      );
+    } else {
+      console.log("Error: Your browser doesn't support geolocation.");
+    }
+  };
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   return (
     <div>

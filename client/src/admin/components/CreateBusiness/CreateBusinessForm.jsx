@@ -1,11 +1,20 @@
-import { Box, Button, TextField, Typography, useTheme } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useBusiness from "../../../hooks/useBusiness";
+import { useNavigate } from "react-router-dom";
 function CreateBusinessForm() {
   const theme = useTheme();
-  const { createBusiness } = useBusiness();
+  const navigate = useNavigate();
+  const { createBusiness, pending, error } = useBusiness();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -14,9 +23,15 @@ function CreateBusinessForm() {
       name: yup.string().required(),
     }),
     onSubmit(values) {
-      createBusiness(values);
+      handleSubmit(values);
     },
   });
+  const handleSubmit = async (values) => {
+    const result = await createBusiness(values);
+    if (result) {
+      navigate("/admin");
+    }
+  };
   return (
     <Box
       maxWidth={500}
@@ -45,18 +60,27 @@ function CreateBusinessForm() {
         </span>
       </Typography>
       <Box component="form" onSubmit={formik.handleSubmit}>
+        {error && (
+          <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <div>
           <TextField
             name="name"
             label="Name"
-            required
             value={formik.values.name}
             onChange={formik.handleChange}
             error={Boolean(formik.errors.name)}
+            helperText={formik.errors.name}
             sx={{ width: "100%" }}
           />
         </div>
-        <Button type="submit" variant="contained" sx={{ width: "100%", mt: 4 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ width: "100%", mt: 4 }}
+          disabled={pending}>
           Create
         </Button>
         <Typography

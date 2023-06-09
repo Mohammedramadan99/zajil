@@ -24,13 +24,13 @@ const useBusiness = () => {
         },
         body: JSON.stringify(values),
       });
-      const Business = await response.json();
-      if (Business.error) {
-        setError(Business.error);
+      const business = await response.json();
+      if (business.error) {
+        setError(business.error);
         return null;
       }
-      setData(Business);
-      return Business;
+      setData(business);
+      return business;
     } catch (error) {
       setError(error.message);
     } finally {

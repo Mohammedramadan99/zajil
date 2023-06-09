@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Box, Container, Grid } from "@mui/material";
 import React from "react";
-import CreateBranchForm from "../../../admin/components/CreateBusiness/CreateBranchForm";
+import CreateBranchForm from "../../components/CreateBusiness/CreateBranchForm";
 
 function CreateBranch() {
   const theme = useTheme();

@@ -8,10 +8,14 @@ import {
   Typography,
 } from "@mui/material";
 import CreateBusinessForm from "../../../admin/components/CreateBusiness/CreateBusinessForm";
+import useBusiness from "../../../hooks/useBusiness";
+import { useEffect } from "react";
 // import CreateBusinessForm from "../../../components/Dashboard/CreateBusiness/CreateBusinessForm";
-
+import { useNavigate } from "react-router-dom";
 function CreateBusiness() {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const { data } = useBusiness();
 
   return (
     <Box
