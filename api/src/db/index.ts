@@ -4,8 +4,8 @@ import config from '../config';
 import { setAssociations } from './set-associations';
 import { initModels } from './init-models';
 
-const sequelize = new Sequelize(config.dbUri, {
-    logging: config.dbLogging ? console.log : false,
+const sequelize = new Sequelize(config.db.uri, {
+    logging: config.db.logging ? console.log : false,
 });
 
 // initialize models
@@ -21,7 +21,12 @@ const dbConnect = async () => {
 
     console.log('Models', sequelize.models);
 
-    await sequelize.sync();
+    // default false
+    if (config.db.sync)
+        await sequelize.sync({
+            alter: config.db.syncAlter, // default false
+            force: config.db.syncForce, // default false
+        });
 
     console.log('All models were synchronized successfully.');
 };

@@ -1,7 +1,6 @@
 export interface ConfigInterface {
     port: number;
     host: string;
-    dbUri: string;
     bcrypt: {
         saltRounds: number;
     };
@@ -9,5 +8,11 @@ export interface ConfigInterface {
         secret: string;
         expiresIn: string;
     };
-    dbLogging: boolean;
+    db:{
+        uri: string;
+        logging: boolean;
+        sync: boolean;
+        syncForce: boolean;
+        syncAlter: boolean;
+    }
 }
