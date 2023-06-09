@@ -3,7 +3,7 @@ import { RequestMod } from '../../../common/interfaces/request.mod';
 import { CardTemplate, CardType } from '../models/card-template.model';
 import { ItemsSubscriptionCardTemplate } from '../models/items-subscription-card-template.model';
 import { LoyaltyCardTemplate } from '../models/loyalty-card-template.model';
-import { CreateCardTemplateDto } from '../dto/create-card-template';
+import { CardDesignType, CreateCardTemplateDto } from '../dto/create-card-template';
 import { UpdateCardTemplateDto } from '../dto/update-card-template';
 import path from 'path';
 import fs from 'fs';
@@ -56,11 +56,7 @@ export const createCardTemplate = async (
         // create a folder in the public folder to store the card template files
         cardTemplateFolderPath = await createCardTemplateFolder({
             cardTemplateId: cardTemplate.id,
-            iconUrl: createCardTemplateDto.iconUrl,
-            thumbnailUrl: createCardTemplateDto.thumbnailUrl,
-            logoUrl: createCardTemplateDto.logoUrl,
-            logoText: createCardTemplateDto.logoText,
-            cardProps: createCardTemplateDto.cardProps,
+            ...createCardTemplateDto,
         });
 
         // combine the base card template with the sub card template in a single object
@@ -84,21 +80,20 @@ export const createCardTemplate = async (
     }
 };
 
-const createCardTemplateFolder = async ({
-    cardTemplateId,
-    thumbnailUrl,
-    logoUrl,
-    logoText,
-    iconUrl,
-    cardProps,
-}: {
-    cardTemplateId: number;
-    thumbnailUrl?: string;
-    logoUrl: string;
-    logoText: string;
-    iconUrl: string;
-    cardProps: object;
-}) => {
+const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto & { cardTemplateId: number }) => {
+    const {
+        cardTemplateId,
+        designType,
+        logoUrl,
+        iconUrl,
+        thumbnailUrl,
+        footerUrl,
+        stripUrl,
+        backgroundUrl,
+        qrCodeFormat,
+        ...rest
+    } = cardTemplateProps;
+
     // create a folder in the public folder to store the card template files
     const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
     if (!fs.existsSync(cardTemplateFolderPath)) fs.mkdirSync(cardTemplateFolderPath);
@@ -113,13 +108,14 @@ const createCardTemplateFolder = async ({
             applePassJsonPath,
             JSON.stringify(
                 {
-                    ...cardProps,
+                    ...rest.cardProps,
                     ...APPLE_PASS_PLACEHOLDER({
-                        logoText,
-                        qrCodeMessage: 'QR_CODE_MESSAGE',
                         serialNumber: 'SERIAL_NUMBER',
                         description: 'Test Apple Wallet Card',
                         organizationName: `Test Organization`,
+                        designType,
+                        qrCodeMessage: 'QR_CODE_MESSAGE',
+                        qrCodeFormat,
                     }),
                 },
                 null,
@@ -132,11 +128,15 @@ const createCardTemplateFolder = async ({
 
     // download the logo and icon images
     const imagesToDownload = [
-        downloadImageToFolder(logoUrl, path.join(cardTemplateFolderPath, 'logo.png')),
-        downloadImageToFolder(iconUrl, path.join(cardTemplateFolderPath, 'icon.png')),
-    ];
-    if (thumbnailUrl)
-        imagesToDownload.push(downloadImageToFolder(thumbnailUrl, path.join(cardTemplateFolderPath, 'thumbnail.png')));
+        { url: logoUrl, path: 'logo.png' },
+        { url: iconUrl, path: 'icon.png' },
+        { url: thumbnailUrl, path: 'thumbnail.png' },
+        { url: footerUrl, path: 'footer.png' },
+        { url: stripUrl, path: 'strip.png' },
+        { url: backgroundUrl, path: 'background.png' },
+    ]
+        .filter(({ url }) => url)
+        .map((image) => downloadImageToFolder(image.url, path.join(cardTemplateFolderPath, image.path)));
 
     await Promise.all(imagesToDownload);
 

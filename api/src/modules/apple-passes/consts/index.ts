@@ -7,19 +7,19 @@ export const APPLE_PASS_PLACEHOLDER = ({
     serialNumber,
     description,
     organizationName,
-    logoText,
     qrCodeMessage,
+    qrCodeFormat,
+    designType,
 }): IAppleCardProps => ({
-    type: 'generic',
+    type: designType,
     formatVersion: '1',
     passTypeIdentifier: APPLE_PASS_TYPE_IDENTIFIER,
     teamIdentifier: APPLE_TEAM_IDENTIFIER,
     serialNumber: serialNumber,
     description: description,
     organizationName: organizationName,
-    logoText: logoText,
     barcode: {
         message: qrCodeMessage,
-        format: 'PKBarcodeFormatQR',
+        format: qrCodeFormat || 'PKBarcodeFormatQR',
     },
 });
