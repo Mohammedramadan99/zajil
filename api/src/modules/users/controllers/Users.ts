@@ -8,6 +8,7 @@ import { UpdateUserDto } from '../dto/update-user';
 
 export const UsersController: ICRUDController & {
     activateAccount: (req: Request, res: Response, next: NextFunction) => void;
+    requestAccountActivation: (req: Request, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: Request, res: Response, next: NextFunction): void {
         const body: CreateUserDto = req.body;
@@ -76,6 +77,16 @@ export const UsersController: ICRUDController & {
 
         usersServices
             .activateAccount(token)
+            .then((user) => res.json(user))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+
+    requestAccountActivation: function (req: RequestMod, res: Response, next: NextFunction): void {
+        usersServices
+            .requestAccountActivation(req.user)
             .then((user) => res.json(user))
             .catch((err) => {
                 console.error(err);

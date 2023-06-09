@@ -129,3 +129,8 @@ export const activateAccount = async (token: string) => {
 
     return user.save().then(() => ({ message: 'Account activated successfully' }));
 };
+
+export async function requestAccountActivation(user: User) {
+    await sendAccountActivationEmail(user);
+    return { message: 'Account activation email sent successfully' };
+}

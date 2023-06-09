@@ -21,7 +21,7 @@ export default {
     middleware: accountActivationMiddleware,
     condition: (req: RequestMod, res: Response, next: NextFunction) => {
         // all routes except:r login and register
-        const except = ['/login', '/register', '/activate-account'];
+        const except = ['/login', '/register', '/activate-account', '/request-account-activation'];
         const regex = new RegExp(except.join('|'), 'i');
         return !regex.test(req.path);
     },

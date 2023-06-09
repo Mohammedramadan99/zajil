@@ -11,6 +11,7 @@ const mainRouter = express.Router();
 mainRouter.post('/register', validateMiddleware(CreateUserDto), UsersController.create);
 mainRouter.post('/login', AuthController.login);
 mainRouter.get('/activate-account/:token', UsersController.activateAccount);
+mainRouter.post('/request-account-activation', UsersController.requestAccountActivation);
 
 mainRouter.use('/users', usersRouter);
 mainRouter.use('/businesses', businessesRouter);

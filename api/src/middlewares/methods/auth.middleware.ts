@@ -35,6 +35,10 @@ export default {
     middleware: authMiddleware,
     condition: (req: RequestMod, res: Response, next: NextFunction) => {
         // all routes except:r login and register
-        return !['/login', '/register'].includes(req.path);
+        return ![
+            '/login',
+            '/register',
+            '/activate-account'
+        ].includes(req.path);
     },
 };
