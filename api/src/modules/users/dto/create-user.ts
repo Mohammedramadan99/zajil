@@ -24,6 +24,6 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsArray()
-    @IsEnum(UserRole, { each: true })
+    @IsEnum([UserRole.BUSINESS_OWNER, UserRole.EMPLOYEE], { each: true })
     roles: UserRole[];
 }
