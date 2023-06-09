@@ -26,6 +26,10 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            googleMapsLocation: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             businessId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

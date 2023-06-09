@@ -28,6 +28,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@nestjs/mapped-types": "^1.2.2",
     "@types/cors": "^2.8.13",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",

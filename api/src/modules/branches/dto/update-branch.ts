@@ -1,13 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { CreateBranchDto } from './create-branch';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class UpdateBranchDto {
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional()
-    name?: string;
-
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional()
-    address?: string;
-}
+export class UpdateBranchDto extends PartialType(CreateBranchDto) {}
