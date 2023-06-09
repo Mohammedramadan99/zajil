@@ -15,6 +15,7 @@ import CreateBusiness from "./admin/pages/CreateBusiness/CreateBusiness";
 import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import Business from "./admin/pages/business/Business";
 const isAdmin = true;
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: "location",
         element: <Location />,
+      },
+      {
+        path: "business",
+        element: <Business />,
       },
       {
         path: "business/new",

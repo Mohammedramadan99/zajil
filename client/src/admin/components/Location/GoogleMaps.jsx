@@ -59,10 +59,9 @@ function GoogleMaps({ w, selectedAddress, setSelectedAddress }) {
         center={center}
         zoom={15}
         onClick={handleMapClick}
-        mapContainerStyle={{ width: w ? w : "500px", height: "400px" }}>
+        mapContainerStyle={{ width: w ? w : "100%", height: "400px" }}>
         {selectedLocation && <Marker position={selectedLocation} />}
       </GoogleMap>
-      <div>{selectedAddress && <p>Selected Address: {selectedAddress}</p>}</div>
     </div>
   );
 }

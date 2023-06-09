@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -21,7 +22,7 @@ function CreateBranchForm() {
   const theme = useTheme();
   const { getBusinesses, data: businesses } = useBusiness();
   const { createBranch, data } = useBranch();
-
+  const [success, setSuccess] = useState("");
   useEffect(() => {
     getBusinesses();
   }, []);
@@ -36,17 +37,35 @@ function CreateBranchForm() {
       business: yup.string().required("business is required"),
     }),
     onSubmit(values) {
-      const branchData = {
-        businessId: values.business,
-        address: "ain shams",
-        name: values.name,
-      };
-      createBranch(branchData);
+      handleSubmit(values);
     },
   });
+  const handleSubmit = async (values) => {
+    const branchData = {
+      businessId: values.business,
+      address: "ain shams",
+      name: values.name,
+    };
+    const result = await createBranch(branchData);
+    result && setSuccess(`${values.name} branch created successfully`);
+  };
   return (
     businesses?.length > 0 && (
-      <Box>
+      <Box
+        sx={{
+          maxWidth: 700,
+          // width: "100%",
+          m: "50px auto",
+          backgroundColor: theme.palette.grey[900],
+          p: 5,
+        }}>
+        {success && (
+          <Alert variant="outlined" severity="success">
+            {" "}
+            {success}{" "}
+          </Alert>
+        )}
+
         <Typography
           variant="h1"
           textTransform={"capitalize"}
@@ -93,7 +112,7 @@ function CreateBranchForm() {
               ))}
             </Select>
           </FormControl>
-          <GoogleMaps w={"100%"} />
+          {/* <GoogleMaps w={"100%"} /> */}
           <Button
             type="submit"
             variant="contained"

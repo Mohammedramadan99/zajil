@@ -29,7 +29,7 @@ function CreateBusinessForm() {
   const handleSubmit = async (values) => {
     const result = await createBusiness(values);
     if (result) {
-      navigate("/admin");
+      navigate("/admin/branch/new");
     }
   };
   return (
