@@ -5,6 +5,7 @@ export class LoyaltyGift extends Model {
     public name: string;
     public loyaltyCardTemplateId: number;
     public limitedAmount?: number;
+    public priceNPoints: number;
     public templateId: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -25,6 +26,10 @@ export const init = (sequelize: Sequelize) =>
             limitedAmount: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
+            },
+            priceNPoints: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
             },
             templateId: {
                 type: DataTypes.INTEGER,

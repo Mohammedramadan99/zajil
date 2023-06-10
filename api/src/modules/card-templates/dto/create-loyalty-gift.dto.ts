@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
 
 export class CreateLoyaltyGiftDto {
     // name
@@ -12,4 +12,10 @@ export class CreateLoyaltyGiftDto {
     @IsNumber()
     @Min(1)
     limitedAmount: number;
+
+    // priceNPoints
+    @IsNotEmpty()
+    @IsNumber()
+    @IsPositive()
+    priceNPoints: number;
 }

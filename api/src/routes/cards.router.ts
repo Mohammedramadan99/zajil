@@ -25,11 +25,9 @@ cardsRouter.delete('/:id', CardController.delete);
 
 // loyalty functions
 cardsRouter.patch('/:id/loyalty/add-points', CardController.loyaltyAddPoints);
-cardsRouter.patch(
-    '/:id/loyalty/subtract-points',
-    validateMiddleware(LoyaltyAddSubtractPoints),
-    CardController.loyaltySubtractPoints,
-);
+
+// redeem loyalty gift
+cardsRouter.patch('/:id/loyalty/redeem-gift', CardController.loyaltyRedeemGift);
 
 // items subscription functions
 cardsRouter.patch(

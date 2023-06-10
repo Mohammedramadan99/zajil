@@ -12,6 +12,7 @@ import path from 'path';
 import { PKPass } from 'passkit-generator';
 import fs from 'fs';
 import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
+import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -180,6 +181,21 @@ export const deleteCardById = async (cardId: number) => {
 // loyalty add points
 export const loyaltyAddPoints = async (cardId: number) => {
     // find the loyalty card
+    const card = await Card.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    const template = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: card.templateId,
+        },
+    });
+    if (!template) throw new HttpError(404, 'Template not found');
+
+    // find the loyalty card
     const loyaltyCard = await LoyaltyCard.findOne({
         where: {
             id: cardId,
@@ -187,18 +203,9 @@ export const loyaltyAddPoints = async (cardId: number) => {
     });
     if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
-    const template = await LoyaltyCardTemplate.findOne({
-        where: {
-            id: loyaltyCard.templateId,
-        },
-    });
-    if (!template) throw new HttpError(404, 'Template not found');
-
     // add points
     loyaltyCard.points += template.pointsPerVisit;
-    await loyaltyCard.save();
-
-    return loyaltyCard;
+    return await loyaltyCard.save();
 };
 
 // loyalty subtract points
@@ -264,4 +271,42 @@ const removeRowNullFields = (row) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
+};
+
+export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
+    // find the loyalty card
+    const loyaltyCard = await LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+    const isGiftLimited = gift.limitedAmount !== null;
+    console.log(isGiftLimited);
+    
+
+    // check if the gift in stock
+    if (isGiftLimited && gift.limitedAmount <= 0) throw new HttpError(400, 'Gift out of stock');
+
+    // check if the user has enough points
+    if (loyaltyCard.points < gift.priceNPoints) throw new HttpError(400, 'Not enough points');
+
+    // subtract points
+    loyaltyCard.points -= gift.priceNPoints;
+
+    // subtract gift from stock if limited
+    if (isGiftLimited) {
+        gift.limitedAmount -= 1;
+        await gift.save();
+    }
+
+    return await loyaltyCard.save();
 };

@@ -8,12 +8,12 @@ import { UpdateCardDto } from '../dto/update-card';
 
 export const CardController: ICRUDController & {
     loyaltyAddPoints: (req: RequestMod, res: Response, next: NextFunction) => void;
-    loyaltySubtractPoints: (req: RequestMod, res: Response, next: NextFunction) => void;
+    loyaltyRedeemGift: (req: RequestMod, res: Response, next: NextFunction) => void;
     itemSubscriptionUse: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;
-        
+
         cardServices
             .createCard(body, req)
             .then((card) => res.status(201).json(card))
@@ -91,12 +91,12 @@ export const CardController: ICRUDController & {
             });
     },
 
-    loyaltySubtractPoints: function (req: Request, res: Response, next: NextFunction): void {
+    loyaltyRedeemGift: function (req: Request, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
-        const value = req.body.value;
+        const giftId = Number(req.body.giftId);
 
         cardServices
-            .loyaltySubtractPoints(cardId, value)
+            .loyaltyRedeemGift(cardId, giftId)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
