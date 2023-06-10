@@ -5,6 +5,7 @@ import cors from 'cors';
 import mainRouter from './routes';
 
 const app = Express();
+app.use(Express.static('public'));
 app.use(cors());
 app.use(Express.json());
 applyMiddlewaresPre(app);

@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { CardTemplateController } from '../controllers/CardTemplate';
+import { CardTemplateController } from '../modules/card-templates/controllers/CardTemplate';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
-import { CreateCardTemplateDto } from '../dto/card-template/create-card-template';
-import { UpdateCardTemplateDto } from '../dto/card-template/update-card-template';
+import { CreateCardTemplateDto } from '../modules/card-templates/dto/create-card-template';
+import { UpdateCardTemplateDto } from '../modules/card-templates/dto/update-card-template';
 
 const cardTemplatesRouter = Router({ mergeParams: true });
 

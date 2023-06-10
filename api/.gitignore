@@ -16,3 +16,9 @@ dist/
 
 # Else
 .env
+
+# Card templates
+public/card-templates/*
+
+# Cards
+public/cards/*

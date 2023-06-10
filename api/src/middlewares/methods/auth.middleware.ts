@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { verifyJWT } from '../../services/auth/jwt';
 import { HttpError } from '../../common';
 import { RequestMod } from '../../common/interfaces/request.mod';
 import { IJWTPayload } from '../../common/interfaces/jwt-payload';
-import { findOneUserById } from '../../services/users';
+import { findOneUserById } from '../../modules/users/services';
+import { verifyJWT } from '../../modules/auth/services/jwt';
 
 const authMiddleware = async (req: RequestMod, res: Response, next: NextFunction) => {
     try {
@@ -35,6 +35,10 @@ export default {
     middleware: authMiddleware,
     condition: (req: RequestMod, res: Response, next: NextFunction) => {
         // all routes except:r login and register
-        return !['/login', '/register'].includes(req.path);
+        return ![
+            '/login',
+            '/register',
+            '/activate-account'
+        ].includes(req.path);
     },
 };

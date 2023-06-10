@@ -56,6 +56,7 @@ function CardStats() {
             <Box
               display={"flex"}
               justifyContent={"flex-end"}
+
               borderRadius={"50%"}
               p={1}
               sx={{ background: "#c1212130", borderRadius: 3 }}>

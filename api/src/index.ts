@@ -9,8 +9,8 @@ const main = async () => {
         process.exit(1);
     });
 
-    app.listen(config.port, () => {
-        console.log(`App listening on port ${config.port}`);
+    app.listen(config.port, config.host, () => {
+        console.log(`App listening on ${config.host}:${config.port}`);
     });
 };
 

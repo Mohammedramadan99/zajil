@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
-import { UpdateCardDto } from '../dto/card/update-card';
-import { CreateCardDto } from '../dto/card/create-card';
-import { CardController } from '../controllers/Card';
-import { LoyaltyAddSubtractPoints } from '../dto/card/loyalty-add-subtract-points';
-import { ItemsSubUseDto } from '../dto/card/items-sub-use';
+import { UpdateCardDto } from '../modules/cards/dto/update-card';
+import { CreateCardDto } from '../modules/cards/dto/create-card';
+import { CardController } from '../modules/cards/controllers/Card';
+import { LoyaltyAddSubtractPoints } from '../modules/cards/dto/loyalty-add-subtract-points';
+import { ItemsSubUseDto } from '../modules/cards/dto/items-sub-use';
 
 const cardsRouter = Router({ mergeParams: true });
 

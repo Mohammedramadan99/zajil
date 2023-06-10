@@ -1,11 +1,12 @@
 import express from 'express';
-import { BusinessController } from '../controllers/Business';
+import { BusinessController } from '../modules/businesses/controllers/Business';
 import { validateMiddleware } from '../middlewares/methods/validate.middleware';
-import { CreateBusinessDto } from '../dto/business/create-business';
-import { UpdateBusinessDto } from '../dto/business/update-business';
+import { CreateBusinessDto } from '../modules/businesses/dto/create-business';
+import { UpdateBusinessDto } from '../modules/businesses/dto/update-business';
 import cardTemplatesRouter from './card-templates.router';
 import { canUseBusinessId } from '../middlewares/methods/canUseBusinessId.middleware';
 import cardsRouter from './cards.router';
+import menuRouter from './menu.router';
 
 const businessesRouter = express.Router();
 businessesRouter.post('/', validateMiddleware(CreateBusinessDto), BusinessController.create);
@@ -19,5 +20,8 @@ businessesRouter.use('/:businessId/card-templates', canUseBusinessId, cardTempla
 
 // Cards
 businessesRouter.use('/:businessId/cards', canUseBusinessId, cardsRouter);
+
+// Menu
+businessesRouter.use('/:businessId/menu', canUseBusinessId, menuRouter);
 
 export default businessesRouter;
