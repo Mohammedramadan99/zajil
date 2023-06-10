@@ -1,27 +1,30 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
-export class LoyaltyCard extends Model {
+export class LoyaltyGift extends Model {
     public declare id: number;
-    public points!: number;
+    public name: string;
+    public loyaltyCardTemplateId: number;
+    public limitedAmount?: number;
     public templateId: number;
-
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
 export const init = (sequelize: Sequelize) =>
-    LoyaltyCard.init(
+    LoyaltyGift.init(
         {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
+                autoIncrement: true,
             },
-            points: {
-                type: DataTypes.INTEGER,
+            name: {
+                type: DataTypes.STRING,
                 allowNull: false,
-                validate: {
-                    min: 0,
-                },
+            },
+            limitedAmount: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
             },
             templateId: {
                 type: DataTypes.INTEGER,
@@ -30,6 +33,6 @@ export const init = (sequelize: Sequelize) =>
         },
         {
             sequelize,
-            tableName: 'loyalty_cards',
+            tableName: 'loyalty_gifts',
         },
     );

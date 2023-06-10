@@ -11,6 +11,7 @@ import { generatePass } from '../../apple-passes/services';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
 import fs from 'fs';
+import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -177,7 +178,7 @@ export const deleteCardById = async (cardId: number) => {
 };
 
 // loyalty add points
-export const loyaltyAddPoints = async (cardId: number, value: number) => {
+export const loyaltyAddPoints = async (cardId: number) => {
     // find the loyalty card
     const loyaltyCard = await LoyaltyCard.findOne({
         where: {
@@ -186,8 +187,15 @@ export const loyaltyAddPoints = async (cardId: number, value: number) => {
     });
     if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
+    const template = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: loyaltyCard.templateId,
+        },
+    });
+    if (!template) throw new HttpError(404, 'Template not found');
+
     // add points
-    loyaltyCard.points += value;
+    loyaltyCard.points += template.pointsPerVisit;
     await loyaltyCard.save();
 
     return loyaltyCard;

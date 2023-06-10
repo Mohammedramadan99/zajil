@@ -9,6 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
+import { LoyaltyGift } from '../models/loyalty-gift.model';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -40,7 +41,16 @@ export const createCardTemplate = async (
             case CardType.LOYALTY:
                 subCardTemplate = await LoyaltyCardTemplate.create({
                     id: cardTemplate.id,
+                    pointsPerVisit: createCardTemplateDto.pointsPerVisit,
                 });
+
+                // add gifts
+                await LoyaltyGift.bulkCreate(
+                    createCardTemplateDto.gifts.map((gift) => ({
+                        ...gift,
+                        templateId: cardTemplate.id,
+                    })),
+                );
                 break;
 
             case CardType.ITEMS_SUBSCRIPTION:
@@ -238,6 +248,13 @@ const FIND_INCLUDE_OPTIONS = [
             '$CardTemplate.cardType$': CardType.LOYALTY,
         },
         required: false,
+        include: [
+            {
+                model: LoyaltyGift,
+                as: 'loyaltyGifts',
+                required: false,
+            }
+        ]
     },
     {
         model: ItemsSubscriptionCardTemplate,

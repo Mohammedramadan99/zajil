@@ -80,10 +80,9 @@ export const CardController: ICRUDController & {
 
     loyaltyAddPoints: function (req: Request, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
-        const value = req.body.value;
 
         cardServices
-            .loyaltyAddPoints(cardId, value)
+            .loyaltyAddPoints(cardId)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);

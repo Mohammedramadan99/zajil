@@ -1,16 +1,24 @@
 import {
+    ArrayMinSize,
+    IsArray,
     IsEnum,
     IsIn,
     IsNotEmpty,
+    IsNotEmptyObject,
     IsNumber,
     IsObject,
     IsOptional,
     IsString,
     IsUrl,
+    Length,
     Min,
+    MinLength,
     ValidateIf,
+    ValidateNested,
 } from 'class-validator';
 import { CardType } from '../models/card-template.model';
+import { CreateLoyaltyGiftDto } from './create-loyalty-gift.dto';
+import { Type } from 'class-transformer';
 
 export enum CardDesignType {
     BoardingPass = 'boardingPass',
@@ -121,4 +129,23 @@ export class CreateCardTemplateDto {
     @IsNumber()
     @Min(0)
     nItems: number;
+
+    /*
+     * Loyalty Card Template Validation
+     * */
+
+    // pointsPerVisit
+    @ValidateIf((o) => o.cardType === CardType.LOYALTY)
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    pointsPerVisit: number;
+
+    // gifts
+    @ValidateIf((o) => o.cardType === CardType.LOYALTY)
+    @IsArray()
+    @ArrayMinSize(1)
+    @ValidateNested({ each: true })
+    @Type(() => CreateLoyaltyGiftDto)
+    gifts: CreateLoyaltyGiftDto[];
 }

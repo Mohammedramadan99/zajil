@@ -24,11 +24,7 @@ cardsRouter.patch('/:id', validateMiddleware(UpdateCardDto), CardController.upda
 cardsRouter.delete('/:id', CardController.delete);
 
 // loyalty functions
-cardsRouter.patch(
-    '/:id/loyalty/add-points',
-    validateMiddleware(LoyaltyAddSubtractPoints),
-    CardController.loyaltyAddPoints,
-);
+cardsRouter.patch('/:id/loyalty/add-points', CardController.loyaltyAddPoints);
 cardsRouter.patch(
     '/:id/loyalty/subtract-points',
     validateMiddleware(LoyaltyAddSubtractPoints),

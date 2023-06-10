@@ -9,6 +9,7 @@ import { Menu } from '../modules/businesses/models/menu/menu.model';
 import { User } from '../modules/users/models/user.model';
 import { LoyaltyCard } from '../modules/cards/models/loyalty-card.model';
 import { ItemsSubscriptionCard } from '../modules/cards/models/items-subscription-card.model';
+import { LoyaltyGift } from '../modules/card-templates/models/loyalty-gift.model';
 
 export const setAssociations = () => {
     // User | Business
@@ -62,6 +63,17 @@ export const setAssociations = () => {
     LoyaltyCardTemplate.belongsTo(CardTemplate, {
         foreignKey: 'id',
         as: 'cardTemplate',
+    });
+
+    // Loyal Card Template | Loyalty Gift
+    LoyaltyCardTemplate.hasMany(LoyaltyGift, {
+        foreignKey: 'templateId',
+        as: 'loyaltyGifts',
+        onDelete: 'CASCADE',
+    });
+    LoyaltyGift.belongsTo(LoyaltyCardTemplate, {
+        foreignKey: 'templateId',
+        as: 'loyaltyCardTemplate',
     });
 
     // Card Template | Items Subscription Card Template
