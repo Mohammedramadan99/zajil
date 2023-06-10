@@ -10,6 +10,7 @@ import fs from 'fs';
 import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
+import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -253,8 +254,8 @@ const FIND_INCLUDE_OPTIONS = [
                 model: LoyaltyGift,
                 as: 'loyaltyGifts',
                 required: false,
-            }
-        ]
+            },
+        ],
     },
     {
         model: ItemsSubscriptionCardTemplate,
@@ -270,4 +271,72 @@ const removeRowNullFields = (row) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
+};
+
+export const addGiftToLoyaltyCardTemplate = async (cardTemplateId: number, body: CreateLoyaltyGiftDto) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // create the gift
+    const gift = await LoyaltyGift.create({
+        ...body,
+        templateId: loyaltyCardTemplate.id,
+    });
+
+    return gift;
+};
+export const updateGiftInLoyaltyCardTemplate = async (
+    cardTemplateId: number,
+    giftId: number,
+    body: CreateLoyaltyGiftDto,
+) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+            templateId: loyaltyCardTemplate.id,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+
+    // update the gift
+    await gift.update(body);
+
+    return gift;
+};
+export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, giftId: number) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+            templateId: loyaltyCardTemplate.id,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+
+    // delete the gift
+    await gift.destroy();
+
+    return gift;
 };
