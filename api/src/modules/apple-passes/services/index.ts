@@ -4,7 +4,7 @@ import { PKPass } from 'passkit-generator';
 import { getCertificates } from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 
-export async function generatePass(props: { cardTemplateId: number; serialNumber: string }) {
+export async function generatePass(props: { cardTemplateId: number; serialNumber: string, cardId: string }) {
     const folderPath = path.resolve(__dirname, `../../../../public/card-templates/${props.cardTemplateId}`);
 
     const [appleJSON, certificates] = await Promise.all([
@@ -50,7 +50,7 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
 
     // add barcode
     pass.setBarcodes({
-        message: appleJSONObj.barcode.message,
+        message: props.cardId,
         format: appleJSONObj.barcode.format,
     });
 
