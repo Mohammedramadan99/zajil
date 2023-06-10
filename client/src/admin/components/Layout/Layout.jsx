@@ -27,8 +27,10 @@ const RootLayout = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Grid container>
-        <Grid xs={2}>{!isNonMobile ? <MobileSidebar /> : <MainSidebar />}</Grid>
-        <Grid ml={isNonMobile ? 0 : 15} xs={10} sm={12}>
+        <Grid item xs={2}>
+          {!isNonMobile ? <MobileSidebar /> : <MainSidebar />}
+        </Grid>
+        <Grid item ml={isNonMobile ? 0 : 15} xs={10} sm={12}>
           <Outlet />
         </Grid>
       </Grid>

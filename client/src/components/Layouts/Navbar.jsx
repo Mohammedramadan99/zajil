@@ -29,8 +29,7 @@ function Navbar() {
     <div
       className={`navbar ${mode === "dark" ? "dark-mode" : "light-mode"} ${
         active ? "active" : ""
-      } `}
-    >
+      } `}>
       <div className="container">
         <div className="logo">loyalty.</div>
         <div className="block">

@@ -15,31 +15,35 @@ import {
   ForumOutlined,
   LocationOnOutlined,
   ManageAccountsOutlined,
+  Business,
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function MainSidebar() {
   const { mode } = useSelector((state) => state.mode);
   const [activeitem, setActiveItem] = useState("home");
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
-
+  const navigate = useNavigate();
   const transition = "1s ease";
   const links = [
     { icon: <HomeOutlined />, text: "home" },
-    { icon: <StyleOutlined />, text: "cards" },
+    { icon: <Business />, text: "business", slug: "business/new" },
+    { icon: <StyleOutlined />, text: "cards", slug: "cards" },
     { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "locations" },
+    { icon: <LocationOnOutlined />, text: "location", slug: "location" },
     { icon: <ForumOutlined />, text: "messages" },
-    { icon: <ManageAccountsOutlined />, text: "managers" },
   ];
   const handleClick = (item) => {
     setActiveItem(item.text);
+    navigate(`${item.slug}`);
   };
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.primary[700],
+        backgroundColor: `#0002`,
+        backdropFilter: "blur(10px)",
         position: "absolute",
         maxWidth: "500px",
         width: "100%",
@@ -47,7 +51,7 @@ function MainSidebar() {
         left: "50%",
         transform: "translateX(-50%)",
         borderRadius: "40px",
-        // border: "1px solid #fff",
+        zIndex: 10,
       }}>
       <List
         sx={{
@@ -55,8 +59,9 @@ function MainSidebar() {
           position: "relative",
           justifyContent: "center",
         }}>
-        {links?.map((item) => (
+        {links?.map((item, i) => (
           <ListItem
+            key={item.text}
             onClick={() => handleClick(item)}
             className={activeitem === item.text ? "active" : ""}
             sx={{
@@ -72,12 +77,13 @@ function MainSidebar() {
               },
               "&.active .MuiListItemIcon-root svg path,&.active .MuiListItemIcon-root svg circle":
                 {
-                  color: theme.palette.primary[900],
+                  color: theme.palette.primary[500],
                 },
               "&.active .MuiButtonBase-root": {
                 transform: "translateY(20px)",
                 opacity: 1,
                 scale: "1",
+                color: theme.palette.primary[500],
               },
               "&:nth-child(1).active ~ .indicator": {
                 transform: "translateX(calc(80px * 0))",
@@ -107,7 +113,7 @@ function MainSidebar() {
                 alignItems: "center",
                 justifyContent: "center",
                 "& svg": {
-                  color: theme.palette.background.alt,
+                  color: theme.palette.grey[600],
                   fontSize: "25px",
                 },
               }}>
@@ -134,8 +140,9 @@ function MainSidebar() {
         <div
           className="indicator"
           style={{
-            backgroundColor: theme.palette.primary[100],
-            borderColor: theme.palette.background.default,
+            backgroundColor: "#0003",
+            borderColor: "transparent",
+            backdropFilter: "blur(10px)",
           }}>
           <span
             style={{
@@ -147,7 +154,8 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopRightRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.default}`,
+              boxShadow: `0 -10px 0 0 #0001`,
+              backdropFilter: "blur(10px)",
             }}></span>
           <span
             style={{
@@ -159,7 +167,8 @@ function MainSidebar() {
               height: " 20px",
               backgroundColor: " transparent",
               borderTopLeftRadius: " 20px",
-              boxShadow: `0 -10px 0 0 ${theme.palette.background.default}`,
+              boxShadow: `0 -10px 0 0 transparent`,
+              backdropFilter: "blur(10px)",
             }}></span>
         </div>
       </List>

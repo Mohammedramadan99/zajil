@@ -9,7 +9,13 @@ import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
-
+import Cards from "./admin/pages/cards/Cards";
+import Location from "./admin/pages/Location/Location";
+import CreateBusiness from "./admin/pages/CreateBusiness/CreateBusiness";
+import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import Business from "./admin/pages/business/Business";
 const isAdmin = true;
 const router = createBrowserRouter([
   {
@@ -52,6 +58,26 @@ const router = createBrowserRouter([
         path: "/admin",
         element: <DashboardHome />,
       },
+      {
+        path: "cards",
+        element: <Cards />,
+      },
+      {
+        path: "location",
+        element: <Location />,
+      },
+      {
+        path: "business",
+        element: <Business />,
+      },
+      {
+        path: "business/new",
+        element: <CreateBusiness />,
+      },
+      {
+        path: "branch/new",
+        element: <CreateBranch />,
+      },
     ],
   },
 ]);
@@ -67,6 +93,14 @@ function App() {
       document.body.dir = "ltr";
     }
   }, [i18n.language]);
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // animation duration
+      once: false, // animation only once
+      easing: "ease-in-out", // animation easing function
+      offset: 50, // animation start offset
+    });
+  }, []);
   return (
     <>
       <RouterProvider router={router} />
