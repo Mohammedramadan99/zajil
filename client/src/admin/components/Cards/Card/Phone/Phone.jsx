@@ -7,8 +7,10 @@ function Phone({ children }) {
   return (
     <Box
       sx={{
-        border: `7px solid ${theme.palette.grey[900]}`,
-        outline: `3px solid ${theme.palette.grey[600]}`,
+        border: `7px solid #ccc`,
+        outline: `3px solid #ddd`,
+        // border: `7px solid ${theme.palette.grey[900]}`,
+        // outline: `3px solid ${theme.palette.grey[600]}`,
         width: "100%",
         height: "500px",
         borderRadius: "20px",

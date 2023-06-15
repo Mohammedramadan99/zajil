@@ -28,7 +28,7 @@ function MainSidebar() {
   const navigate = useNavigate();
   const transition = "1s ease";
   const links = [
-    { icon: <HomeOutlined />, text: "home" },
+    { icon: <HomeOutlined />, text: "home", slug: "/admin" },
     { icon: <Business />, text: "business", slug: "business/new" },
     { icon: <StyleOutlined />, text: "cards", slug: "cards" },
     { icon: <PeopleAltOutlined />, text: "clients" },

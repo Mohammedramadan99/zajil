@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import img_1 from "../../assets/images/final/banner_1.png";
 import img_2 from "../../assets/images/final/banner_2.png";
 import img_3 from "../../assets/images/final/banner_3.png";
+import Phone from "../../admin/components/Cards/Card/Phone/Phone";
 
 function Home() {
   const { t } = useTranslation();
@@ -12,18 +13,8 @@ function Home() {
 
   return (
     <div className={mode === "dark" ? "home dark-mode" : "home light-mode"}>
-      <div className="bgs">
-        <div className="p1">
-          <img src={img_1} alt="banner-img" />
-        </div>
-        <div className="p2">
-          <img src={img_2} alt="banner-img" />
-        </div>
-        <div className="p3">
-          <img src={img_3} alt="banner-img" />
-        </div>
-      </div>
       <div className="container">
+        <Phone />
         <div className="box">
           <h1 className="text"> {t("banner.text")} </h1>
         </div>

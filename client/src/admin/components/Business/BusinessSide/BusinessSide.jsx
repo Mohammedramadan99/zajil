@@ -1,13 +1,22 @@
 import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import BusinessesTable from "./BusinessesTable";
+import useBusiness from "../../../../hooks/useBusiness";
+import { businesses } from "../../../../utils/mockup/data";
+import { useNavigate } from "react-router-dom";
 function BusinessSide() {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const { getBusinesses, data, pending, error } = useBusiness();
+  useEffect(() => {
+    // getBusinesses();
+  }, []);
+
   return (
     <Box>
       <Typography variant="h2">Businesses</Typography>
-      <Button variant="outlined" sx={{ mt: 2 }}>
+      <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("new")}>
         create new business
       </Button>
 
@@ -23,7 +32,7 @@ function BusinessSide() {
         22
       </Typography>
       <Box mt={2}>
-        <BusinessesTable />
+        <BusinessesTable data={businesses} />
       </Box>
     </Box>
   );

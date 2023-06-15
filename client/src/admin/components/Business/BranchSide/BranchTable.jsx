@@ -14,17 +14,15 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-// import EnhancedTableHead from "../../components/EnhancedTableHead/EnhancedTableHead";
 import EnhancedTableHead from "../../PublicComponents/EnhancedTableHead/EnhancedTableHead";
 import { useTable } from "../../../hooks/useTable";
 import { sortTable } from "../../../utils/sortTable";
-import { red } from "@mui/material/colors";
 const headers = [
   { id: "title", label: "Title" },
-  { id: "branches", label: "Branches" },
+  { id: "locations", label: "Locations" },
   { id: "actions", label: "Actions" },
 ];
-const BusinessesTable = ({ data = [] }) => {
+const BranchesTable = ({ data = [] }) => {
   const {
     page,
     rowsPerPage,
@@ -45,7 +43,7 @@ const BusinessesTable = ({ data = [] }) => {
         variant="p1"
         component={"p"}
         sx={{ color: theme.palette.grey[300], fontSize: 13, mb: 2 }}>
-        All Businesses
+        All Branches
       </Typography>
       <TableContainer>
         <Table>
@@ -61,15 +59,13 @@ const BusinessesTable = ({ data = [] }) => {
               .map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <Link to={`/admin/orders/${item.id}`}>{item.name}</Link>
+                    <Link to={`/admin/branches/${item.id}`}>{item.name}</Link>
                   </TableCell>
 
-                  <TableCell>
-                    <Link to={`/admin/users/1`}>{item.branches}</Link>
-                  </TableCell>
+                  <TableCell>{item.location}</TableCell>
                   <TableCell>
                     <Button
-                      variant="text"
+                      variant="outlined"
                       color="error"
                       size="small"
                       onClick={() => onDelete(item.id)}>
@@ -99,4 +95,4 @@ const BusinessesTable = ({ data = [] }) => {
   );
 };
 
-export default BusinessesTable;
+export default BranchesTable;
