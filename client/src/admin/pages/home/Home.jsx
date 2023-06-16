@@ -15,6 +15,10 @@ import {
   PaymentOutlined,
 } from "@mui/icons-material";
 import CardStats from "../../components/Home/CardStats/CardStats";
+import LineChart from "../../components/Charts/LineChart/LineChart";
+import SyncLineChart from "../../components/Charts/LineChart/SyncLineChart";
+import ShapeBarChart from "../../components/Charts/BarChart/ShapeBarChart";
+import BarChartNoPadding from "../../components/Charts/BarChart/BarChartNoPadding";
 function Home() {
   const theme = useTheme();
   const cards = [
@@ -65,11 +69,23 @@ function Home() {
         </Grid> */}
 
         <Grid xs={12} item container spacing={2}>
-          {cards.map((item) => (
-            <Grid xs={6} item>
+          {cards.map((item, i) => (
+            <Grid xs={6} item key={i}>
               <CardStats />
             </Grid>
           ))}
+        </Grid>
+        <Grid xs={12} md={6} item>
+          <LineChart />
+        </Grid>
+        <Grid xs={12} md={6} item>
+          <SyncLineChart />
+        </Grid>
+        <Grid xs={12} md={6} item>
+          <ShapeBarChart />
+        </Grid>
+        <Grid xs={12} md={6} item>
+          <BarChartNoPadding />
         </Grid>
       </Grid>
     </Box>

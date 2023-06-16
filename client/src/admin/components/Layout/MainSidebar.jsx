@@ -44,7 +44,7 @@ function MainSidebar() {
       sx={{
         backgroundColor: `#0002`,
         backdropFilter: "blur(10px)",
-        position: "absolute",
+        position: "fixed",
         maxWidth: "500px",
         width: "100%",
         bottom: "50px",
