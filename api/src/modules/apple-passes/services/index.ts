@@ -1,7 +1,7 @@
-import { promises as fs } from 'fs';
+import { promises as fs, writeFileSync } from 'fs';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
-import { getCertificates } from '../utils';
+import { getCertificates, populateVariables } from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
@@ -24,7 +24,9 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         fs.readFile(`${folderPath}/background.png`).catch(() => null),
     ]);
 
-    const appleJSONObj: IAppleCardProps = JSON.parse(appleJSON.toString());
+    const appleJSONObj: IAppleCardProps = JSON.parse(
+        await populateVariables(appleJSON.toString(), Number(props.cardId)),
+    );
 
     const pass = new PKPass(
         {},
