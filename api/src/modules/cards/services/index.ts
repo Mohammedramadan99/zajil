@@ -291,7 +291,6 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
     if (!gift) throw new HttpError(404, 'Gift not found');
     const isGiftLimited = gift.limitedAmount !== null;
     console.log(isGiftLimited);
-    
 
     // check if the gift in stock
     if (isGiftLimited && gift.limitedAmount <= 0) throw new HttpError(400, 'Gift out of stock');
@@ -309,4 +308,99 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
     }
 
     return await loyaltyCard.save();
+};
+
+export const registerDevice = async ({
+    serialNumber,
+    pushToken,
+    deviceLibraryIdentifier,
+}: {
+    serialNumber: number;
+    pushToken: string;
+    deviceLibraryIdentifier: string;
+}) => {
+    console.log('registerDevice');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // update deviceLibraryIdentifier
+    card.deviceLibraryIdentifier = deviceLibraryIdentifier;
+
+    // update pushToken
+    card.pushToken = pushToken;
+
+    await card.save();
+
+    console.log('registerDevice Success');
+    return true;
+};
+
+export const unregisterDevice = async (props: {
+    deviceLibraryIdentifier: string;
+    passTypeIdentifier: string;
+    serialNumber: number;
+}) => {
+    console.log('unregisterDevice');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: props.serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // update pushToken
+    card.pushToken = null;
+    await card.save();
+
+    console.log('unregisterDevice Success');
+    return true;
+};
+
+export const getSerialNumbers = async (props: { deviceLibraryIdentifier: string }) => {
+    console.log('getSerialNumbers');
+
+    // find cards
+    const cards = await Card.findAll({
+        where: {
+            deviceLibraryIdentifier: props.deviceLibraryIdentifier,
+        },
+        attributes: ['id', 'updatedAt', 'createdAt'],
+    });
+
+    const ids = cards.map((card) => card.id.toString());
+    const lastUpdated = cards.length > 0 ? cards[0].updatedAt || cards[0].createdAt : new Date();
+    console.log(ids);
+    console.log('getSerialNumbers Success');
+    const out = {
+        serialNumbers: ids,
+        lastUpdated,
+    };
+    console.log(out);
+    return out;
+};
+export const sendUpdatedPass = async (props: { passTypeIdentifier: string; serialNumber: number }) => {
+    console.log('sendUpdatedPass');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: props.serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // load the pkpass file
+    const pkpassBuffer = fs.readFileSync(path.join(__dirname, `../../../../public/cards/${card.id}.pkpass`));
+
+    // send the pkpass file
+    console.log('sendUpdatedPass Success');
+    return pkpassBuffer;
 };

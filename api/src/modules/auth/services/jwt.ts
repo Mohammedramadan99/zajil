@@ -16,6 +16,14 @@ export const signJWT = (user: User) => {
     return sign(payload, config.JWT.secret, { expiresIn: config.JWT.expiresIn });
 };
 
+export const signApplePassAuthTokens = ({ cardId, cardType }) => {
+    const payload = {
+        cardId,
+        cardType,
+    };
+    return sign(payload, config.JWT.secret);
+};
+
 export const verifyJWT = (token: string): IJWTPayload => {
     // @ts-ignore
     return verify(token, config.JWT.secret);

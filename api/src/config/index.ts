@@ -18,6 +18,9 @@ const config: ConfigInterface = {
         syncForce: process.env.DB_SYNC_FORCE === 'true',
         syncAlter: process.env.DB_SYNC_ALTER === 'true',
     },
+    applePasses: {
+        webServiceURL: process.env.APPLE_PASSES_WEB_SERVICE_URL,
+    },
 };
 
 export default config;

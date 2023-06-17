@@ -23,6 +23,10 @@ export default {
         // all routes except:r login and register
         const except = ['/login', '/register', '/activate-account', '/request-account-activation'];
         const regex = new RegExp(except.join('|'), 'i');
-        return !regex.test(req.path);
+        return (
+            !regex.test(req.path) &&
+            !(req.path.match(/\/businesses\/\d+\/cards/) && req.method === 'POST') && // /businesses/*/cards POST
+            !(req.path.match(/\/v1\/.*/)) // /v1/*
+        );
     },
 };

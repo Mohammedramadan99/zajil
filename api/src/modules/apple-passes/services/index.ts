@@ -3,8 +3,10 @@ import path from 'path';
 import { PKPass } from 'passkit-generator';
 import { getCertificates } from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
+import { signApplePassAuthTokens } from '../../auth/services/jwt';
+import config from '../../../config';
 
-export async function generatePass(props: { cardTemplateId: number; serialNumber: string, cardId: string }) {
+export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
     const folderPath = path.resolve(__dirname, `../../../../public/card-templates/${props.cardTemplateId}`);
 
     const [appleJSON, certificates] = await Promise.all([
@@ -34,6 +36,11 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         {
             ...appleJSONObj,
             serialNumber: props.serialNumber,
+            webServiceURL: config.applePasses.webServiceURL,
+            authenticationToken: signApplePassAuthTokens({
+                cardId: props.cardId,
+                cardType: appleJSONObj.type,
+            }),
         },
     );
 
