@@ -1,5 +1,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { Card } from '../../cards/models/card.model';
+import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
+import { LoyaltyCard } from '../../cards/models/loyalty-card.model';
 
 interface Cache {
     certificates:
@@ -34,3 +37,30 @@ export async function getCertificates(): Promise<Exclude<Cache['certificates'], 
 
     return cache.certificates;
 }
+
+export const populateVariables = async (str: string, cardId: number) => {
+    // get card
+    const card = (await Card.findOne({
+        where: { id: cardId },
+        include: [
+            {
+                model: CardTemplate,
+                as: 'cardTemplate',
+            },
+        ],
+    })) as Card & { cardTemplate: CardTemplate };
+
+    const cardType = card.cardTemplate.cardType;
+
+    switch (cardType) {
+        case CardType.LOYALTY:
+            const loyaltyCard = await LoyaltyCard.findOne({
+                where: { id: cardId },
+            });
+
+            // replace {{points}} with loyalty points
+            str = str.replace(/{{points}}/g, loyaltyCard.points.toString());
+    }
+
+    return str;
+};

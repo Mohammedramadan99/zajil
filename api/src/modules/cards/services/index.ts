@@ -205,7 +205,12 @@ export const loyaltyAddPoints = async (cardId: number) => {
 
     // add points
     loyaltyCard.points += template.pointsPerVisit;
-    return await loyaltyCard.save();
+    const newCard = await loyaltyCard.save();
+
+    // update the pass
+    await generatePassFromTemplate(cardId, card.templateId);
+    
+    return newCard;
 };
 
 // loyalty subtract points
