@@ -18,7 +18,7 @@ function CreateCard() {
           <Grid xs={9} item>
             <CreateCardForm />
           </Grid>
-          <Grid spacing={2} xs={3} item>
+          <Grid xs={3} item>
             <Box width={"100%"} m={"auto"}>
               <Card title="holidays" withControl={false} />
             </Box>

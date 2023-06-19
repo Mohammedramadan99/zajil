@@ -1,5 +1,4 @@
-import { useTheme } from "@emotion/react";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, useTheme } from "@mui/material";
 import React from "react";
 
 function Phone({ children }) {
@@ -25,7 +24,7 @@ function Phone({ children }) {
           sx={{
             width: "10px",
             height: "10px",
-            background: theme.palette.grey[100],
+            background: theme.palette.grey[200],
             borderRadius: "50%",
           }}></Box>
         <Box
