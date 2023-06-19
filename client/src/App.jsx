@@ -16,6 +16,7 @@ import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Business from "./admin/pages/business/Business";
+import CreateCard from "./admin/pages/createCard/CreateCard";
 const isAdmin = true;
 const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: "branch/new",
         element: <CreateBranch />,
+      },
+      {
+        path: "cards/new",
+        element: <CreateCard />,
       },
     ],
   },

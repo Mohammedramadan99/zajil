@@ -43,3 +43,51 @@ export const branches = [
     locations: 2,
   },
 ];
+
+export const orders = [
+  {
+    id: 1,
+    customer: {
+      name: "mohamed",
+      img: "",
+    },
+    date: "2023-06-09T22:48:43.026Z",
+    price: 20,
+    items: [
+      {
+        name: "item 1",
+      },
+    ],
+    status: "success",
+  },
+  {
+    id: 2,
+    customer: {
+      name: "ramadan",
+      img: "",
+    },
+    date: "2023-06-09T22:48:43.026Z",
+    price: 20,
+    items: [
+      {
+        name: "item 1",
+      },
+    ],
+    status: "success",
+  },
+  {
+    id: 1,
+    customer: {
+      name: "abdelmaqsode",
+      img: "",
+    },
+    date: "2023-06-09T22:48:43.026Z",
+    price: 20,
+    items: [
+      {
+        name: "item 1",
+      },
+    ],
+    status: "success",
+  },
+];

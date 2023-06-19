@@ -19,6 +19,8 @@ import LineChart from "../../components/Charts/LineChart/LineChart";
 import SyncLineChart from "../../components/Charts/LineChart/SyncLineChart";
 import ShapeBarChart from "../../components/Charts/BarChart/ShapeBarChart";
 import BarChartNoPadding from "../../components/Charts/BarChart/BarChartNoPadding";
+import OrdersTable from "../../components/OrdersTable/OrdersTable";
+import { orders } from "../../../utils/mockup/data";
 function Home() {
   const theme = useTheme();
   const cards = [
@@ -86,6 +88,9 @@ function Home() {
         </Grid>
         <Grid xs={12} md={6} item>
           <BarChartNoPadding />
+        </Grid>
+        <Grid xs={12} md={6} item>
+          <OrdersTable data={orders} />
         </Grid>
       </Grid>
     </Box>
