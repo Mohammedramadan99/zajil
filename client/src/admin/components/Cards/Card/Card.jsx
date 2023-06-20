@@ -12,9 +12,10 @@ import {
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 
-function Card({ title, bg, icon, withControl = true }) {
+function Card({ title, bg, icon, activeImg, withControl = true }) {
   const [stampsNumber, setStampsNumber] = useState(10);
   const theme = useTheme();
+  console.log({ activeImg });
   return (
     <>
       {/* Card */}
@@ -29,7 +30,25 @@ function Card({ title, bg, icon, withControl = true }) {
             margin: "auto",
             borderRadius: "20px",
           }}>
-          <Stack direction={"row"} gap={1} p={1} flexWrap={"wrap"}>
+          <img src="" id="photo" />
+          <Stack
+            direction={"row"}
+            gap={1}
+            p={1}
+            flexWrap={"wrap"}
+            sx={
+              activeImg?.url
+                ? {
+                    backgroundImage: `url(${activeImg?.url})`,
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                    borderRadius: "10px",
+                  }
+                : {
+                    backgroundColor: activeImg?.color,
+                    borderRadius: "10px",
+                  }
+            }>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
               <Box
                 key={item}
@@ -52,7 +71,12 @@ function Card({ title, bg, icon, withControl = true }) {
             ))}
           </Stack>
         </Box>
-        <Box display={"flex"} justifyContent={"space-between"} p={2} gap={2}>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          p={2}
+          mt={2}
+          gap={2}>
           <Box>
             <Typography variant={"body2"} fontWeight={600}>
               {" "}

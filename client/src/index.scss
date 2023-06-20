@@ -33,7 +33,7 @@ input {
 .flex {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
 }
 .items-center {
   display: flex;
@@ -43,6 +43,11 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .parent-dark-mode {
   // background-color: $mauve_color-1 !important;
