@@ -7,7 +7,9 @@ function CreateCard() {
   const theme = useTheme();
   const [tempPhoto, setTempPhoto] = useState("");
   const [activeImg, setActiveImg] = useState("");
-
+  const [textLogo, setTextLogo] = useState(null);
+  const [stickersNumber, setStickersNumber] = useState();
+  const [logoImg, setLogoImg] = useState(null);
   return (
     <Box
       sx={{
@@ -24,6 +26,12 @@ function CreateCard() {
               setTempPhoto={setTempPhoto}
               activeImg={activeImg}
               setActiveImg={setActiveImg}
+              textLogo={textLogo}
+              setTextLogo={setTextLogo}
+              logoImg={logoImg}
+              setLogoImg={setLogoImg}
+              stickersNumber={stickersNumber}
+              setStickersNumber={setStickersNumber}
             />
           </Grid>
           <Grid xs={3} item>
@@ -35,6 +43,12 @@ function CreateCard() {
                   tempPhoto={tempPhoto}
                   activeImg={activeImg}
                   setActiveImg={setActiveImg}
+                  textLogo={textLogo}
+                  setTextLogo={setTextLogo}
+                  logoImg={logoImg}
+                  setLogoImg={setLogoImg}
+                  stickersNumber={stickersNumber}
+                  setStickersNumber={setStickersNumber}
                 />
               </Box>
             </div>

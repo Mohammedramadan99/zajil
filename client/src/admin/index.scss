@@ -46,3 +46,21 @@
   top: 40px;
   height: 100px;
 }
+
+.stickers {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 30px);
+  grid-template-rows: repeat(3, 30px);
+  background-color: #0006;
+  padding: 10px;
+  gap: 5px;
+  border-radius: 10px;
+  transition: 1s ease;
+  .sticker {
+    width: 100%;
+    background-color: #fff5;
+    border-radius: 50%;
+    transition: 1s ease;
+  }
+}

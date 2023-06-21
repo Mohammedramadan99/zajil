@@ -7,7 +7,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import Card from "../../components/Cards/Card/Card";
 import cardBg_1 from "../../../assets/images/card_bg_1.jpg";
 import { Star } from "@mui/icons-material";
@@ -25,7 +25,8 @@ function Cards() {
   const theme = useTheme();
   const navigate = useNavigate();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
   const handleClickOpen = () => {
     setOpen(true);
   };

@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -26,21 +26,33 @@ import bg4 from "../../../assets/images/cardsBackgrounds/bg-4.jpg";
 import bg5 from "../../../assets/images/cardsBackgrounds/bg-5.jpg";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
+function CreateCardForm({
+  tempPhoto,
+  setTempPhoto,
+  activeImg,
+  setActiveImg,
+  logoImg,
+  setLogoImg,
+  textLogo,
+  setTextLogo,
+  stickersNumber,
+  setStickersNumber,
+}) {
   const [color, setColor] = useState("#aabbcc");
   const theme = useTheme();
   const icons = [...Array(50)];
-
   const formik = useFormik({
     initialValues: {
       cardName: "",
       cardType: "",
       brandName: "",
+      stickersNumber,
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
       cardType: yup.string().required(),
       brandName: yup.string().required(),
+      stickersNumber: yup.number().required(),
     }),
     onSubmit(values) {
       const data = { ...values, activeImg, tempPhoto };
@@ -78,6 +90,7 @@ function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
   };
 
   const onImageChange = (e) => {
+    console.log(e.target.files);
     if (e.target.files.length <= 0) {
       return false;
     }
@@ -90,14 +103,28 @@ function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
       return false;
     }
     const url = URL.createObjectURL(file);
-    console.log({ file });
-    document.getElementById("photo").src = url;
-    document.getElementById("logo").src = url;
+    console.log({ url });
+    setTextLogo(null);
+    setLogoImg(url);
     setTempPhoto(file);
-    // setLogoImg(file);
-    console.log({ tempPhoto });
+    console.log({ textLogo });
   };
-
+  useEffect(() => {
+    // Whenever the textLogo or logoImg props change, update the logo image
+    if (textLogo) {
+      setLogoImg(null);
+      setTextLogo(textLogo);
+    } else if (logoImg) {
+      setTextLogo(null);
+      setLogoImg(logoImg);
+    }
+    if (stickersNumber) {
+      setStickersNumber(stickersNumber);
+    }
+  }, [textLogo, logoImg, stickersNumber]);
+  const fileInputClick = (event) => {
+    event.target.value = null;
+  };
   return (
     <Box sx={{ background: theme.palette.grey[800], p: 2 }}>
       <form onSubmit={formik.handleSubmit}>
@@ -256,7 +283,7 @@ function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
                       position: "relative",
                       width: "50px",
                     }}>
-                    {tempPhoto && <img src={""} id="logo" width={50} />}
+                    <img src={textLogo && ""} id="logo" width={50} />
 
                     <label
                       style={{
@@ -270,9 +297,10 @@ function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
                       <AddAPhotoIcon fontSize="medium" />
                       <input
                         type="file"
-                        multiple={false}
+                        // multiple={false}
                         accept="image/jpeg,image/jpg,image/png"
                         style={{ display: "none" }}
+                        onClick={fileInputClick}
                         onChange={onImageChange}
                       />
                     </label>
@@ -301,12 +329,42 @@ function CreateCardForm({ tempPhoto, setTempPhoto, activeImg, setActiveImg }) {
                         },
                     }}
                   />
-                  <Button variant="outlined">use as logo</Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setLogoImg(null);
+                      setTextLogo(formik.values.brandName);
+                    }}>
+                    use as logo
+                  </Button>
+                </Stack>
+                <Stack direction={"row"} spacing={2}>
+                  <TextField
+                    name="stickersNumber"
+                    label="Stickers Number"
+                    type="number"
+                    value={formik.values.stickersNumber}
+                    // onChange={formik.handleChange}
+                    onChange={(e) => {
+                      setStickersNumber(Number(e.target.value));
+                      formik.setFieldValue("stickersNumber", e.target.value);
+                    }}
+                    error={Boolean(formik.errors.stickersNumber)}
+                    helperText={formik.errors.stickersNumber}
+                    inputProps={{
+                      min: 1,
+                      max: 30,
+                    }}
+                    sx={{
+                      width: "50%",
+                    }}
+                  />
                 </Stack>
               </div>
             </Box>
           </AccordionDetails>
         </Accordion>
+
         <Button type="submit">submit</Button>
       </form>
     </Box>
