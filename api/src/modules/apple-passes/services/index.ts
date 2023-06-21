@@ -1,7 +1,7 @@
 import { promises as fs, writeFileSync } from 'fs';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
-import { getCertificates, populateVariables } from '../utils';
+import { generateStickersIfPossible, getCertificates, populateVariables } from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
@@ -81,15 +81,21 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         pass.addBuffer('footer.png', footer);
         pass.addBuffer('footer@2x.png', footer);
     }
-    // add strip image
-    if (strip) {
-        pass.addBuffer('strip.png', strip);
-        pass.addBuffer('strip@2x.png', strip);
-    }
     // add background image
     if (background) {
         pass.addBuffer('background.png', background);
         pass.addBuffer('background@2x.png', background);
+    }
+
+    // add strip image
+    if (strip) {
+        // generate stickers if possible
+        const success = await generateStickersIfPossible(pass, props.cardTemplateId, strip);
+
+        if (!success) {
+            pass.addBuffer('strip.png', strip);
+            pass.addBuffer('strip@2x.png', strip);
+        }
     }
 
     return pass;

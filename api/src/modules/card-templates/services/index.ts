@@ -60,6 +60,8 @@ export const createCardTemplate = async (
                     maxDailyUsage: createCardTemplateDto.maxDailyUsage,
                     subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
                     nItems: createCardTemplateDto.nItems,
+                    stickers: createCardTemplateDto.stickers,
+                    stickersCount: createCardTemplateDto.stickersCount,
                 });
                 break;
         }
@@ -137,6 +139,10 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
     // create the google pass json file
     if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
 
+    // Create sticker images folder
+    if (!fs.existsSync(path.join(cardTemplateFolderPath, 'stickers')))
+        fs.mkdirSync(path.join(cardTemplateFolderPath, 'stickers'));
+
     // download the logo and icon images
     const imagesToDownload = [
         { url: logoUrl, path: 'logo.png' },
@@ -145,6 +151,12 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         { url: footerUrl, path: 'footer.png' },
         { url: stripUrl, path: 'strip.png' },
         { url: backgroundUrl, path: 'background.png' },
+
+        // stickers
+        ...rest.stickers.map((stickerProps) => ({
+            url: stickerProps.imageUrl,
+            path: `stickers/${stickerProps.title}.${stickerProps.imageType}`,
+        })),
     ]
         .filter(({ url }) => url)
         .map((image) => downloadImageToFolder(image.url, path.join(cardTemplateFolderPath, image.path)));

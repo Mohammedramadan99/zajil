@@ -28,6 +28,30 @@ export enum CardDesignType {
     StoreCard = 'storeCard',
 }
 
+export enum StickerImageType {
+    PNG = 'png',
+    JPG = 'jpg',
+}
+
+export class StickerDto {
+    // imageUrl
+    @IsNotEmpty()
+    @IsString()
+    @IsUrl()
+    imageUrl: string;
+
+    // title
+    @IsNotEmpty()
+    @IsString()
+    title: string;
+
+    // imageType
+    @IsNotEmpty()
+    @IsString()
+    @IsEnum(StickerImageType)
+    imageType: StickerImageType;
+}
+
 export class CreateCardTemplateDto {
     // name
     @IsNotEmpty()
@@ -129,6 +153,20 @@ export class CreateCardTemplateDto {
     @IsNumber()
     @Min(0)
     nItems: number;
+
+    // stickers | on items subscription card type if there is a stripe image and there is noStickers
+    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl && o.stickersCount)
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => StickerDto)
+    stickers: StickerDto[];
+
+    // noStickers | on items subscription card type if there is a stripe image
+    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl)
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    stickersCount: number;
 
     /*
      * Loyalty Card Template Validation
