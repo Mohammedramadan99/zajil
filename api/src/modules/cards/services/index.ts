@@ -11,6 +11,8 @@ import { generatePass } from '../../apple-passes/services';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
 import fs from 'fs';
+import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
+import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -71,6 +73,7 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
         serialNumber: cardId.toString(),
+        cardId: cardId.toString(),
     });
 
     // create a folder in the public folder to store the card template files
@@ -82,7 +85,6 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
 
     // return the uri using the public folder as the root
     return cardPath.replace(path.join(__dirname, '../../../../public'), '');
-    
 };
 
 export const findAllCards = async ({
@@ -177,7 +179,22 @@ export const deleteCardById = async (cardId: number) => {
 };
 
 // loyalty add points
-export const loyaltyAddPoints = async (cardId: number, value: number) => {
+export const loyaltyAddPoints = async (cardId: number) => {
+    // find the loyalty card
+    const card = await Card.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    const template = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: card.templateId,
+        },
+    });
+    if (!template) throw new HttpError(404, 'Template not found');
+
     // find the loyalty card
     const loyaltyCard = await LoyaltyCard.findOne({
         where: {
@@ -187,10 +204,13 @@ export const loyaltyAddPoints = async (cardId: number, value: number) => {
     if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
     // add points
-    loyaltyCard.points += value;
-    await loyaltyCard.save();
+    loyaltyCard.points += template.pointsPerVisit;
+    const newCard = await loyaltyCard.save();
 
-    return loyaltyCard;
+    // update the pass
+    await generatePassFromTemplate(cardId, card.templateId);
+    
+    return newCard;
 };
 
 // loyalty subtract points
@@ -256,4 +276,136 @@ const removeRowNullFields = (row) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
+};
+
+export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
+    // find the loyalty card
+    const loyaltyCard = await LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+    });
+    if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+    const isGiftLimited = gift.limitedAmount !== null;
+    console.log(isGiftLimited);
+
+    // check if the gift in stock
+    if (isGiftLimited && gift.limitedAmount <= 0) throw new HttpError(400, 'Gift out of stock');
+
+    // check if the user has enough points
+    if (loyaltyCard.points < gift.priceNPoints) throw new HttpError(400, 'Not enough points');
+
+    // subtract points
+    loyaltyCard.points -= gift.priceNPoints;
+
+    // subtract gift from stock if limited
+    if (isGiftLimited) {
+        gift.limitedAmount -= 1;
+        await gift.save();
+    }
+
+    return await loyaltyCard.save();
+};
+
+export const registerDevice = async ({
+    serialNumber,
+    pushToken,
+    deviceLibraryIdentifier,
+}: {
+    serialNumber: number;
+    pushToken: string;
+    deviceLibraryIdentifier: string;
+}) => {
+    console.log('registerDevice');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // update deviceLibraryIdentifier
+    card.deviceLibraryIdentifier = deviceLibraryIdentifier;
+
+    // update pushToken
+    card.pushToken = pushToken;
+
+    await card.save();
+
+    console.log('registerDevice Success');
+    return true;
+};
+
+export const unregisterDevice = async (props: {
+    deviceLibraryIdentifier: string;
+    passTypeIdentifier: string;
+    serialNumber: number;
+}) => {
+    console.log('unregisterDevice');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: props.serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // update pushToken
+    card.pushToken = null;
+    await card.save();
+
+    console.log('unregisterDevice Success');
+    return true;
+};
+
+export const getSerialNumbers = async (props: { deviceLibraryIdentifier: string }) => {
+    console.log('getSerialNumbers');
+
+    // find cards
+    const cards = await Card.findAll({
+        where: {
+            deviceLibraryIdentifier: props.deviceLibraryIdentifier,
+        },
+        attributes: ['id', 'updatedAt', 'createdAt'],
+    });
+
+    const ids = cards.map((card) => card.id.toString());
+    const lastUpdated = cards.length > 0 ? cards[0].updatedAt || cards[0].createdAt : new Date();
+    console.log(ids);
+    console.log('getSerialNumbers Success');
+    const out = {
+        serialNumbers: ids,
+        lastUpdated,
+    };
+    console.log(out);
+    return out;
+};
+export const sendUpdatedPass = async (props: { passTypeIdentifier: string; serialNumber: number }) => {
+    console.log('sendUpdatedPass');
+
+    // find card
+    const card = await Card.findOne({
+        where: {
+            id: props.serialNumber,
+        },
+    });
+    if (!card) throw new HttpError(404, 'Card not found');
+
+    // load the pkpass file
+    const pkpassBuffer = fs.readFileSync(path.join(__dirname, `../../../../public/cards/${card.id}.pkpass`));
+
+    // send the pkpass file
+    console.log('sendUpdatedPass Success');
+    return pkpassBuffer;
 };

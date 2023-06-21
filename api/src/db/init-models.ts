@@ -9,6 +9,9 @@ import { init as initCardTemplate } from '../modules/card-templates/models/card-
 import { init as initLoyaltyCardTemplate } from '../modules/card-templates/models/loyalty-card-template.model';
 import { init as initItemsSubscriptionCardTemplate } from '../modules/card-templates/models/items-subscription-card-template.model';
 
+// loyalty gifts
+import { init as initLoyaltyGift } from '../modules/card-templates/models/loyalty-gift.model';
+
 // cards
 import { init as initCard } from '../modules/cards/models/card.model';
 import { init as initLoyaltyCard } from '../modules/cards/models/loyalty-card.model';
@@ -29,6 +32,9 @@ export const initModels = (sequelize: Sequelize) => {
         initCardTemplate,
         initLoyaltyCardTemplate,
         initItemsSubscriptionCardTemplate,
+
+        // loyalty gifts
+        initLoyaltyGift,
 
         // cards
         initCard,

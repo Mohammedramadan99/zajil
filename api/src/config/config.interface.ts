@@ -8,11 +8,14 @@ export interface ConfigInterface {
         secret: string;
         expiresIn: string;
     };
-    db:{
+    db: {
         uri: string;
         logging: boolean;
         sync: boolean;
         syncForce: boolean;
         syncAlter: boolean;
-    }
+    };
+    applePasses: {
+        webServiceURL: string;
+    };
 }

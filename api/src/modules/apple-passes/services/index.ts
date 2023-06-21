@@ -1,10 +1,12 @@
-import { promises as fs } from 'fs';
+import { promises as fs, writeFileSync } from 'fs';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
-import { getCertificates } from '../utils';
+import { generateStickersIfPossible, getCertificates, populateVariables } from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
+import { signApplePassAuthTokens } from '../../auth/services/jwt';
+import config from '../../../config';
 
-export async function generatePass(props: { cardTemplateId: number; serialNumber: string }) {
+export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
     const folderPath = path.resolve(__dirname, `../../../../public/card-templates/${props.cardTemplateId}`);
 
     const [appleJSON, certificates] = await Promise.all([
@@ -22,7 +24,9 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         fs.readFile(`${folderPath}/background.png`).catch(() => null),
     ]);
 
-    const appleJSONObj: IAppleCardProps = JSON.parse(appleJSON.toString());
+    const appleJSONObj: IAppleCardProps = JSON.parse(
+        await populateVariables(appleJSON.toString(), Number(props.cardId)),
+    );
 
     const pass = new PKPass(
         {},
@@ -34,6 +38,11 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         {
             ...appleJSONObj,
             serialNumber: props.serialNumber,
+            webServiceURL: config.applePasses.webServiceURL,
+            authenticationToken: signApplePassAuthTokens({
+                cardId: props.cardId,
+                cardType: appleJSONObj.type,
+            }),
         },
     );
 
@@ -50,7 +59,7 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
 
     // add barcode
     pass.setBarcodes({
-        message: appleJSONObj.barcode.message,
+        message: props.cardId,
         format: appleJSONObj.barcode.format,
     });
 
@@ -72,15 +81,21 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         pass.addBuffer('footer.png', footer);
         pass.addBuffer('footer@2x.png', footer);
     }
-    // add strip image
-    if (strip) {
-        pass.addBuffer('strip.png', strip);
-        pass.addBuffer('strip@2x.png', strip);
-    }
     // add background image
     if (background) {
         pass.addBuffer('background.png', background);
         pass.addBuffer('background@2x.png', background);
+    }
+
+    // add strip image
+    if (strip) {
+        // generate stickers if possible
+        const success = await generateStickersIfPossible(pass, props.cardTemplateId, strip);
+
+        if (!success) {
+            pass.addBuffer('strip.png', strip);
+            pass.addBuffer('strip@2x.png', strip);
+        }
     }
 
     return pass;

@@ -5,6 +5,8 @@ export class Card extends Model {
     public clientPhone!: string;
     public clientName!: string;
     public templateId!: number;
+    public deviceLibraryIdentifier: string;
+    public pushToken: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -29,6 +31,14 @@ export const init = (sequelize: Sequelize) =>
             templateId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+            },
+            deviceLibraryIdentifier: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            pushToken: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
         },
         {

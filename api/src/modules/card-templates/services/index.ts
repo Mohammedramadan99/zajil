@@ -9,6 +9,8 @@ import path from 'path';
 import fs from 'fs';
 import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
+import { LoyaltyGift } from '../models/loyalty-gift.model';
+import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -40,7 +42,16 @@ export const createCardTemplate = async (
             case CardType.LOYALTY:
                 subCardTemplate = await LoyaltyCardTemplate.create({
                     id: cardTemplate.id,
+                    pointsPerVisit: createCardTemplateDto.pointsPerVisit,
                 });
+
+                // add gifts
+                await LoyaltyGift.bulkCreate(
+                    createCardTemplateDto.gifts.map((gift) => ({
+                        ...gift,
+                        templateId: cardTemplate.id,
+                    })),
+                );
                 break;
 
             case CardType.ITEMS_SUBSCRIPTION:
@@ -49,6 +60,8 @@ export const createCardTemplate = async (
                     maxDailyUsage: createCardTemplateDto.maxDailyUsage,
                     subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
                     nItems: createCardTemplateDto.nItems,
+                    stickers: createCardTemplateDto.stickers,
+                    stickersCount: createCardTemplateDto.stickersCount,
                 });
                 break;
         }
@@ -126,6 +139,10 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
     // create the google pass json file
     if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
 
+    // Create sticker images folder
+    if (!fs.existsSync(path.join(cardTemplateFolderPath, 'stickers')))
+        fs.mkdirSync(path.join(cardTemplateFolderPath, 'stickers'));
+
     // download the logo and icon images
     const imagesToDownload = [
         { url: logoUrl, path: 'logo.png' },
@@ -134,6 +151,12 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         { url: footerUrl, path: 'footer.png' },
         { url: stripUrl, path: 'strip.png' },
         { url: backgroundUrl, path: 'background.png' },
+
+        // stickers
+        ...rest.stickers.map((stickerProps) => ({
+            url: stickerProps.imageUrl,
+            path: `stickers/${stickerProps.title}.${stickerProps.imageType}`,
+        })),
     ]
         .filter(({ url }) => url)
         .map((image) => downloadImageToFolder(image.url, path.join(cardTemplateFolderPath, image.path)));
@@ -238,6 +261,13 @@ const FIND_INCLUDE_OPTIONS = [
             '$CardTemplate.cardType$': CardType.LOYALTY,
         },
         required: false,
+        include: [
+            {
+                model: LoyaltyGift,
+                as: 'loyaltyGifts',
+                required: false,
+            },
+        ],
     },
     {
         model: ItemsSubscriptionCardTemplate,
@@ -253,4 +283,72 @@ const removeRowNullFields = (row) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
+};
+
+export const addGiftToLoyaltyCardTemplate = async (cardTemplateId: number, body: CreateLoyaltyGiftDto) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // create the gift
+    const gift = await LoyaltyGift.create({
+        ...body,
+        templateId: loyaltyCardTemplate.id,
+    });
+
+    return gift;
+};
+export const updateGiftInLoyaltyCardTemplate = async (
+    cardTemplateId: number,
+    giftId: number,
+    body: CreateLoyaltyGiftDto,
+) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+            templateId: loyaltyCardTemplate.id,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+
+    // update the gift
+    await gift.update(body);
+
+    return gift;
+};
+export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, giftId: number) => {
+    // find the loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: {
+            id: cardTemplateId,
+        },
+    });
+    if (!loyaltyCardTemplate) throw new HttpError(404, 'Card template not found');
+
+    // find the gift
+    const gift = await LoyaltyGift.findOne({
+        where: {
+            id: giftId,
+            templateId: loyaltyCardTemplate.id,
+        },
+    });
+    if (!gift) throw new HttpError(404, 'Gift not found');
+
+    // delete the gift
+    await gift.destroy();
+
+    return gift;
 };
