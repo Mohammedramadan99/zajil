@@ -5,6 +5,7 @@ import { CreateCardDto } from '../modules/cards/dto/create-card';
 import { CardController } from '../modules/cards/controllers/Card';
 import { LoyaltyAddSubtractPoints } from '../modules/cards/dto/loyalty-add-subtract-points';
 import { ItemsSubUseDto } from '../modules/cards/dto/items-sub-use';
+import { canUseBusinessId } from '../middlewares/methods/canUseBusinessId.middleware';
 
 const cardsRouter = Router({ mergeParams: true });
 
@@ -12,32 +13,27 @@ const cardsRouter = Router({ mergeParams: true });
 cardsRouter.post('/', validateMiddleware(CreateCardDto), CardController.create);
 
 // Get All Card
-cardsRouter.get('/', CardController.getAll);
+cardsRouter.get('/', canUseBusinessId, CardController.getAll);
 
 // Get One Card by ID
-cardsRouter.get('/:id', CardController.getOne);
+cardsRouter.get('/:id', canUseBusinessId, CardController.getOne);
 
 // Update Card by ID
-cardsRouter.patch('/:id', validateMiddleware(UpdateCardDto), CardController.update);
+cardsRouter.patch('/:id', canUseBusinessId, validateMiddleware(UpdateCardDto), CardController.update);
 
 // Delete Card by ID
-cardsRouter.delete('/:id', CardController.delete);
+cardsRouter.delete('/:id', canUseBusinessId, CardController.delete);
 
 // loyalty functions
-cardsRouter.patch(
-    '/:id/loyalty/add-points',
-    validateMiddleware(LoyaltyAddSubtractPoints),
-    CardController.loyaltyAddPoints,
-);
-cardsRouter.patch(
-    '/:id/loyalty/subtract-points',
-    validateMiddleware(LoyaltyAddSubtractPoints),
-    CardController.loyaltySubtractPoints,
-);
+cardsRouter.patch('/:id/loyalty/add-points', canUseBusinessId, CardController.loyaltyAddPoints);
+
+// redeem loyalty gift
+cardsRouter.patch('/:id/loyalty/redeem-gift', canUseBusinessId, CardController.loyaltyRedeemGift);
 
 // items subscription functions
 cardsRouter.patch(
     '/:id/items-subscription/use',
+    canUseBusinessId,
     validateMiddleware(ItemsSubUseDto),
     CardController.itemSubscriptionUse,
 );

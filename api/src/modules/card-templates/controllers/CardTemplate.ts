@@ -5,8 +5,13 @@ import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
 import { CreateCardTemplateDto } from '../dto/create-card-template';
 import { UpdateCardTemplateDto } from '../dto/update-card-template';
+import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 
-export const CardTemplateController: ICRUDController = {
+export const CardTemplateController: ICRUDController & {
+    addGiftToLoyaltyCardTemplate: (req: Request, res: Response, next: NextFunction) => void;
+    updateGiftInLoyaltyCardTemplate: (req: Request, res: Response, next: NextFunction) => void;
+    deleteGiftFromLoyaltyCardTemplate: (req: Request, res: Response, next: NextFunction) => void;
+} = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const businessId = Number(req.params.businessId);
         const body: CreateCardTemplateDto = req.body;
@@ -63,6 +68,49 @@ export const CardTemplateController: ICRUDController = {
 
         cardTemplateServices
             .deleteCardTemplateById(cardTemplateId)
+            .then((cardTemplate) => res.json(cardTemplate))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    addGiftToLoyaltyCardTemplate: function (req: Request, res: Response, next: NextFunction): void {
+        const cardTemplateId = Number(req.params.id);
+        const body: CreateLoyaltyGiftDto = req.body;
+
+        cardTemplateServices
+            .addGiftToLoyaltyCardTemplate(cardTemplateId, body)
+            .then((cardTemplate) => res.json(cardTemplate))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    updateGiftInLoyaltyCardTemplate: function (req: Request, res: Response, next: NextFunction): void {
+        const cardTemplateId = Number(req.params.id);
+        const giftId = Number(req.params.giftId);
+        const body: CreateLoyaltyGiftDto = req.body;
+
+        cardTemplateServices
+            .updateGiftInLoyaltyCardTemplate(cardTemplateId, giftId, body)
+            .then((cardTemplate) => res.json(cardTemplate))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    deleteGiftFromLoyaltyCardTemplate: function (req: Request, res: Response, next: NextFunction): void {
+        const cardTemplateId = Number(req.params.id);
+        const giftId = Number(req.params.giftId);
+
+        cardTemplateServices
+            .deleteGiftFromLoyaltyCardTemplate(cardTemplateId, giftId)
             .then((cardTemplate) => res.json(cardTemplate))
             .catch((err) => {
                 console.error(err);

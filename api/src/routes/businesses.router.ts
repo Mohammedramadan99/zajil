@@ -19,7 +19,7 @@ businessesRouter.delete('/' + ':id', BusinessController.delete);
 businessesRouter.use('/:businessId/card-templates', canUseBusinessId, cardTemplatesRouter);
 
 // Cards
-businessesRouter.use('/:businessId/cards', canUseBusinessId, cardsRouter);
+businessesRouter.use('/:businessId/cards', cardsRouter);
 
 // Menu
 businessesRouter.use('/:businessId/menu', canUseBusinessId, menuRouter);

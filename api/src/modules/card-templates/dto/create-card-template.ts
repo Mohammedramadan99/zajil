@@ -1,16 +1,24 @@
 import {
+    ArrayMinSize,
+    IsArray,
     IsEnum,
     IsIn,
     IsNotEmpty,
+    IsNotEmptyObject,
     IsNumber,
     IsObject,
     IsOptional,
     IsString,
     IsUrl,
+    Length,
     Min,
+    MinLength,
     ValidateIf,
+    ValidateNested,
 } from 'class-validator';
 import { CardType } from '../models/card-template.model';
+import { CreateLoyaltyGiftDto } from './create-loyalty-gift.dto';
+import { Type } from 'class-transformer';
 
 export enum CardDesignType {
     BoardingPass = 'boardingPass',
@@ -18,6 +26,30 @@ export enum CardDesignType {
     EventTicket = 'eventTicket',
     Generic = 'generic',
     StoreCard = 'storeCard',
+}
+
+export enum StickerImageType {
+    PNG = 'png',
+    JPG = 'jpg',
+}
+
+export class StickerDto {
+    // imageUrl
+    @IsNotEmpty()
+    @IsString()
+    @IsUrl()
+    imageUrl: string;
+
+    // title
+    @IsNotEmpty()
+    @IsString()
+    title: string;
+
+    // imageType
+    @IsNotEmpty()
+    @IsString()
+    @IsEnum(StickerImageType)
+    imageType: StickerImageType;
 }
 
 export class CreateCardTemplateDto {
@@ -121,4 +153,37 @@ export class CreateCardTemplateDto {
     @IsNumber()
     @Min(0)
     nItems: number;
+
+    // stickers | on items subscription card type if there is a stripe image and there is noStickers
+    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl && o.stickersCount)
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => StickerDto)
+    stickers: StickerDto[];
+
+    // noStickers | on items subscription card type if there is a stripe image
+    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl)
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    stickersCount: number;
+
+    /*
+     * Loyalty Card Template Validation
+     * */
+
+    // pointsPerVisit
+    @ValidateIf((o) => o.cardType === CardType.LOYALTY)
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    pointsPerVisit: number;
+
+    // gifts
+    @ValidateIf((o) => o.cardType === CardType.LOYALTY)
+    @IsArray()
+    @ArrayMinSize(1)
+    @ValidateNested({ each: true })
+    @Type(() => CreateLoyaltyGiftDto)
+    gifts: CreateLoyaltyGiftDto[];
 }
