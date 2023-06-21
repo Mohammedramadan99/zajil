@@ -19,6 +19,8 @@ dist/
 
 # Card templates
 public/card-templates/*
+!public/card-templates/.gitkeep
 
-# Cards
+# Cards except
 public/cards/*
+!public/cards/.gitkeep
