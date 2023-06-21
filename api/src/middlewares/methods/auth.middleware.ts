@@ -34,11 +34,14 @@ const authMiddleware = async (req: RequestMod, res: Response, next: NextFunction
 export default {
     middleware: authMiddleware,
     condition: (req: RequestMod, res: Response, next: NextFunction) => {
-        // all routes except:r login and register
-        return (
-            !['/login', '/register', '/activate-account'].includes(req.path) &&
-            !(req.path.match(/\/businesses\/\d+\/cards/) && req.method === 'POST') && // /businesses/*/cards POST
-            !req.path.match(/\/v1\/.*/) // /v1/*
-        );
+        const exceptRegex = [
+            /\/login/,                  // /login
+            /\/register/,               // /register
+            /\/activate-account/,       // /activate-account
+            /\/businesses\/\d+\/cards/, // /businesses/:id/cards
+            /\/v1\/.*/,                 // /v1/*
+        ]
+
+        return !exceptRegex.some((regex) => regex.test(req.path));
     },
 };
