@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import qrCode from "../../../../assets/images/qrcode.png";
 
 function Card({
   title,
@@ -24,6 +25,10 @@ function Card({
   setStickersNumber,
   stickersNumber,
   withControl = true,
+  activeIcon,
+  setActiveIcon,
+  name,
+  setName,
 }) {
   const [stampsNumber, setStampsNumber] = useState(10);
   const theme = useTheme();
@@ -115,8 +120,10 @@ function Card({
                     : {}
                 }>
                 {[...Array(stickersNumber || 1)].map((item) => (
-                  <div className="sticker">
-                    <div className="icon"></div>
+                  <div className="sticker flex">
+                    <div className="icon flex">
+                      <img src={activeIcon} alt="" width={20} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -133,7 +140,7 @@ function Card({
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography variant={"body2"}> Mohammed </Typography>
+              <Typography variant={"body2"}> {name} </Typography>
             </Box>
             <Box>
               <Typography
@@ -142,8 +149,14 @@ function Card({
                 textTransform={"capitalize"}>
                 stamps until next reward
               </Typography>
-              <Typography variant={"body2"}> {stickersNumber - 1} </Typography>
+              <Typography variant={"body2"}>
+                {" "}
+                {stickersNumber - 1 || 0}{" "}
+              </Typography>
             </Box>
+          </Box>
+          <Box className="flex">
+            <img src={qrCode} alt="" width={100} />
           </Box>
         </Stack>
       </Phone>

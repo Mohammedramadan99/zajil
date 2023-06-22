@@ -24,6 +24,10 @@ import bg2 from "../../../assets/images/cardsBackgrounds/bg-2.jpg";
 import bg3 from "../../../assets/images/cardsBackgrounds/bg-3.jpg";
 import bg4 from "../../../assets/images/cardsBackgrounds/bg-4.jpg";
 import bg5 from "../../../assets/images/cardsBackgrounds/bg-5.jpg";
+import icon1 from "../../../assets/images/stickers/meat.png";
+import icon2 from "../../../assets/images/stickers/fish.png";
+import icon3 from "../../../assets/images/stickers/chicken.png";
+
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 function CreateCardForm({
@@ -37,6 +41,10 @@ function CreateCardForm({
   setTextLogo,
   stickersNumber,
   setStickersNumber,
+  activeIcon,
+  setActiveIcon,
+  name,
+  setName,
 }) {
   const [color, setColor] = useState("#aabbcc");
   const theme = useTheme();
@@ -47,11 +55,13 @@ function CreateCardForm({
       cardType: "",
       brandName: "",
       stickersNumber,
+      name,
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
       cardType: yup.string().required(),
       brandName: yup.string().required(),
+      name: yup.string().required(),
       stickersNumber: yup.number().required(),
     }),
     onSubmit(values) {
@@ -125,11 +135,12 @@ function CreateCardForm({
   const fileInputClick = (event) => {
     event.target.value = null;
   };
+  const stickersIcons = [icon1, icon2, icon3];
   return (
-    <Box sx={{ background: theme.palette.grey[800], p: 2 }}>
+    <Box sx={{}}>
       <form onSubmit={formik.handleSubmit}>
         {/* ############ Accordion 1 ############ */}
-        <Accordion defaultExpanded>
+        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -151,15 +162,6 @@ function CreateCardForm({
                 helperText={formik.errors.cardName}
                 sx={{
                   width: "100%",
-                  "& .MuiOutlinedInput-root": {
-                    // outlineColor: "transparent",
-                  },
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    // borderColor: "#7b2cbfff !important",
-                  },
-                  "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused": {
-                    // color: "#7b2cbfff",
-                  },
                 }}
               />
               <FormControl fullWidth>
@@ -187,7 +189,7 @@ function CreateCardForm({
         </Accordion>
 
         {/* ############ Accordion 2 ############ */}
-        <Accordion defaultExpanded>
+        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2a-content"
@@ -257,7 +259,7 @@ function CreateCardForm({
         </Accordion>
 
         {/* ############ Accordion 3 ############ */}
-        <Accordion defaultExpanded>
+        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -344,7 +346,6 @@ function CreateCardForm({
                     label="Stickers Number"
                     type="number"
                     value={formik.values.stickersNumber}
-                    // onChange={formik.handleChange}
                     onChange={(e) => {
                       setStickersNumber(Number(e.target.value));
                       formik.setFieldValue("stickersNumber", e.target.value);
@@ -359,13 +360,48 @@ function CreateCardForm({
                       width: "50%",
                     }}
                   />
+                  <TextField
+                    name="stickersNumber"
+                    label="Stickers Number"
+                    type="text"
+                    value={formik.values.name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      formik.setFieldValue("name", e.target.value);
+                    }}
+                    error={Boolean(formik.errors.name)}
+                    helperText={formik.errors.name}
+                    inputProps={{
+                      min: 1,
+                      max: 30,
+                    }}
+                    sx={{
+                      width: "50%",
+                    }}
+                  />
+                </Stack>
+                <Stack direction={"row"}>
+                  <Box>
+                    <div className="stickers-icons">
+                      {stickersIcons.map((item) => (
+                        <div
+                          className="icon"
+                          onClick={() => setActiveIcon(item)}>
+                          {" "}
+                          <img src={item} alt="" width={30} />{" "}
+                        </div>
+                      ))}
+                    </div>
+                  </Box>
                 </Stack>
               </div>
             </Box>
           </AccordionDetails>
         </Accordion>
 
-        <Button type="submit">submit</Button>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+          submit
+        </Button>
       </form>
     </Box>
   );

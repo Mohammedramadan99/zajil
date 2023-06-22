@@ -33,11 +33,12 @@ input {
 .flex {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
 .items-center {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 .flex-between {
   display: flex;
@@ -51,4 +52,24 @@ input {
 }
 .parent-dark-mode {
   // background-color: $mauve_color-1 !important;
+}
+.stickers-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  .icon {
+    background-color: #fff1;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    // gap: 20px;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease;
+    &:active,
+    &:hover {
+      background-color: #fff4;
+    }
+  }
 }
