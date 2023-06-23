@@ -1,11 +1,11 @@
-import { promises as fs } from 'fs';
+import { promises as fs, writeFileSync } from 'fs';
 import path from 'path';
 import { Card } from '../../cards/models/card.model';
 import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
 import { LoyaltyCard } from '../../cards/models/loyalty-card.model';
 import { PKPass } from 'passkit-generator';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
-import sharp, { OverlayOptions } from 'sharp';
+import sharp, { OverlayOptions, Sharp } from 'sharp';
 
 interface Cache {
     certificates:
@@ -68,12 +68,16 @@ export const populateVariables = async (str: string, cardId: number) => {
     return str;
 };
 
-export const generateStickersIfPossible = async (pass: PKPass, cardTemplateId: number, stripBuffer: Buffer) => {
+export const generateStickersIfPossible = async (
+    pass: PKPass,
+    cardTemplateId: number,
+    cardId: number,
+    stripBuffer: Buffer,
+) => {
     // get card template
     const cardTemplate = await CardTemplate.findOne({
         where: { id: cardTemplateId },
     });
-
     // return if not an items subscription card template
     if (cardTemplate.cardType !== CardType.ITEMS_SUBSCRIPTION) return;
 
@@ -84,6 +88,14 @@ export const generateStickersIfPossible = async (pass: PKPass, cardTemplateId: n
 
     // check for stickers and stickersCount
     if (!itemsSubscriptionCardTemplate.stickers || !itemsSubscriptionCardTemplate.stickersCount) return;
+
+    // get card
+    const card = await Card.findOne({
+        where: { id: cardId },
+    });
+    if (!card) throw new Error('Card not found');
+
+    const chosenStickers = card.chosenStickers || [];
 
     const stickers = itemsSubscriptionCardTemplate.stickers;
     const stickersCount = itemsSubscriptionCardTemplate.stickersCount;
@@ -104,77 +116,66 @@ export const generateStickersIfPossible = async (pass: PKPass, cardTemplateId: n
     const stickerCellWidth = innerStripWidth / stickersPerRow;
     const stickerVerticalMargin = 5;
 
+    const choosenStickerBuffers = await Promise.all(
+        chosenStickers.map(
+            async (sticker) =>
+                await handleStickerSharpToBuffer(
+                    sharp(
+                        path.resolve(
+                            __dirname,
+                            `../../../../public/card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
+                        ),
+                    ),
+                    stickerSize,
+                ),
+        ),
+    );
+
+    const stickerPlaceholderBuffer = await handleStickerSharpToBuffer(
+        sharp({
+            create: {
+                width: Math.round(stickerSize),
+                height: Math.round(stickerSize),
+                channels: 4,
+                background: { r: 0, g: 0, b: 0, alpha: 0.5 },
+            },
+        }),
+        stickerSize,
+    );
+
+    const compositeOperations: OverlayOptions[] = [];
+
+    for (let row = 0; row < numberOfRows; row++) {
+        for (let column = 0; column < stickersPerRow; column++) {
+            const index = row * stickersPerRow + column;
+
+            if (index >= stickersCount) break;
+
+            compositeOperations.push({
+                input: choosenStickerBuffers[index] || stickerPlaceholderBuffer,
+                top: Math.round(
+                    row * (stickerSize + (row !== 0 ? stickerVerticalMargin : 0)) +
+                        stripHeight * margin -
+                        stickerVerticalMargin * (numberOfRows - 2),
+                ),
+                left: Math.round(
+                    column * stickerCellWidth + stripWidth * margin + stickerCellWidth / 2 - stickerSize / 2,
+                ),
+            });
+        }
+    }
+
     // render stickers on the strip
     await sharp(stripBuffer)
         .resize(Math.round(stripWidth), Math.round(stripHeight))
+        .composite(compositeOperations)
         .toBuffer()
-        .then((stripResizedBuffer) => {
-            return (
-                sharp(
-                    path.resolve(
-                        __dirname,
-                        `../../../../public/card-templates/${cardTemplateId}/stickers/${stickers[0].title}.${stickers[0].imageType}`,
-                    ),
-                )
-                    .resize(Math.round(stickerSize), Math.round(stickerSize))
-                    .png()
+        .then((buffer) => {
+            pass.addBuffer('strip.png', buffer);
+            pass.addBuffer('strip@2x.png', buffer);
 
-                    // blue rectangle
-                    // sharp({
-                    //     create: {
-                    //         width: Math.round(stickerSize),
-                    //         height: Math.round(stickerSize),
-                    //         channels: 4,
-                    //         background: { r: 0, g: 0, b: 255, alpha: 1 },
-                    //     },
-                    // })
-                    //     .png()
-                    .composite([
-                        {
-                            input: Buffer.from(
-                                `<svg><rect x="0" y="0" width="${stickerSize}" height="${stickerSize}" rx="${
-                                    stickerSize / 2
-                                }" ry="${stickerSize / 2}" /></svg>`,
-                            ),
-                            blend: 'dest-in',
-                        },
-                    ])
-                    .toBuffer()
-                    .then((stickerImageBuffer) => {
-                        const compositeOperations: OverlayOptions[] = [];
-
-                        for (let row = 0; row < numberOfRows; row++) {
-                            for (let column = 0; column < stickersPerRow; column++) {
-                                const index = row * stickersPerRow + column;
-
-                                if (index >= stickersCount) break;
-
-                                compositeOperations.push({
-                                    input: stickerImageBuffer,
-                                    top: Math.round(
-                                        row * (stickerSize + (row !== 0 ? stickerVerticalMargin : 0)) +
-                                            stripHeight * margin -
-                                            stickerVerticalMargin * (numberOfRows - 2),
-                                    ),
-                                    left: Math.round(
-                                        column * stickerCellWidth +
-                                            stripWidth * margin +
-                                            stickerCellWidth / 2 -
-                                            stickerSize / 2,
-                                    ),
-                                });
-                            }
-                        }
-
-                        return sharp(stripResizedBuffer)
-                            .composite(compositeOperations)
-                            .toBuffer()
-                            .then((buffer) => {
-                                pass.addBuffer('strip.png', buffer);
-                                pass.addBuffer('strip@2x.png', buffer);
-                            });
-                    })
-            );
+            // remove at the end
+            writeFileSync('test.png', buffer);
         })
         .catch((err) => {
             console.error(err);
@@ -182,4 +183,21 @@ export const generateStickersIfPossible = async (pass: PKPass, cardTemplateId: n
         });
 
     return true;
+};
+
+const handleStickerSharpToBuffer = async (x: Sharp, stickerSize: number) => {
+    return x
+        .resize(Math.round(stickerSize), Math.round(stickerSize))
+        .png()
+        .composite([
+            {
+                input: Buffer.from(
+                    `<svg><rect x="0" y="0" width="${stickerSize}" height="${stickerSize}" rx="${
+                        stickerSize / 2
+                    }" ry="${stickerSize / 2}" /></svg>`,
+                ),
+                blend: 'dest-in',
+            },
+        ])
+        .toBuffer();
 };

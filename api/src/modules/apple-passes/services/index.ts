@@ -90,7 +90,7 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
     // add strip image
     if (strip) {
         // generate stickers if possible
-        const success = await generateStickersIfPossible(pass, props.cardTemplateId, strip);
+        const success = await generateStickersIfPossible(pass, props.cardTemplateId, Number(props.cardId), strip);
 
         if (!success) {
             pass.addBuffer('strip.png', strip);

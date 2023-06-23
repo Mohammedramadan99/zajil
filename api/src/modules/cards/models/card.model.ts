@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { StickerDto } from '../../card-templates/dto/create-card-template';
 
 export class Card extends Model {
     public declare id: number;
@@ -7,6 +8,9 @@ export class Card extends Model {
     public templateId!: number;
     public deviceLibraryIdentifier: string;
     public pushToken: string;
+
+    // stickers
+    public chosenStickers: StickerDto[];
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -38,6 +42,10 @@ export const init = (sequelize: Sequelize) =>
             },
             pushToken: {
                 type: DataTypes.STRING,
+                allowNull: true,
+            },
+            chosenStickers: {
+                type: DataTypes.JSON,
                 allowNull: true,
             },
         },
