@@ -113,10 +113,9 @@ export const CardController: ICRUDController & {
 
     itemSubscriptionUse: function (req: Request, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
-        const value = req.body.value;
 
         cardServices
-            .itemsSubscriptionUseItems(cardId, value)
+            .itemsSubscriptionUseItems(cardId, req.body)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);

@@ -13,6 +13,7 @@ import { PKPass } from 'passkit-generator';
 import fs from 'fs';
 import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
+import { ItemsSubUseDto } from '../dto/items-sub-use';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -120,7 +121,34 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
         where: {
             id: cardId,
         },
-        include: FIND_INCLUDE_OPTIONS(businessId),
+        include: [
+            {
+                model: CardTemplate,
+                as: 'cardTemplate',
+                where: {
+                    businessId,
+                },
+                required: true,
+
+                include: [
+                    {
+                        model: ItemsSubscriptionCardTemplate,
+                        as: 'itemsSubscriptionCardTemplate',
+                        required: false,
+                    },
+                ],
+            },
+            {
+                model: LoyaltyCard,
+                as: 'loyaltyCard',
+                required: false,
+            },
+            {
+                model: ItemsSubscriptionCard,
+                as: 'itemsSubscriptionCard',
+                required: false,
+            },
+        ],
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
         return removeRowNullFields(row);
@@ -235,19 +263,38 @@ export const loyaltySubtractPoints = async (cardId: number, value: number) => {
 };
 
 // items subscription use items
-export const itemsSubscriptionUseItems = async (cardId: number, value: number) => {
+export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUseDto) => {
     // find the items subscription card
-    const itemsSubscriptionCard = await ItemsSubscriptionCard.findOne({
+    const itemsSubscriptionCard = (await ItemsSubscriptionCard.findOne({
         where: {
             id: cardId,
         },
-    });
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                required: true,
+            },
+        ],
+    })) as ItemsSubscriptionCard & { card: Card };
     if (!itemsSubscriptionCard) throw new HttpError(404, 'Card not found');
 
     // use items
-    if (itemsSubscriptionCard.nItems < value) throw new HttpError(400, 'Not enough items');
-    itemsSubscriptionCard.nItems -= value;
+
+    // update nItems
+    if (itemsSubscriptionCard.nItems < body.value) throw new HttpError(400, 'Not enough items');
+    itemsSubscriptionCard.nItems -= body.value;
+
+    // update stickers if provided
+    if (body.stickers) {
+        const oldChosenStickers = itemsSubscriptionCard.card.chosenStickers || [];
+        itemsSubscriptionCard.card.chosenStickers = [...oldChosenStickers, ...body.stickers];
+        await itemsSubscriptionCard.card.save();
+    }
     await itemsSubscriptionCard.save();
+
+    // update the pass
+    await generatePassFromTemplate(cardId, itemsSubscriptionCard.card.templateId);
 
     return itemsSubscriptionCard;
 };

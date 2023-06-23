@@ -175,7 +175,7 @@ export const generateStickersIfPossible = async (
             pass.addBuffer('strip@2x.png', buffer);
 
             // remove at the end
-            // writeFileSync('test.png', buffer);
+            writeFileSync('test.png', buffer);
         })
         .catch((err) => {
             console.error(err);
