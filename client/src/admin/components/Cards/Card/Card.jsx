@@ -29,6 +29,8 @@ function Card({
   setActiveIcon,
   name,
   setName,
+  activeScanType,
+  setActiveScanType,
 }) {
   const [stampsNumber, setStampsNumber] = useState(10);
   const theme = useTheme();
@@ -156,7 +158,14 @@ function Card({
             </Box>
           </Box>
           <Box className="flex">
-            <img src={qrCode} alt="" width={100} />
+            <div style={{ background: "#fff", padding: "10px" }}>
+              <img
+                src={activeScanType.icon}
+                alt=""
+                width={activeScanType.type === "barCode" ? 200 : 80}
+                height={80}
+              />
+            </div>
           </Box>
         </Stack>
       </Phone>

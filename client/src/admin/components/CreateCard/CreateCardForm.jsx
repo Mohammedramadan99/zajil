@@ -27,6 +27,12 @@ import bg5 from "../../../assets/images/cardsBackgrounds/bg-5.jpg";
 import icon1 from "../../../assets/images/stickers/meat.png";
 import icon2 from "../../../assets/images/stickers/fish.png";
 import icon3 from "../../../assets/images/stickers/chicken.png";
+import icon4 from "../../../assets/images/stickers/sweet-1.png";
+import icon5 from "../../../assets/images/stickers/sweet-2.png";
+import ScanIcon1 from "../../../assets/images/stickers/barcode_icon-1.png";
+import ScanIcon2 from "../../../assets/images/stickers/qrCode_icon-1.png";
+import barcode from "../../../assets/images/barcode-1.png";
+import qrcode from "../../../assets/images/qrcode.png";
 
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -45,10 +51,11 @@ function CreateCardForm({
   setActiveIcon,
   name,
   setName,
+  activeScanType,
+  setActiveScanType,
 }) {
   const [color, setColor] = useState("#aabbcc");
   const theme = useTheme();
-  const icons = [...Array(50)];
   const formik = useFormik({
     initialValues: {
       cardName: "",
@@ -94,9 +101,43 @@ function CreateCardForm({
 
   const cardTypes = ["Loyalty", "Subscription"];
 
+  const stickersIcons = [
+    {
+      id: 1,
+      icon: icon1,
+    },
+    {
+      id: 2,
+      icon: icon2,
+    },
+    {
+      id: 3,
+      icon: icon3,
+    },
+    {
+      id: 4,
+      icon: icon4,
+    },
+    {
+      id: 5,
+      icon: icon5,
+    },
+  ];
+  const scanTypes = [
+    {
+      icon: ScanIcon1,
+      type: "barCode",
+      url: barcode,
+    },
+    {
+      icon: ScanIcon2,
+      type: "qrCode",
+      url: qrcode,
+    },
+  ];
+  const [activeStickers, setActiveStickers] = useState([]);
   const cardBgHandler = (bg) => {
     setActiveImg(bg);
-    console.log({ activeImg, bg });
   };
 
   const onImageChange = (e) => {
@@ -117,10 +158,8 @@ function CreateCardForm({
     setTextLogo(null);
     setLogoImg(url);
     setTempPhoto(file);
-    console.log({ textLogo });
   };
   useEffect(() => {
-    // Whenever the textLogo or logoImg props change, update the logo image
     if (textLogo) {
       setLogoImg(null);
       setTextLogo(textLogo);
@@ -135,7 +174,25 @@ function CreateCardForm({
   const fileInputClick = (event) => {
     event.target.value = null;
   };
-  const stickersIcons = [icon1, icon2, icon3];
+  // const addStickerHandler = (item) => {
+  //   const sticker = activeStickers.find((sticker) => sticker.id === item.id);
+  //   console.log({ sticker });
+  //   if (!sticker) {
+  //     setActiveStickers([...activeStickers, item]);
+  //   } else {
+  //     setActiveStickers(
+  //       activeStickers.filter((sticker) => sticker.id !== item.id)
+  //     );
+  //   }
+  // };
+  const addStickerHandler = (id) => {
+    if (activeStickers.includes(id)) {
+      setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+    } else {
+      setActiveStickers([...activeStickers, id]);
+    }
+  };
+
   return (
     <Box sx={{}}>
       <form onSubmit={formik.handleSubmit}>
@@ -361,8 +418,8 @@ function CreateCardForm({
                     }}
                   />
                   <TextField
-                    name="stickersNumber"
-                    label="Stickers Number"
+                    name="Name"
+                    label="Name"
                     type="text"
                     value={formik.values.name}
                     onChange={(e) => {
@@ -382,16 +439,75 @@ function CreateCardForm({
                 </Stack>
                 <Stack direction={"row"}>
                   <Box>
+                    <div
+                      style={{
+                        color: "#999",
+                        marginBlock: "10px",
+                        display: "flex",
+                        gap: "10px",
+                      }}>
+                      Stickers
+                      {activeStickers.length > 0 && (
+                        <span
+                          style={{
+                            color: "#0ddc0d",
+                            background: "#0ddc0d3b",
+                            borderRadius: "10px",
+                            padding: "2px 10px",
+                            fontSize: "12px",
+                          }}>
+                          selected {activeStickers.length}{" "}
+                        </span>
+                      )}
+                    </div>
                     <div className="stickers-icons">
                       {stickersIcons.map((item) => (
                         <div
-                          className="icon"
-                          onClick={() => setActiveIcon(item)}>
+                          className={
+                            activeStickers.includes(item.id)
+                              ? "icon active"
+                              : "icon"
+                          }
+                          onClick={() => addStickerHandler(item.id)}>
                           {" "}
-                          <img src={item} alt="" width={30} />{" "}
+                          <img src={item.icon} alt="" width={30} />{" "}
                         </div>
                       ))}
                     </div>
+                  </Box>
+                </Stack>
+                <Stack>
+                  <div
+                    style={{
+                      color: "#999",
+                      marginBlock: "10px",
+                    }}>
+                    {" "}
+                    Scan by {/*  type? , or just scan ? */}
+                  </div>
+                  <Box display={"flex"} alignItems={"center"} gap={1}>
+                    {scanTypes.map((item) => (
+                      <div
+                        className="flex"
+                        style={{
+                          background: "#fff",
+                          padding: "10px",
+                          transition: ".3s ease",
+                          border: `2px solid ${
+                            activeScanType.type === item.type
+                              ? "#0ddc0d"
+                              : "transparent"
+                          }`,
+                        }}
+                        onClick={() => setActiveScanType(item)}>
+                        <img
+                          src={item.icon}
+                          alt="scan-icon"
+                          width={item.type === "barCode" ? 60 : 30}
+                          height={30}
+                        />
+                      </div>
+                    ))}
                   </Box>
                 </Stack>
               </div>
