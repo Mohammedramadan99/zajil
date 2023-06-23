@@ -92,17 +92,20 @@ export const findAllCards = async ({
     offset = 0,
     businessId,
     req,
+    sort,
 }: {
     limit: number;
     offset: number;
     businessId: number;
     req: RequestMod;
+    sort: 'asc' | 'desc';
 }) => {
     return (
         Card.findAndCountAll({
             include: FIND_INCLUDE_OPTIONS(businessId),
             limit,
             offset,
+            order: [['id', sort]],
         })
             // remove null fields from each row
             .then((result) => {
@@ -209,7 +212,7 @@ export const loyaltyAddPoints = async (cardId: number) => {
 
     // update the pass
     await generatePassFromTemplate(cardId, card.templateId);
-    
+
     return newCard;
 };
 

@@ -44,9 +44,10 @@ export const CardController: ICRUDController & {
         const limit = Number(req.query.limit) || 10;
         const offset = Number(req.query.offset) || 0;
         const businessId = Number(req.params.businessId);
+        const sort = req.query.sort === 'asc' ? 'asc' : 'desc';
 
         cardServices
-            .findAllCards({ limit, offset, req, businessId })
+            .findAllCards({ limit, offset, req, businessId, sort })
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
