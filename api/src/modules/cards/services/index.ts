@@ -269,7 +269,7 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     // log activity
     await Activity.create({
         businessId: card.cardTemplate.businessId,
-        message: `Card ${card.id} scanned`,
+        message: `Card ${card.id} scanned, ${template.pointsPerVisit} points added`,
         type: ActivityType.SCAN_CARD,
         cardId: card.id,
         userId: user.id,
@@ -279,13 +279,25 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
 };
 
 // loyalty subtract points
-export const loyaltySubtractPoints = async (cardId: number, value: number) => {
+export const loyaltySubtractPoints = async (cardId: number, value: number, user: User) => {
     // find the loyalty card
-    const loyaltyCard = await LoyaltyCard.findOne({
+    const loyaltyCard = (await LoyaltyCard.findOne({
         where: {
             id: cardId,
         },
-    });
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                    },
+                ],
+            },
+        ],
+    })) as LoyaltyCard & { card: Card & { cardTemplate: CardTemplate } };
     if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
     // subtract points
@@ -293,11 +305,20 @@ export const loyaltySubtractPoints = async (cardId: number, value: number) => {
     loyaltyCard.points -= value;
     await loyaltyCard.save();
 
+    // log activity
+    await Activity.create({
+        businessId: loyaltyCard.card.cardTemplate.businessId,
+        message: `Card ${loyaltyCard.id} scanned, ${value} points subtracted`,
+        type: ActivityType.SCAN_CARD,
+        cardId: loyaltyCard.id,
+        userId: user.id,
+    });
+
     return loyaltyCard;
 };
 
 // items subscription use items
-export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUseDto) => {
+export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUseDto, user: User) => {
     // find the items subscription card
     const itemsSubscriptionCard = (await ItemsSubscriptionCard.findOne({
         where: {
@@ -307,10 +328,15 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
             {
                 model: Card,
                 as: 'card',
-                required: true,
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                    },
+                ],
             },
         ],
-    })) as ItemsSubscriptionCard & { card: Card };
+    })) as ItemsSubscriptionCard & { card: Card & { cardTemplate: CardTemplate } };
     if (!itemsSubscriptionCard) throw new HttpError(404, 'Card not found');
 
     // use items
@@ -329,6 +355,15 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
 
     // update the pass
     await generatePassFromTemplate(cardId, itemsSubscriptionCard.card.templateId);
+
+    // log activity
+    await Activity.create({
+        businessId: itemsSubscriptionCard.card.cardTemplate.businessId,
+        message: `Card ${itemsSubscriptionCard.id} scanned, ${body.value} items used`,
+        type: ActivityType.SCAN_CARD,
+        cardId: itemsSubscriptionCard.id,
+        userId: user.id,
+    });
 
     return itemsSubscriptionCard;
 };
@@ -362,13 +397,25 @@ const removeRowNullFields = (row) => {
     return row;
 };
 
-export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
+export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: User) => {
     // find the loyalty card
-    const loyaltyCard = await LoyaltyCard.findOne({
+    const loyaltyCard = (await LoyaltyCard.findOne({
         where: {
             id: cardId,
         },
-    });
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                    },
+                ],
+            },
+        ],
+    })) as LoyaltyCard & { card: Card & { cardTemplate: CardTemplate } };
     if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
     // find the gift
@@ -395,6 +442,15 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number) => {
         gift.limitedAmount -= 1;
         await gift.save();
     }
+
+    // log activity
+    await Activity.create({
+        businessId: loyaltyCard.card.cardTemplate.businessId,
+        message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
+        type: ActivityType.SCAN_CARD,
+        cardId: loyaltyCard.id,
+        userId: user.id,
+    });
 
     return await loyaltyCard.save();
 };
