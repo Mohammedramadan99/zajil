@@ -2,6 +2,7 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { Business } from '../../businesses/models/business.model';
 import { Branch } from '../../branches/models/branch.model';
 import { File } from '../../file-upload/models/file.model';
+import { Activity } from '../../businesses/models/activity.model';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -88,5 +89,11 @@ export const associate = () => {
     User.hasMany(File, {
         foreignKey: 'userId',
         as: 'files',
+    });
+
+    // User | Activity
+    User.hasMany(Activity, {
+        foreignKey: 'userId',
+        as: 'activities',
     });
 };

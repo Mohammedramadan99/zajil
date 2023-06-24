@@ -14,6 +14,8 @@ import fs from 'fs';
 import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 import { ItemsSubUseDto } from '../dto/items-sub-use';
+import { Activity, ActivityType } from '../../businesses/models/activity.model';
+import { User } from '../../users/models/user.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
     /*
@@ -61,6 +63,14 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
 
     // generate the pass in the public folder
     const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
+
+    // log activity
+    await Activity.create({
+        businessId: cardTemplate.businessId,
+        message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
+        type: ActivityType.CREATE_CARD,
+        userId: card.id,
+    });
 
     // combine the base card with the sub card in a single object
     return {
@@ -198,6 +208,15 @@ export const updateCardById = async (
             if (!subCard2) throw new HttpError(404, 'Card not found');
             break;
     }
+
+    // log activity
+    await Activity.create({
+        businessId: cardTemplate.businessId,
+        message: `Card ${card.id} updated`,
+        type: ActivityType.UPDATE_CARD,
+        cardId: card.id,
+    });
+
     return findOneCardById(cardId, businessId);
 };
 
@@ -210,13 +229,19 @@ export const deleteCardById = async (cardId: number) => {
 };
 
 // loyalty add points
-export const loyaltyAddPoints = async (cardId: number) => {
+export const loyaltyAddPoints = async (cardId: number, user: User) => {
     // find the loyalty card
-    const card = await Card.findOne({
+    const card = (await Card.findOne({
         where: {
             id: cardId,
         },
-    });
+        include: [
+            {
+                model: CardTemplate,
+                as: 'cardTemplate',
+            },
+        ],
+    })) as Card & { cardTemplate: CardTemplate };
     if (!card) throw new HttpError(404, 'Card not found');
 
     const template = await LoyaltyCardTemplate.findOne({
@@ -240,6 +265,15 @@ export const loyaltyAddPoints = async (cardId: number) => {
 
     // update the pass
     await generatePassFromTemplate(cardId, card.templateId);
+
+    // log activity
+    await Activity.create({
+        businessId: card.cardTemplate.businessId,
+        message: `Card ${card.id} scanned`,
+        type: ActivityType.SCAN_CARD,
+        cardId: card.id,
+        userId: user.id,
+    });
 
     return newCard;
 };

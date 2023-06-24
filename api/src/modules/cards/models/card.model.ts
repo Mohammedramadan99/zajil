@@ -3,6 +3,7 @@ import { StickerDto } from '../../card-templates/dto/create-card-template';
 import { CardTemplate } from '../../card-templates/models/card-template.model';
 import { LoyaltyCard } from './loyalty-card.model';
 import { ItemsSubscriptionCard } from './items-subscription-card.model';
+import { Activity } from '../../businesses/models/activity.model';
 
 export class Card extends Model {
     public declare id: number;
@@ -76,5 +77,11 @@ export const associate = () => {
         foreignKey: 'id',
         as: 'itemsSubscriptionCard',
         onDelete: 'CASCADE',
+    });
+
+    // Card | Activity
+    Card.hasMany(Activity, {
+        foreignKey: 'cardId',
+        as: 'activities',
     });
 };
