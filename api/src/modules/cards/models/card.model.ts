@@ -1,5 +1,8 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { StickerDto } from '../../card-templates/dto/create-card-template';
+import { CardTemplate } from '../../card-templates/models/card-template.model';
+import { LoyaltyCard } from './loyalty-card.model';
+import { ItemsSubscriptionCard } from './items-subscription-card.model';
 
 export class Card extends Model {
     public declare id: number;
@@ -54,3 +57,24 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'cards',
         },
     );
+
+export const associate = () => {
+    // Card Template | Card
+    Card.belongsTo(CardTemplate, {
+        foreignKey: 'templateId',
+        as: 'cardTemplate',
+    });
+
+    // Card | Loyalty Card
+    Card.hasOne(LoyaltyCard, {
+        foreignKey: 'id',
+        as: 'loyaltyCard',
+        onDelete: 'CASCADE',
+    });
+
+    Card.hasOne(ItemsSubscriptionCard, {
+        foreignKey: 'id',
+        as: 'itemsSubscriptionCard',
+        onDelete: 'CASCADE',
+    });
+};

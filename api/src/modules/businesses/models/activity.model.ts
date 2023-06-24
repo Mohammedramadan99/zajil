@@ -1,52 +1,51 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { User } from '../../users/models/user.model';
 
-export class File extends Model {
+export enum ActivityType {
+    CREATE_CARD = 'create_card',
+    UPDATE_CARD = 'update_card',
+    SCAN_CARD = 'scan_card',
+}
+
+export class Activity extends Model {
     public declare id: number;
-    public createdBy!: number;
-    public name!: string;
-    public url!: string;
-    public mimeType!: string;
+    public businessId!: number;
+    public message?: string;
+    public type!: ActivityType;
+    public cardId?: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
 export const init = (sequelize: Sequelize) =>
-    File.init(
+    Activity.init(
         {
             id: {
                 type: DataTypes.INTEGER,
-                primaryKey: true,
                 autoIncrement: true,
+                primaryKey: true,
             },
-            createdBy: {
+            businessId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            name: {
+            message: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            type: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            url: {
+            cardId: {
                 type: DataTypes.STRING,
-                allowNull: false,
-            },
-            mimeType: {
-                type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
         },
         {
             sequelize,
-            tableName: 'files',
+            tableName: 'activities',
         },
     );
 
-export const associate = () => {
-    // User | File
-    File.belongsTo(User, {
-        foreignKey: 'createdBy',
-        as: 'creator',
-    });
-};
+export const associate = () => {};

@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Menu } from './menu.model';
 
 export class MenuItem extends Model {
     public declare id: number;
@@ -41,3 +42,10 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'menu_items',
         },
     );
+
+export const associate = () => {
+    MenuItem.belongsTo(Menu, {
+        foreignKey: 'menuId',
+        as: 'menu',
+    });
+};

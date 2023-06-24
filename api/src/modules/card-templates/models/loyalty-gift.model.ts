@@ -1,4 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { LoyaltyCardTemplate } from './loyalty-card-template.model';
 
 export class LoyaltyGift extends Model {
     public declare id: number;
@@ -41,3 +42,11 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'loyalty_gifts',
         },
     );
+
+export const associate = () => {
+    // Loyal Card Template | Loyalty Gift
+    LoyaltyGift.belongsTo(LoyaltyCardTemplate, {
+        foreignKey: 'templateId',
+        as: 'loyaltyCardTemplate',
+    });
+};
