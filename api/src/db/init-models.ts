@@ -21,6 +21,9 @@ import { init as initItemsSubscriptionCard } from '../modules/cards/models/items
 import { init as initMenu } from '../modules/businesses/models/menu/menu.model';
 import { init as initMenuItem } from '../modules/businesses/models/menu/menu-item.model';
 
+// files
+import { init as initFile } from '../modules/file-upload/models/file.model';
+
 export const initModels = (sequelize: Sequelize) => {
     // array of model init functions
     const modelInits = [
@@ -44,6 +47,9 @@ export const initModels = (sequelize: Sequelize) => {
         // menu
         initMenu,
         initMenuItem,
+
+        // files
+        initFile,
     ];
 
     // call each model's init function

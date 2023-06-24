@@ -10,6 +10,7 @@ import { User } from '../modules/users/models/user.model';
 import { LoyaltyCard } from '../modules/cards/models/loyalty-card.model';
 import { ItemsSubscriptionCard } from '../modules/cards/models/items-subscription-card.model';
 import { LoyaltyGift } from '../modules/card-templates/models/loyalty-gift.model';
+import { File } from '../modules/file-upload/models/file.model';
 
 export const setAssociations = () => {
     // User | Business
@@ -139,5 +140,15 @@ export const setAssociations = () => {
     MenuItem.belongsTo(Menu, {
         foreignKey: 'menuId',
         as: 'menu',
+    });
+
+    // User | File
+    User.hasMany(File, {
+        foreignKey: 'createdBy',
+        as: 'files',
+    });
+    File.belongsTo(User, {
+        foreignKey: 'createdBy',
+        as: 'creator',
     });
 };
