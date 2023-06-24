@@ -36,6 +36,8 @@ function Card({
   imgColor,
   setImgColor,
 }) {
+  const [stampsNumber, setStampsNumber] = useState(10);
+  const theme = useTheme();
   useEffect(() => {
     // Whenever the textLogo or logoImg props change, update the logo image
     if (textLogo) {
@@ -53,19 +55,21 @@ function Card({
 
   const boxRef = useRef(null);
   const downloadImage = () => {
-    // html2canvas(box, { useCORS: true, x: 0, y: 0 }).then(function (canvas) {
-    //   const imgData = canvas.toDataURL("image/png");
-    //   // const link = document.createElement("a");
-    //   // link.download = "image.png";
-    //   // link.href = imgData;
-    //   // link.click();
-    // });
+    const box = boxRef.current;
+    setImgColor(box);
+    html2canvas(box, { useCORS: true, x: 0, y: 0 }).then(function (canvas) {
+      const imgData = canvas.toDataURL("image/png");
+      // const link = document.createElement("a");
+      // link.download = "image.png";
+      // link.href = imgData;
+      // link.click();
+    });
   };
   useEffect(() => {
-    // downloadImage();
-    const box = boxRef.current;
-    setImgColor && setImgColor(box);
-  }, [activeImg?.color]);
+    downloadImage();
+    console.log({ setActiveImg });
+  }, [activeImg.color]);
+  console.log({ setActiveImg });
 
   return (
     <>
@@ -83,29 +87,18 @@ function Card({
               paddingInline: "10px",
               borderRadius: "20px",
             }}>
-            <Stack
-              direction={"row"}
-              spacing={2}
-              alignItems={"center"}
-              justifyContent={"space-between"}>
-              <Box>
-                {logoImg && (
-                  <img
-                    src={logoImg}
-                    id="photo"
-                    width={30}
-                    height={30}
-                    style={{ borderRadius: "50%" }}
-                  />
-                )}
-
-                {/* )} */}
-                {textLogo && <span> {textLogo} </span>}
-              </Box>
-              <Box>
-                <Typography variant="body1">ORG</Typography>
-                <Typography variant="body2">mohammed</Typography>
-              </Box>
+            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+              {!textLogo && logoImg && (
+                <img
+                  src={logoImg}
+                  id="photo"
+                  width={30}
+                  height={30}
+                  style={{ borderRadius: "50%" }}
+                />
+              )}
+              {/* )} */}
+              {textLogo && <span> {textLogo} </span>}
             </Stack>
             <Stack
               direction={"row"}
@@ -195,9 +188,9 @@ function Card({
           <Box className="flex">
             <div style={{ background: "#fff", padding: "10px" }}>
               <img
-                src={activeScanType?.icon}
+                src={activeScanType.icon}
                 alt=""
-                width={activeScanType?.type === "barCode" ? 200 : 80}
+                width={activeScanType.type === "barCode" ? 200 : 80}
                 height={80}
               />
             </div>

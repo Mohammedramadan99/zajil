@@ -230,6 +230,17 @@ function CreateCardForm({
   const fileInputClick = (event) => {
     event.target.value = null;
   };
+  // const addStickerHandler = (item) => {
+  //   const sticker = activeStickers.find((sticker) => sticker.id === item.id);
+  //   console.log({ sticker });
+  //   if (!sticker) {
+  //     setActiveStickers([...activeStickers, item]);
+  //   } else {
+  //     setActiveStickers(
+  //       activeStickers.filter((sticker) => sticker.id !== item.id)
+  //     );
+  //   }
+  // };
   const addStickerHandler = (id) => {
     if (activeStickers.includes(id)) {
       setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
@@ -433,6 +444,14 @@ function CreateCardForm({
                         },
                     }}
                   />
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setLogoImg(null);
+                      setTextLogo(formik.values.brandName);
+                    }}>
+                    use as logo
+                  </Button>
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                   <TextField

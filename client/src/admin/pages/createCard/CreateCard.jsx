@@ -6,6 +6,7 @@ import CreateCardForm from "../../components/CreateCard/CreateCardForm";
 function CreateCard() {
   const theme = useTheme();
   const [tempPhoto, setTempPhoto] = useState("");
+  const [imgColor, setImgColor] = useState("");
   const [activeImg, setActiveImg] = useState("");
   const [textLogo, setTextLogo] = useState(null);
   const [stickersNumber, setStickersNumber] = useState();
@@ -23,7 +24,7 @@ function CreateCard() {
         flexGrow: 1,
       }}>
       <Container>
-        <Grid container spacing={2}>
+        <Grid container spacing={6}>
           <Grid xs={9} item>
             <CreateCardForm
               tempPhoto={tempPhoto}
@@ -42,6 +43,8 @@ function CreateCard() {
               setName={setName}
               activeScanType={activeScanType}
               setActiveScanType={setActiveScanType}
+              imgColor={imgColor}
+              setImgColor={setImgColor}
             />
           </Grid>
           <Grid xs={3} item>
@@ -65,6 +68,8 @@ function CreateCard() {
                   setName={setName}
                   activeScanType={activeScanType}
                   setActiveScanType={setActiveScanType}
+                  imgColor={imgColor}
+                  setImgColor={setImgColor}
                 />
               </Box>
             </div>
