@@ -179,17 +179,20 @@ function Card({
               </Typography>
               <Typography variant={"body2"}> {name} </Typography>
             </Box>
+          </Box>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            px={2}
+            mb={2}
+            gap={2}>
             <Box>
-              <Typography
-                variant={"body2"}
-                fontWeight={600}
-                textTransform={"capitalize"}>
-                stamps until next reward
-              </Typography>
-              <Typography variant={"body2"}>
-                {" "}
-                {stickersNumber - 1 || 0}{" "}
-              </Typography>
+              <Typography variant="body2">Earned Rewards</Typography>
+              <Typography variant={"body2"}> 5 </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2">Next Gift</Typography>
+              <Typography variant={"body2"}> 2 </Typography>
             </Box>
           </Box>
           <Box className="flex">

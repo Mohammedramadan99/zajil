@@ -37,6 +37,8 @@ import qrcode from "../../../assets/images/qrcode.png";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
+import TabPanel from "./LoyaltyTabs";
+
 function CreateCardForm({
   tempPhoto,
   setTempPhoto,
@@ -57,8 +59,8 @@ function CreateCardForm({
   imgColor,
   setImgColor,
 }) {
-  console.log({ imgColor });
   const [color, setColor] = useState("#aabbcc");
+  const [activeStickers, setActiveStickers] = useState([]);
   const theme = useTheme();
   const formik = useFormik({
     initialValues: {
@@ -74,6 +76,12 @@ function CreateCardForm({
       brandName: yup.string().required(),
       name: yup.string().required(),
       stickersNumber: yup.number().required(),
+      gift: yup.string().required(),
+      giftPoints: yup.number().required(),
+      discound: yup.string().required(),
+      discoundPoints: yup.number().required(),
+      earnedRewards: yup.number(),
+      nextGift: yup.number(),
     }),
     onSubmit(values) {
       html2canvas(imgColor, { useCORS: true, x: 0, y: 0 }).then(function (
@@ -191,7 +199,6 @@ function CreateCardForm({
       url: qrcode,
     },
   ];
-  const [activeStickers, setActiveStickers] = useState([]);
   const cardBgHandler = (bg) => {
     setActiveImg(bg);
   };
@@ -231,10 +238,27 @@ function CreateCardForm({
     event.target.value = null;
   };
   const addStickerHandler = (id) => {
-    if (activeStickers.includes(id)) {
-      setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+    if (formik.values.cardType === "LOYALTY") {
+      if (activeStickers.length >= 2) {
+        if (activeStickers.includes(id)) {
+          setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+        } else {
+          return;
+          // setActiveStickers([...activeStickers, id]);
+        }
+      } else {
+        if (activeStickers.includes(id)) {
+          setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+        } else {
+          setActiveStickers([...activeStickers, id]);
+        }
+      }
     } else {
-      setActiveStickers([...activeStickers, id]);
+      if (activeStickers.includes(id)) {
+        setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+      } else {
+        setActiveStickers([...activeStickers, id]);
+      }
     }
   };
 
@@ -276,16 +300,24 @@ function CreateCardForm({
                   value={formik.values.cardType}
                   label="Card Type"
                   onChange={formik.handleChange}
-                  error={Boolean(formik.errors.cardType)}
-                  // helperText={formik.errors.cardType}
-                >
+                  error={Boolean(formik.errors.cardType)}>
                   {cardTypes.map((item, i) => (
-                    <MenuItem key={i} value={item.type}>
+                    <MenuItem
+                      key={i}
+                      value={item.type}
+                      onClick={() => {
+                        if (activeStickers.length > 2) {
+                          setActiveStickers([]);
+                        }
+                      }}>
                       {item.text}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+              {formik.values.cardType === "LOYALTY" && (
+                <TabPanel onChange={formik.handleChange} formik={formik} />
+              )}
             </Box>
           </AccordionDetails>
         </Accordion>
