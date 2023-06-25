@@ -64,13 +64,13 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
     // generate the pass in the public folder
     const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
 
-    // log activity
-    await Activity.create({
-        businessId: cardTemplate.businessId,
-        message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
-        type: ActivityType.CREATE_CARD,
-        userId: card.id,
-    });
+    // // log activity
+    // await Activity.create({
+    //     businessId: cardTemplate.businessId,
+    //     message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
+    //     type: ActivityType.CREATE_CARD,
+    //     userId: card.id,
+    // });
 
     // combine the base card with the sub card in a single object
     return {
