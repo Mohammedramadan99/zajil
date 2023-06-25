@@ -4,42 +4,36 @@ import { User } from '../../users/models/user.model';
 import path from 'path';
 import fs from 'fs';
 import { File } from '../models/file.model';
+import * as s3 from '../../aws/s3';
 
 export const uploadFile = async (file: UploadedFile, user: User) => {
     await validateUploadFile(file);
 
-    const uploadFolderParent = path.join(__dirname, '../../../../public/uploads');
-    let fileName: string;
-    let uploadFolder: string;
+    const uploadFolderParent = 'uploads';
+    let uploadFolder: string = `${uploadFolderParent}/${user.id}`;
 
-    try {
-        // generate a random file name
-        fileName = `${new Date().getTime()}-${user.id}-${file.name}`;
+    // generate a random file name
+    const fileName = `${new Date().getTime()}-${user.id}-${file.name}`;
 
-        // create a user uploads folder if not exist
-        uploadFolder = path.join(uploadFolderParent, `${user.id}`);
-        if (!fs.existsSync(uploadFolder)) fs.mkdirSync(uploadFolder);
+    // create the upload folder if not exist
+    const res = await s3.uploadFile(
+        {
+            name: fileName,
+            data: file.data,
+        },
+        uploadFolder,
+    );
 
-        // move the file to the uploads folder
-        await file.mv(path.join(uploadFolder, fileName));
+    // save the file to the database
+    const fileCreated = await File.create({
+        createdBy: user.id,
+        name: file.name,
+        url: res.Location,
+        mimeType: file.mimetype,
+        key: res.Key,
+    });
 
-        // save the file to the database
-        const fileCreated = await File.create({
-            createdBy: user.id,
-            name: file.name,
-            url: `${process.env.PROTOCOL || 'https'}://${process.env.HOST}:${process.env.PORT}/uploads/${
-                user.id
-            }/${fileName}`,
-            mimeType: file.mimetype,
-        });
-
-        return fileCreated;
-    } catch (error) {
-        // remove the file if any error occurs
-        if (fileName && uploadFolder) fs.unlinkSync(path.join(uploadFolder, fileName));
-
-        throw error;
-    }
+    return fileCreated;
 };
 
 export const listFiles = async (user: User) => {
@@ -76,10 +70,7 @@ export const deleteFile = async (id: number, user: User) => {
     if (!file) throw new HttpError(404, 'File not found');
 
     // remove the file from the uploads folder
-    const path = file.url.split('uploads')[1];
-    const filePath = `${__dirname}/../../../../public/uploads${path}`;
-    // remove file if exist
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    await s3.deleteFile(file.key);
 
     // remove the file from the database
     await file.destroy();
