@@ -39,7 +39,7 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
 import TabPanel from "./LoyaltyTabs";
 import { createCard } from "../../../store/CardSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function CreateCardForm({
   tempPhoto,
@@ -62,8 +62,11 @@ function CreateCardForm({
   setImgColor,
 }) {
   const dispatch = useDispatch();
+  // const { user } = useSelector(state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
+  const [logoUrl, setLogoUrl] = useState(null);
+  const [stripUrl, setStripUrl] = useState(null);
   const theme = useTheme();
   const formik = useFormik({
     initialValues: {
@@ -90,9 +93,12 @@ function CreateCardForm({
       giftPriceNPoints: yup.number().required(),
     }),
     onSubmit(values) {
-      html2canvas(imgColor, { useCORS: true, x: 0, y: 0 }).then(function (
-        canvas
-      ) {
+      (async () => {
+        const canvas = await html2canvas(imgColor, {
+          useCORS: true,
+          x: 0,
+          y: 0,
+        });
         const imgData = canvas.toDataURL("image/png");
         const byteCharacters = atob(imgData.split(",")[1]);
         const byteNumbers = new Array(byteCharacters.length);
@@ -106,11 +112,37 @@ function CreateCardForm({
           lastModified: new Date().getTime(),
         });
 
+        const imgs = [
+          { name: "logoUrl", url: tempPhoto },
+          { name: "stripUrl", url: file },
+        ];
+        console.log({ imgs });
+        const uploadPromises = imgs.map(async (img) => {
+          const form = new FormData();
+          form.append("file", img.url);
+          const res = await fetch("http://localhost:3000/file-upload", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6ImFkbWluMUBhZG1pbi5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1lZCIsImxhc3ROYW1lIjoicmFtYWRhbiIsImJ1c2luZXNzZXMiOls5XSwicm9sZXMiOlsiYnVzaW5lc3Nfb3duZXIiXSwiZW1wbG95ZWRBdCI6W10sImlhdCI6MTY4NzczNjUyNCwiZXhwIjoxNjg3NzQzNzI0fQ.6JYgQMW6uV-8tyKOtlLjvcIdNuVXfKu4ORZDoL6Syqw`,
+            },
+            body: form,
+          });
+          const imgUrl = await res.json();
+          console.log({ imgUrl });
+          if (img.name === "logoUrl") {
+            setLogoUrl(imgUrl.data.url);
+          } else if (img.name === "stripUrl") {
+            setStripUrl(imgUrl.data.url);
+          }
+          return imgUrl.data.url;
+        });
+        const uploadedImgUrls = await Promise.all(uploadPromises);
+        console.log({ uploadedImgUrls, logoUrl, stripUrl });
         const cardData = {
           params: { businessId: 9 },
           data: {
             ...values,
-            logoUrl: logoImg,
+            logoUrl,
             logoText: values.brandName,
             nItems: stickersNumber,
             stickersCount: stickersIcons?.length,
@@ -124,11 +156,9 @@ function CreateCardForm({
               },
             ],
             designType: "storeCard",
-            activeImg,
-            tempPhoto,
-            imgData,
-            iconUrl: logoImg,
-            stripUrl: file,
+
+            iconUrl: logoUrl || "",
+            stripUrl: stripUrl || activeImg,
             cardProps: {
               backgroundColor: "#fff",
               foregroundColor: "#000",
@@ -144,8 +174,7 @@ function CreateCardForm({
           },
         };
         dispatch(createCard(cardData));
-      });
-      // console.log({ cardData });
+      })();
     },
   });
   const bgs = [
@@ -485,7 +514,10 @@ function CreateCardForm({
                     value={formik.values.stickersNumber}
                     onChange={(e) => {
                       setStickersNumber(Number(e.target.value));
-                      formik.setFieldValue("stickersNumber", e.target.value);
+                      formik.setFieldValue(
+                        "stickersNumber",
+                        Number(e.target.value)
+                      );
                     }}
                     error={Boolean(formik.errors.stickersNumber)}
                     helperText={formik.errors.stickersNumber}
