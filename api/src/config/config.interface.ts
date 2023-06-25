@@ -18,4 +18,12 @@ export interface ConfigInterface {
     applePasses: {
         webServiceURL: string;
     };
+    aws: {
+        secretAccessKey: string;
+        accessKeyId: string;
+        region: string;
+        s3: {
+            bucketName: string;
+        };
+    };
 }

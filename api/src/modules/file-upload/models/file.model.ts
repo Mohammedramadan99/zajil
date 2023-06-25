@@ -7,6 +7,7 @@ export class File extends Model {
     public name!: string;
     public url!: string;
     public mimeType!: string;
+    public key!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -33,6 +34,10 @@ export const init = (sequelize: Sequelize) =>
                 allowNull: false,
             },
             mimeType: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            key: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
