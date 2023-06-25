@@ -10,9 +10,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@emotion/react";
-import qrCode from "../../../../assets/images/qrcode.png";
-import html2canvas from "html2canvas";
 
 function Card({
   title,
@@ -188,11 +185,11 @@ function Card({
             gap={2}>
             <Box>
               <Typography variant="body2">Earned Rewards</Typography>
-              <Typography variant={"body2"}> 5 </Typography>
+              <Typography variant={"body2"}> 0 </Typography>
             </Box>
             <Box>
               <Typography variant="body2">Next Gift</Typography>
-              <Typography variant={"body2"}> 2 </Typography>
+              <Typography variant={"body2"}> 0 </Typography>
             </Box>
           </Box>
           <Box className="flex">

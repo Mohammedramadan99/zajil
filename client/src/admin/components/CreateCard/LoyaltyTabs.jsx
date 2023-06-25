@@ -38,7 +38,6 @@ function a11yProps(index) {
 }
 
 export default function VerticalTabs({ onChange, formik }) {
-  console.log({ onChange, formik });
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -62,28 +61,29 @@ export default function VerticalTabs({ onChange, formik }) {
         aria-label="Vertical tabs example"
         sx={{ borderRight: 1, borderColor: "divider" }}>
         <Tab label="Gifts" {...a11yProps(0)} />
-        <Tab label="Discound" {...a11yProps(1)} />
+        <Tab label="Discount" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0} sx={{ width: "100%" }}>
         <Stack direction={"row"} spacing={2} width={"100%"}>
           <TextField
-            name="gift"
+            name="giftName"
             label="Gift"
-            value={formik.values.gift}
+            value={formik.values.giftName}
             onChange={formik.handleChange}
-            error={Boolean(formik.errors.gift)}
-            helperText={formik.errors.gift}
+            error={Boolean(formik.errors.giftName)}
+            helperText={formik.errors.giftName}
             sx={{
               width: "100%",
             }}
           />
           <TextField
-            name="giftPoints"
+            name="giftPriceNPoints"
             label="Points"
-            value={formik.values.giftPoints}
+            type="number"
+            value={formik.values.giftPriceNPoints}
             onChange={formik.handleChange}
-            error={Boolean(formik.errors.giftPoints)}
-            helperText={formik.errors.giftPoints}
+            error={Boolean(formik.errors.giftPriceNPoints)}
+            helperText={formik.errors.giftPriceNPoints}
             sx={{
               width: "100%",
             }}
@@ -93,23 +93,24 @@ export default function VerticalTabs({ onChange, formik }) {
       <TabPanel value={value} index={1}>
         <Stack direction={"row"} spacing={2} width={"100%"}>
           <TextField
-            name="discound"
-            label="Discound"
-            value={formik.values.discound}
+            name="discount"
+            label="Discount"
+            value={formik.values.giftName}
             onChange={formik.handleChange}
-            error={Boolean(formik.errors.discound)}
-            helperText={formik.errors.discound}
+            error={Boolean(formik.errors.giftName)}
+            helperText={formik.errors.giftName}
             sx={{
               width: "100%",
             }}
           />
           <TextField
-            name="discoundPoints"
+            name="discountPoints"
             label="Points"
-            value={formik.values.discoundPoints}
+            type="number"
+            value={formik.values.giftPriceNPoints}
             onChange={formik.handleChange}
-            error={Boolean(formik.errors.discoundPoints)}
-            helperText={formik.errors.discoundPoints}
+            error={Boolean(formik.errors.giftPriceNPoints)}
+            helperText={formik.errors.giftPriceNPoints}
             sx={{
               width: "100%",
             }}

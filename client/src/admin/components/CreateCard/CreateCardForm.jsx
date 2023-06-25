@@ -38,6 +38,8 @@ import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
 import TabPanel from "./LoyaltyTabs";
+import { createCard } from "../../../store/CardSlice";
+import { useDispatch } from "react-redux";
 
 function CreateCardForm({
   tempPhoto,
@@ -59,6 +61,7 @@ function CreateCardForm({
   imgColor,
   setImgColor,
 }) {
+  const dispatch = useDispatch();
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
   const theme = useTheme();
@@ -69,6 +72,8 @@ function CreateCardForm({
       brandName: "",
       stickersNumber,
       name,
+      giftName: "",
+      giftPriceNPoints: "",
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
@@ -76,12 +81,13 @@ function CreateCardForm({
       brandName: yup.string().required(),
       name: yup.string().required(),
       stickersNumber: yup.number().required(),
-      gift: yup.string().required(),
-      giftPoints: yup.number().required(),
-      discound: yup.string().required(),
-      discoundPoints: yup.number().required(),
+
+      // discount: yup.string().required(),
+      // discountPoints: yup.number().required(),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
+      giftName: yup.string().required(),
+      giftPriceNPoints: yup.number().required(),
     }),
     onSubmit(values) {
       html2canvas(imgColor, { useCORS: true, x: 0, y: 0 }).then(function (
@@ -100,41 +106,46 @@ function CreateCardForm({
           lastModified: new Date().getTime(),
         });
 
-        const data = {
-          ...values,
-          logoUrl: logoImg,
-          logoText: textLogo,
-          nItems: stickersNumber,
-          stickersCount: stickersIcons?.length,
-          stickers: stickersIcons,
-          pointsPerVisit: 10,
-          gifts: [
-            {
-              name: "unlimimted gift",
-              priceNPoints: 20,
-            },
-          ],
-          designType: "storeCard",
-          activeImg,
-          tempPhoto,
-          imgData,
-          iconUrl: logoImg,
-          stripUrl: file,
-          cardProps: {
-            backgroundColor: "#fff",
-            foregroundColor: "#000",
-            labelColor: "#fff",
-            headerFields: [
+        const cardData = {
+          params: { businessId: 9 },
+          data: {
+            ...values,
+            logoUrl: logoImg,
+            logoText: values.brandName,
+            nItems: stickersNumber,
+            stickersCount: stickersIcons?.length,
+            stickers: activeStickers,
+            priceNPoints: values.giftPriceNPoints,
+            pointsPerVisit: 10,
+            gifts: [
               {
-                key: "header",
-                label: "ORG",
-                value: "",
+                name: values.giftName,
+                priceNPoints: values.giftPriceNPoints,
               },
             ],
+            designType: "storeCard",
+            activeImg,
+            tempPhoto,
+            imgData,
+            iconUrl: logoImg,
+            stripUrl: file,
+            cardProps: {
+              backgroundColor: "#fff",
+              foregroundColor: "#000",
+              labelColor: "#fff",
+              headerFields: [
+                {
+                  key: "header",
+                  label: "ORG",
+                  value: "",
+                },
+              ],
+            },
           },
         };
-        console.log({ data });
+        dispatch(createCard(cardData));
       });
+      // console.log({ cardData });
     },
   });
   const bgs = [
