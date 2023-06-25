@@ -1,4 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Business } from '../business.model';
+import { MenuItem } from './menu-item.model';
 
 export class Menu extends Model {
     public declare id: number;
@@ -26,3 +28,18 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'menus',
         },
     );
+
+export const associate = () => {
+    // Business | Menu
+    Menu.belongsTo(Business, {
+        foreignKey: 'businessId',
+        as: 'business',
+    });
+
+    // Menu | Menu Item
+    Menu.hasMany(MenuItem, {
+        foreignKey: 'menuId',
+        as: 'menuItems',
+        onDelete: 'CASCADE',
+    });
+};

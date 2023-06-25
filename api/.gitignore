@@ -24,3 +24,7 @@ public/card-templates/*
 # Cards except
 public/cards/*
 !public/cards/.gitkeep
+
+# uploads
+public/uploads/*
+!public/uploads/.gitkeep

@@ -8,6 +8,7 @@ import { validateMiddleware } from '../middlewares/methods/validate.middleware';
 import { CreateUserDto } from '../modules/users/dto/create-user';
 import cardsRouter from './cards.router';
 import { CardController } from '../modules/cards/controllers/Card';
+import fileUploadRouter from './file-upload.router';
 
 const mainRouter = express.Router();
 mainRouter.post('/register', validateMiddleware(CreateUserDto), UsersController.create);
@@ -19,14 +20,26 @@ mainRouter.use('/users', usersRouter);
 mainRouter.use('/businesses', businessesRouter);
 mainRouter.use('/branches', branchesRouter);
 
+// file upload
+mainRouter.use('/file-upload', fileUploadRouter);
+
 // register apple pass device
-mainRouter.post('/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber', CardController.registerDevice);
+mainRouter.post(
+    '/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber',
+    CardController.registerDevice,
+);
 
 // Unregister a Pass for Update Notifications
-mainRouter.delete('/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber', CardController.unregisterDevice);
+mainRouter.delete(
+    '/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber',
+    CardController.unregisterDevice,
+);
 
 // Getting the Serial Numbers for Passes Associated with a Device
-mainRouter.get('/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier', CardController.getSerialNumbers);
+mainRouter.get(
+    '/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier',
+    CardController.getSerialNumbers,
+);
 
 // Send an Updated Pass
 mainRouter.get('/v1/passes/:passTypeIdentifier/:serialNumber', CardController.sendUpdatedPass);
