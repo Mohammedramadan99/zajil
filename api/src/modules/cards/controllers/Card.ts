@@ -84,11 +84,11 @@ export const CardController: ICRUDController & {
 
     // Custom methods
 
-    loyaltyAddPoints: function (req: Request, res: Response, next: NextFunction): void {
+    loyaltyAddPoints: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
 
         cardServices
-            .loyaltyAddPoints(cardId)
+            .loyaltyAddPoints(cardId, req.user)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
@@ -97,12 +97,12 @@ export const CardController: ICRUDController & {
             });
     },
 
-    loyaltyRedeemGift: function (req: Request, res: Response, next: NextFunction): void {
+    loyaltyRedeemGift: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
         const giftId = Number(req.body.giftId);
 
         cardServices
-            .loyaltyRedeemGift(cardId, giftId)
+            .loyaltyRedeemGift(cardId, giftId, req.user)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
@@ -111,11 +111,11 @@ export const CardController: ICRUDController & {
             });
     },
 
-    itemSubscriptionUse: function (req: Request, res: Response, next: NextFunction): void {
+    itemSubscriptionUse: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
 
         cardServices
-            .itemsSubscriptionUseItems(cardId, req.body)
+            .itemsSubscriptionUseItems(cardId, req.body, req.user)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);

@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Card } from './card.model';
 
 export class ItemsSubscriptionCard extends Model {
     public declare id: number;
@@ -33,3 +34,11 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'items_subscription_cards',
         },
     );
+
+export const associate = () => {
+    // Card | Items Subscription Card
+    ItemsSubscriptionCard.belongsTo(Card, {
+        foreignKey: 'id',
+        as: 'card',
+    });
+};

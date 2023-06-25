@@ -1,4 +1,8 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { User } from '../../users/models/user.model';
+import { Branch } from '../../branches/models/branch.model';
+import { CardTemplate } from '../../card-templates/models/card-template.model';
+import { Activity } from './activity.model';
 
 export class Business extends Model {
     public declare id: number;
@@ -31,3 +35,36 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'businesses',
         },
     );
+
+export const associate = () => {
+    // User | Business
+    Business.belongsTo(User, {
+        foreignKey: 'ownerId',
+        as: 'owner',
+    });
+
+    // Business | Branch
+    Business.hasMany(Branch, {
+        foreignKey: 'businessId',
+        as: 'branches',
+    });
+
+    // Business | Card Template
+    Business.hasMany(CardTemplate, {
+        foreignKey: 'businessId',
+        as: 'cardTemplates',
+    });
+
+    // Business | Menu
+    Business.hasMany(CardTemplate, {
+        foreignKey: 'businessId',
+        as: 'menu',
+        onDelete: 'CASCADE',
+    });
+
+    // Business | Activity
+    Business.hasMany(Activity, {
+        foreignKey: 'businessId',
+        as: 'activities',
+    });
+};

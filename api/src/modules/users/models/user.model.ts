@@ -1,6 +1,8 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { Business } from '../../businesses/models/business.model';
 import { Branch } from '../../branches/models/branch.model';
+import { File } from '../../file-upload/models/file.model';
+import { Activity } from '../../businesses/models/activity.model';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -68,3 +70,30 @@ export const init = (sequelize: Sequelize) =>
             tableName: 'users',
         },
     );
+
+export const associate = () => {
+    // User | Business
+    User.hasMany(Business, {
+        foreignKey: 'ownerId',
+        as: 'businesses',
+    });
+
+    // User | Branch
+    User.belongsToMany(Branch, {
+        through: 'UserBranch',
+        as: 'employedAt',
+        foreignKey: 'userId',
+    });
+
+    // User | File
+    User.hasMany(File, {
+        foreignKey: 'userId',
+        as: 'files',
+    });
+
+    // User | Activity
+    User.hasMany(Activity, {
+        foreignKey: 'userId',
+        as: 'activities',
+    });
+};

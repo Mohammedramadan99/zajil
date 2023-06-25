@@ -1,51 +1,52 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { Menu } from './menu.model';
+import { User } from '../../users/models/user.model';
 
-export class MenuItem extends Model {
+export class File extends Model {
     public declare id: number;
-    public itemName!: string;
-    public itemDescription!: string;
-    public itemPrice!: number;
-    public declare menuId: number;
+    public createdBy!: number;
+    public name!: string;
+    public url!: string;
+    public mimeType!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
 export const init = (sequelize: Sequelize) =>
-    MenuItem.init(
+    File.init(
         {
             id: {
                 type: DataTypes.INTEGER,
-                autoIncrement: true,
                 primaryKey: true,
+                autoIncrement: true,
             },
-            itemName: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            itemDescription: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            itemPrice: {
-                type: DataTypes.DOUBLE,
-                allowNull: false,
-            },
-            menuId: {
+            createdBy: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            url: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            mimeType: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
         },
         {
             sequelize,
-            tableName: 'menu_items',
+            tableName: 'files',
         },
     );
 
 export const associate = () => {
-    MenuItem.belongsTo(Menu, {
-        foreignKey: 'menuId',
-        as: 'menu',
+    // User | File
+    File.belongsTo(User, {
+        foreignKey: 'createdBy',
+        as: 'creator',
     });
 };
