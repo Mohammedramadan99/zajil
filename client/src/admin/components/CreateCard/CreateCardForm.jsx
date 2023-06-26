@@ -123,7 +123,7 @@ function CreateCardForm({
           const res = await fetch("http://localhost:3000/file-upload", {
             method: "POST",
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6ImFkbWluMUBhZG1pbi5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1lZCIsImxhc3ROYW1lIjoicmFtYWRhbiIsImJ1c2luZXNzZXMiOls5XSwicm9sZXMiOlsiYnVzaW5lc3Nfb3duZXIiXSwiZW1wbG95ZWRBdCI6W10sImlhdCI6MTY4NzczNjUyNCwiZXhwIjoxNjg3NzQzNzI0fQ.6JYgQMW6uV-8tyKOtlLjvcIdNuVXfKu4ORZDoL6Syqw`,
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwiZmlyc3ROYW1lIjoibW9oYW1tZWQiLCJsYXN0TmFtZSI6InJhbWFkYW4iLCJidXNpbmVzc2VzIjpbXSwicm9sZXMiOlsiYnVzaW5lc3Nfb3duZXIiXSwiZW1wbG95ZWRBdCI6W10sImlhdCI6MTY4NzczNzQ1OSwiZXhwIjoxNjg3NzQ0NjU5fQ.x3-oyprkxmRUl3VYod-ZK5wy3udfW7NRC0J9BX15VFk`,
             },
             body: form,
           });
@@ -139,7 +139,7 @@ function CreateCardForm({
         const uploadedImgUrls = await Promise.all(uploadPromises);
         console.log({ uploadedImgUrls, logoUrl, stripUrl });
         const cardData = {
-          params: { businessId: 9 },
+          params: { businessId: 1 },
           data: {
             ...values,
             logoUrl,

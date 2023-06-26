@@ -12,9 +12,9 @@ import Card from "../../components/Cards/Card/Card";
 import cardBg_1 from "../../../assets/images/card_bg_1.jpg";
 import { Star } from "@mui/icons-material";
 import Visa from "../../components/Cards/Card/Visa";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
+import QrcodeScanner from "../../components/QrcodeScanner/QrcodeScanner";
 
 function Cards() {
   const theme = useTheme();
@@ -79,6 +79,7 @@ function Cards() {
           <Grid item lg={6}>
             <Visa />
           </Grid>
+          <QrcodeScanner />
         </Grid>
       </Container>
     </Box>
