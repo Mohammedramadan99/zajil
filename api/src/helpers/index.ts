@@ -110,7 +110,7 @@ export const downloadImageToFolder = async (imageURL: string, path: string) => {
     const imageType = await fetch(imageURL, {
         method: 'HEAD',
     }).then((res) => res.headers.get('content-type'));
-    if (!imageType || !imageType.includes('image')) throw new HttpError(400, 'Invalid image URL');
+    // if (!imageType || !imageType.includes('image')) throw new HttpError(400, 'Invalid image URL');
 
     // download the image
     return fetch(imageURL)
