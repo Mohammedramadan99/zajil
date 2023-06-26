@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: server
+        restart: always
+        ports:
+            - 3000:3000
+        env_file:
+            - .env
+        command: npm run prod
