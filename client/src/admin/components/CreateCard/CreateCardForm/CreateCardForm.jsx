@@ -2,42 +2,53 @@ import {
   Alert,
   Box,
   Button,
+  Stack,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { createBusiness } from "../../../store/businessSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { createCard } from "../../../../store/CardSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-function CreateBusinessForm() {
+function CreateCardForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errorMessage: error, loading } = useSelector(
-    (state) => state.businesses
-  );
+  const { templateId, businessId } = useParams();
+  const { error, loading, card } = useSelector((state) => state.cards);
+
   const formik = useFormik({
     initialValues: {
-      name: "",
+      clientName: "",
+      clientPhone: "",
     },
     validationSchema: yup.object({
-      name: yup.string().required(),
+      clientName: yup.string().required("Client Name is required"),
+      clientPhone: yup.string().required("Client Phone  is required"),
     }),
     onSubmit(values) {
       handleSubmit(values);
     },
   });
   const handleSubmit = async (values) => {
-    // const result = await createBusiness(values);
-    dispatch(createBusiness(values));
-    if (result) {
-      navigate("/admin/branch/new");
-    }
+    const templateIdNumber = +templateId;
+    dispatch(
+      createCard({
+        data: { ...values, templateId: templateIdNumber },
+        params: { businessId },
+      })
+    );
   };
+  useEffect(() => {
+    if (card) {
+      dispatch(reset());
+      navigate("/admin/cards");
+    }
+  }, [card]);
   return (
     <Box
       maxWidth={500}
@@ -62,7 +73,7 @@ function CreateBusinessForm() {
             display: "inline-block",
             color: theme.palette.primary[500],
           }}>
-          business
+          card
         </span>
       </Typography>
       <Box component="form" onSubmit={formik.handleSubmit}>
@@ -71,17 +82,26 @@ function CreateBusinessForm() {
             {error}
           </Alert>
         )}
-        <div>
+        <Stack spacing={2}>
           <TextField
-            name="name"
-            label="Name"
-            value={formik.values.name}
+            name="clientName"
+            label="Client Name"
+            value={formik.values.clientName}
             onChange={formik.handleChange}
-            error={Boolean(formik.errors.name)}
-            helperText={formik.errors.name}
+            error={Boolean(formik.errors.clientName)}
+            helperText={formik.errors.clientName}
             sx={{ width: "100%" }}
           />
-        </div>
+          <TextField
+            name="clientPhone"
+            label="Client Phone"
+            value={formik.values.clientPhone}
+            onChange={formik.handleChange}
+            error={Boolean(formik.errors.clientPhone)}
+            helperText={formik.errors.clientPhone}
+            sx={{ width: "100%" }}
+          />
+        </Stack>
         <Button
           type="submit"
           variant="contained"
@@ -93,13 +113,13 @@ function CreateBusinessForm() {
           variant="body1"
           sx={{ my: 2, color: theme.palette.grey[500] }}>
           {" "}
-          <span style={{ fontWeight: 600, color: "#ccc" }}>Note:</span> Creating
+          {/* <span style={{ fontWeight: 600, color: "#ccc" }}>Note:</span> Creating
           a business will make you able to create a branch, that means you
-          cannot create a branch if you don't have a business.
+          cannot create a branch if you don't have a business. */}
         </Typography>
       </Box>
     </Box>
   );
 }
 
-export default CreateBusinessForm;
+export default CreateCardForm;

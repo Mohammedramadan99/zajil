@@ -7,6 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   TextField,
   Typography,
   useTheme,
@@ -17,14 +18,17 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import useBranch from "../../../hooks/useBranch";
 import GoogleMaps from "../Location/GoogleMaps";
+import { useDispatch, useSelector } from "react-redux";
+import { getBusinesses } from "../../../store/businessSlice";
 
 function CreateBranchForm() {
   const theme = useTheme();
-  const { getBusinesses, data: businesses } = useBusiness();
+  const dispatch = useDispatch();
+  const { businesses } = useSelector((state) => state.businesses);
   const { createBranch, data } = useBranch();
   const [success, setSuccess] = useState("");
   useEffect(() => {
-    getBusinesses();
+    dispatch(getBusinesses());
   }, []);
 
   const formik = useFormik({
@@ -82,7 +86,7 @@ function CreateBranchForm() {
           </span>
         </Typography>
         <Box component="form" onSubmit={formik.handleSubmit}>
-          <div>
+          <Stack direction="row" alignItems={"center"} spacing={2}>
             <TextField
               name="name"
               label="Name"
@@ -93,25 +97,26 @@ function CreateBranchForm() {
               helperText={formik.errors.name}
               sx={{ width: "100%" }}
             />
-          </div>
-          <FormControl required sx={{ my: 2, minWidth: 120 }}>
-            <InputLabel id="demo-simple-select-required-label">
-              Business
-            </InputLabel>
-            <Select
-              name="business"
-              label="Business"
-              value={formik.values.business}
-              error={Boolean(formik.errors.business)}
-              helperText={formik.errors.business}
-              onChange={formik.handleChange}>
-              {businesses?.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <FormControl required sx={{ my: 2, minWidth: 120 }}>
+              <InputLabel id="demo-simple-select-required-label">
+                Business
+              </InputLabel>
+              <Select
+                name="business"
+                label="Business"
+                value={formik.values.business}
+                error={Boolean(formik.errors.business)}
+                helperText={formik.errors.business}
+                onChange={formik.handleChange}>
+                {businesses?.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+
           {/* <GoogleMaps w={"100%"} /> */}
           <Button
             type="submit"

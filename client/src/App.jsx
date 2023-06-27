@@ -1,4 +1,9 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
 
 import Home from "./pages/Home/Home";
 import DashboardHome from "./admin/pages/home/Home";
@@ -17,79 +22,85 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Business from "./admin/pages/business/Business";
 import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
-const isAdmin = true;
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-    ],
-  },
-  {
-    path: "/register",
-    element: <Home />,
-  },
-  {
-    path: "/auth",
-    element: <RootLayout />,
-    children: [
-      {
-        path: "/auth/login",
-        element: <Login />,
-      },
-      {
-        path: "/auth/register",
-        element: <Register />,
-      },
-    ],
-  },
-  {
-    path: "/admin",
-    element: isAdmin ? (
-      <DashboardLayout />
-    ) : (
-      <div>only admins can see this page</div>
-    ),
-    children: [
-      {
-        path: "/admin",
-        element: <DashboardHome />,
-      },
-      {
-        path: "templates",
-        element: <Templates />,
-      },
-      {
-        path: "location",
-        element: <Location />,
-      },
-      {
-        path: "business",
-        element: <Business />,
-      },
-      {
-        path: "business/new",
-        element: <CreateBusiness />,
-      },
-      {
-        path: "branch/new",
-        element: <CreateBranch />,
-      },
-      {
-        path: "templates/new",
-        element: <CreateTemplate />,
-      },
-    ],
-  },
-]);
+import CardControl from "./admin/pages/cardControl/CardControl";
+import CreateCard from "./admin/pages/controlCard/CreateCard";
 
 function App() {
   const { t, i18n } = useTranslation();
   const { mode } = useSelector((state) => state.mode);
+  const { user } = useSelector((state) => state.auth);
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <RootLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+      ],
+    },
+    {
+      path: "/register",
+      element: <Home />,
+    },
+    {
+      path: "/auth",
+      element: <RootLayout />,
+      children: [
+        {
+          path: "/auth/login",
+          element: <Login />,
+        },
+        {
+          path: "/auth/register",
+          element: <Register />,
+        },
+      ],
+    },
+    {
+      path: "/admin",
+      element: user ? <DashboardLayout /> : <Navigate to={"/auth/login"} />,
+      children: [
+        {
+          path: "/admin",
+          element: <DashboardHome />,
+        },
+        {
+          path: "templates",
+          element: <Templates />,
+        },
+        {
+          path: "location",
+          element: <Location />,
+        },
+        {
+          path: "business",
+          element: <Business />,
+        },
+        {
+          path: "business/new",
+          element: <CreateBusiness />,
+        },
+        {
+          path: "branch/new",
+          element: <CreateBranch />,
+        },
+        {
+          path: "templates/new",
+          element: <CreateTemplate />,
+        },
+        {
+          path: "cards/new/:businessId/:templateId",
+          element: <CreateCard />,
+        },
+        {
+          path: "cards/control",
+          element: <CardControl />,
+        },
+      ],
+    },
+  ]);
 
   useEffect(() => {
     if (i18n.language.indexOf("ar") === 0) {
@@ -98,6 +109,7 @@ function App() {
       document.body.dir = "ltr";
     }
   }, [i18n.language]);
+
   useEffect(() => {
     AOS.init({
       duration: 1000, // animation duration

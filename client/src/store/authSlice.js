@@ -9,11 +9,14 @@ const loggedIn = () => {
     const exp = new Date(payloadObj.exp * 1000);
     const now = new Date();
 
-    if (now.getDate() > exp.getDate()) {
+    if (now.getTime() > exp.getTime()) {
+      console.log("no");
       return null;
     } else {
       const { iat, exp, ...props } = payloadObj;
       const user = { ...props, token };
+      console.log("yes");
+
       return user;
     }
   } else {

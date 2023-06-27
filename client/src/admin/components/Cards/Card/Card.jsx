@@ -16,7 +16,7 @@ function Card({
   template,
   title,
   bg,
-  icon,
+
   logoImg,
   setLogoImg,
   setTextLogo,
@@ -25,14 +25,12 @@ function Card({
   withControl = true,
   textLogo,
   activeImg,
-  setActiveImg,
+
   activeIcon,
-  setActiveIcon,
+
   name,
-  setName,
+
   activeScanType,
-  setActiveScanType,
-  imgColor,
   setImgColor,
 }) {
   const [open, setOpen] = useState(false);
@@ -92,10 +90,10 @@ function Card({
                 {/* )} */}
                 {textLogo && <span> {textLogo} </span>}
               </Box>
-              <Box>
+              {/* <Box>
                 <Typography variant="body1">ORG</Typography>
                 <Typography variant="body2">mohammed</Typography>
-              </Box>
+              </Box> */}
             </Stack>
             <Stack
               direction={"row"}
@@ -222,7 +220,7 @@ function Card({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`http://localhost:5173/admin/createCard/${template.id}/${template.businessId}`}
+          url={`http://localhost:5173/admin/cards/new/${template.id}/${template.businessId}`}
         />
       )}
     </>

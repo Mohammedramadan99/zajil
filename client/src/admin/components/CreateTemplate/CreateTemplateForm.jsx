@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -19,16 +20,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { HexColorPicker } from "react-colorful";
-import bg1 from "../../../assets/images/cardsBackgrounds/bg-1.jpg";
-import bg2 from "../../../assets/images/cardsBackgrounds/bg-2.jpg";
-import bg3 from "../../../assets/images/cardsBackgrounds/bg-3.jpg";
-import bg4 from "../../../assets/images/cardsBackgrounds/bg-4.jpg";
-import bg5 from "../../../assets/images/cardsBackgrounds/bg-5.jpg";
-import icon1 from "../../../assets/images/stickers/meat.png";
-import icon2 from "../../../assets/images/stickers/fish.png";
-import icon3 from "../../../assets/images/stickers/chicken.png";
-import icon4 from "../../../assets/images/stickers/sweet-1.png";
-import icon5 from "../../../assets/images/stickers/sweet-2.png";
+
 import ScanIcon1 from "../../../assets/images/stickers/barcode_icon-1.png";
 import ScanIcon2 from "../../../assets/images/stickers/qrCode_icon-1.png";
 import barcode from "../../../assets/images/barcode-1.png";
@@ -38,8 +30,9 @@ import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
 import TabPanel from "./LoyaltyTabs";
-import { createTemplate } from "../../../store/TemplateSlice";
+import { createTemplate, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function CreateTemplateForm({
   tempPhoto,
@@ -62,12 +55,15 @@ function CreateTemplateForm({
   setImgColor,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { template, errors, loading } = useSelector((state) => state.templates);
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
   const [logoUrl, setLogoUrl] = useState(null);
   const [stripUrl, setStripUrl] = useState(null);
   const theme = useTheme();
+
   const formik = useFormik({
     initialValues: {
       cardName: "",
@@ -82,44 +78,45 @@ function CreateTemplateForm({
       cardName: yup.string().required(),
       cardType: yup.string().required(),
       brandName: yup.string().required(),
+      nItems: yup.number(),
       name: yup.string().required(),
       stickersNumber: yup.number().required(),
-
-      // discount: yup.string().required(),
-      // discountPoints: yup.number().required(),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
-      giftName: yup.string().required(),
-      giftPriceNPoints: yup.number().required(),
+      giftName: yup.string(),
+      giftPriceNPoints: yup.number(),
     }),
     onSubmit(values) {
       (async () => {
-        const canvas = await html2canvas(imgColor, {
-          useCORS: true,
-          x: 0,
-          y: 0,
-        });
-        const imgData = canvas.toDataURL("image/png");
-        const byteCharacters = atob(imgData.split(",")[1]);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        console.log({ imgColor, activeImg });
+        let imgs = [];
+        if (imgColor) {
+          const canvas = await html2canvas(imgColor, {
+            useCORS: true,
+            x: 0,
+            y: 0,
+          });
+          const imgData = canvas.toDataURL("image/png");
+          const byteCharacters = atob(imgData.split(",")[1]);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: "image/png" });
+          const file = new File([blob], "filename.png", {
+            type: "image/png",
+            lastModified: new Date().getTime(),
+          });
+          imgs = [tempPhoto, file];
+        } else {
+          imgs = [tempPhoto];
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "image/png" });
-        const file = new File([blob], "filename.png", {
-          type: "image/png",
-          lastModified: new Date().getTime(),
-        });
-
-        const imgs = [
-          { name: "logoUrl", url: tempPhoto },
-          { name: "stripUrl", url: file },
-        ];
-        console.log({ imgs });
-        const uploadPromises = imgs.map(async (img) => {
+        // upload imgs
+        const uploadPromises = imgs?.map(async (img) => {
           const form = new FormData();
-          form.append("file", img.url);
+          form.append("file", img);
+
           const res = await fetch("http://localhost:3000/file-upload", {
             method: "POST",
             headers: {
@@ -137,12 +134,15 @@ function CreateTemplateForm({
           return imgUrl.data.url;
         });
         const uploadedImgUrls = await Promise.all(uploadPromises);
-        console.log({ uploadedImgUrls, logoUrl, stripUrl });
+
+        // const { id, ...stickersIcons } = activeStickers;
+
+        // console.log({ stickers });
         const cardData = {
           params: { businessId: 1 },
           data: {
             ...values,
-            logoUrl,
+            logoUrl: uploadedImgUrls[0],
             logoText: values.brandName,
             nItems: stickersNumber,
             stickersCount: stickersIcons?.length,
@@ -157,8 +157,8 @@ function CreateTemplateForm({
             ],
             designType: "storeCard",
 
-            iconUrl: logoUrl || "",
-            stripUrl: stripUrl || activeImg,
+            iconUrl: uploadedImgUrls[0] || "",
+            stripUrl: uploadedImgUrls[1] || activeImg.url,
             cardProps: {
               backgroundColor: "#fff",
               foregroundColor: "#000",
@@ -173,30 +173,30 @@ function CreateTemplateForm({
             },
           },
         };
-        dispatch(CreateTemplate(cardData));
+        dispatch(createTemplate(cardData));
       })();
     },
   });
   const bgs = [
     {
       id: 1,
-      url: bg1,
+      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-1.jpg",
     },
     {
       id: 2,
-      url: bg2,
+      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-2.jpg",
     },
     {
       id: 3,
-      url: bg3,
+      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-3.jpg",
     },
     {
       id: 4,
-      url: bg4,
+      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-4.jpg",
     },
     {
       id: 5,
-      url: bg5,
+      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-5.jpg",
     },
   ];
 
@@ -208,23 +208,23 @@ function CreateTemplateForm({
   const stickersIcons = [
     {
       id: 1,
-      icon: icon1,
+      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/meat.png",
     },
     {
       id: 2,
-      icon: icon2,
+      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/fish.png",
     },
     {
       id: 3,
-      icon: icon3,
+      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/chicken.png",
     },
     {
       id: 4,
-      icon: icon4,
+      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-1.png",
     },
     {
       id: 5,
-      icon: icon5,
+      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-2.png",
     },
   ];
   const scanTypes = [
@@ -277,35 +277,93 @@ function CreateTemplateForm({
   const fileInputClick = (event) => {
     event.target.value = null;
   };
-  const addStickerHandler = (id) => {
+  const addStickerHandler = (item) => {
     if (formik.values.cardType === "LOYALTY") {
       if (activeStickers.length >= 2) {
-        if (activeStickers.includes(id)) {
-          setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+        const stickerIndex = activeStickers.findIndex(
+          (sticker) => sticker.id === item.id
+        );
+
+        if (stickerIndex !== -1) {
+          setActiveStickers(
+            activeStickers.filter((sticker, index) => index !== stickerIndex)
+          );
         } else {
+          console.log("lo");
           return;
-          // setActiveStickers([...activeStickers, id]);
         }
       } else {
-        if (activeStickers.includes(id)) {
-          setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+        console.log("not lo");
+        const stickerIndex = activeStickers.findIndex(
+          (sticker) => sticker.id === item.id
+        );
+
+        if (stickerIndex !== -1) {
+          setActiveStickers(
+            activeStickers.filter((sticker, index) => index !== stickerIndex)
+          );
         } else {
-          setActiveStickers([...activeStickers, id]);
+          setActiveStickers(
+            activeStickers.concat({
+              id: item.id,
+              imageUrl: item.icon,
+              title: "test",
+              imageType: "png",
+            })
+          );
         }
       }
     } else {
-      if (activeStickers.includes(id)) {
-        setActiveStickers(activeStickers.filter((itemId) => itemId !== id));
+      const stickerIndex = activeStickers.findIndex(
+        (sticker) => sticker.id === item.id
+      );
+
+      if (stickerIndex !== -1) {
+        setActiveStickers(
+          activeStickers.filter((sticker, index) => index !== stickerIndex)
+        );
       } else {
-        setActiveStickers([...activeStickers, id]);
+        setActiveStickers(
+          activeStickers.concat({
+            id: item.id,
+            imageUrl: item.icon,
+            title: "test",
+            imageType: "png",
+          })
+        );
       }
     }
   };
+  useEffect(() => {
+    if (template) {
+      dispatch(reset());
+
+      navigate("/admin/templates");
+    }
+  }, [template]);
 
   return (
     <Box>
       <form onSubmit={formik.handleSubmit}>
         {/* ############ Accordion 1 ############ */}
+        {errors && (
+          <Alert severity="error" sx={{ marginBottom: 4 }}>
+            {errors?.map((error) => {
+              return Object.keys(error)?.map((key) => {
+                const value = error[key];
+                if (Array.isArray(value)) {
+                  return value.map((errorMsg, index) => (
+                    <div className="error" key={`${key}-${index}`}>
+                      <strong>{key}:</strong> {errorMsg}
+                    </div>
+                  ));
+                } else {
+                  return null;
+                }
+              });
+            })}
+          </Alert>
+        )}
         <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -355,6 +413,51 @@ function CreateTemplateForm({
                   ))}
                 </Select>
               </FormControl>
+              {formik.values.cardType === "ITEMS_SUBSCRIPTION" && (
+                <>
+                  <Stack direction={"row"} spacing={2}>
+                    <TextField
+                      name="itemsNumber"
+                      label="Items Number"
+                      type="number"
+                      required
+                      value={formik.values.nItems}
+                      onChange={formik.handleChange}
+                      error={Boolean(formik.errors.nItems)}
+                      helperText={formik.errors.nItems}
+                      sx={{
+                        width: "50%",
+                      }}
+                    />
+                    <TextField
+                      name="maxDailyUsage"
+                      label="Max Daily Usage"
+                      type="number"
+                      required
+                      value={formik.values.maxDailyUsage}
+                      onChange={formik.handleChange}
+                      error={Boolean(formik.errors.maxDailyUsage)}
+                      helperText={formik.errors.maxDailyUsage}
+                      sx={{
+                        width: "50%",
+                      }}
+                    />
+                  </Stack>
+                  <TextField
+                    name="subscriptionDurationDays"
+                    label="subscription Duration Days"
+                    type="number"
+                    required
+                    value={formik.values.subscriptionDurationDays}
+                    onChange={formik.handleChange}
+                    error={Boolean(formik.errors.subscriptionDurationDays)}
+                    helperText={formik.errors.subscriptionDurationDays}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                </>
+              )}
               {formik.values.cardType === "LOYALTY" && (
                 <TabPanel onChange={formik.handleChange} formik={formik} />
               )}
@@ -573,18 +676,19 @@ function CreateTemplateForm({
                       )}
                     </div>
                     <div className="stickers-icons">
-                      {stickersIcons.map((item) => (
-                        <div
-                          className={
-                            activeStickers.includes(item.id)
-                              ? "icon active"
-                              : "icon"
-                          }
-                          onClick={() => addStickerHandler(item.id)}>
-                          {" "}
-                          <img src={item.icon} alt="" width={30} />{" "}
-                        </div>
-                      ))}
+                      {stickersIcons.map((item) => {
+                        const isActive = activeStickers.some(
+                          (sticker) => sticker.id === item.id
+                        );
+                        return (
+                          <div
+                            className={isActive ? "icon active" : "icon"}
+                            onClick={() => addStickerHandler(item)}
+                            key={item.id}>
+                            <img src={item.icon} alt="" width={30} />
+                          </div>
+                        );
+                      })}
                     </div>
                   </Box>
                 </Stack>
@@ -627,7 +731,11 @@ function CreateTemplateForm({
           </AccordionDetails>
         </Accordion>
 
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ mt: 2 }}
+          disabled={loading}>
           submit
         </Button>
       </form>

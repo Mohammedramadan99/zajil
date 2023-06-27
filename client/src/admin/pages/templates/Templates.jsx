@@ -16,7 +16,11 @@ import Visa from "../../components/Cards/Card/Visa";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getTemplates, createTemplate } from "../../../store/TemplateSlice";
+import {
+  getTemplates,
+  createTemplate,
+  reset,
+} from "../../../store/TemplateSlice";
 
 import BusinessesTabs from "../../components/Templates/Tabs";
 function Cards() {
@@ -24,11 +28,13 @@ function Cards() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { templates } = useSelector((state) => state.templates);
+  const { businesses } = useSelector((state) => state.businesses);
 
   useEffect(() => {
-    dispatch(getTemplates());
-  }, []);
-  console.log({ templates });
+    dispatch(getTemplates(businesses[0]?.id));
+    dispatch(reset());
+  }, [businesses]);
+
   return (
     <Box
       sx={{
@@ -77,16 +83,29 @@ function Cards() {
               </Button>
             </ButtonGroup>
           </Grid>
-          {templates?.rows?.map((template) => (
-            <Grid key={template?.id} item lg={3}>
-              <Card
-                template={template}
-                title="holidays"
-                bg={cardBg_1}
-                icon={<Star />}
-              />
-            </Grid>
-          ))}
+          {templates?.rows?.length > 0 ? (
+            templates?.rows?.map((template) => (
+              <Grid key={template?.id} item lg={3}>
+                <Card
+                  template={template}
+                  title="holidays"
+                  bg={cardBg_1}
+                  icon={<Star />}
+                />
+              </Grid>
+            ))
+          ) : (
+            <>
+              <Typography
+                variant="body1"
+                textTransform={"capitalize"}
+                textAlign={"center"}
+                pl={5}
+                pt={2}>
+                this business don't have templates yet
+              </Typography>
+            </>
+          )}
           {/* <Grid item lg={6}>
             <Visa />
           </Grid> */}

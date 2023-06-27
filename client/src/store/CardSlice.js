@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import baseUrl from "../utils/Api";
 
-export const createTemplate = createAsyncThunk(
-  "templates/create",
+export const createCard = createAsyncThunk(
+  "card/create",
   async (cardData, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const { user } = auth;
 
       const response = await fetch(
-        `http://localhost:3000/businesses/${cardData.params.businessId}/card-templates`,
+        `http://localhost:3000/businesses/${cardData.params.businessId}/cards/1/items-subscription/use`,
         {
           method: "POST",
           headers: {
@@ -35,7 +35,7 @@ export const createTemplate = createAsyncThunk(
   }
 );
 export const getTemplates = createAsyncThunk(
-  "templates/all",
+  "card/all",
   async (businessId, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
@@ -69,21 +69,20 @@ export const getTemplates = createAsyncThunk(
 );
 
 const initialState = {
-  // user: JSON.parse(localStorage.getItem("userInfo")),
-  templates: null,
-  template: null,
+  cards: null,
+  card: null,
   loading: false,
   errors: null,
   errorMessage: null,
   successMessage: null,
 };
-const templateSlice = createSlice({
-  name: "templates",
+const cardSlice = createSlice({
+  name: "cards",
   initialState,
   reducers: {
     reset: (state) => {
-      state.template = null;
-      state.templates = null;
+      state.card = null;
+      state.cards = null;
       state.errors = null;
       state.errorMessage = null;
       state.successMessage = null;
@@ -91,16 +90,16 @@ const templateSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(createTemplate.pending, (state, action) => {
+    builder.addCase(createCard.pending, (state, action) => {
       state.loading = true;
       state.errors = null;
     });
-    builder.addCase(createTemplate.fulfilled, (state, action) => {
+    builder.addCase(createCard.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      state.template = action.payload.data;
+      state.card = action.payload.data;
     });
-    builder.addCase(createTemplate.rejected, (state, action) => {
+    builder.addCase(createCard.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
     });
@@ -111,7 +110,7 @@ const templateSlice = createSlice({
     builder.addCase(getTemplates.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      state.templates = action.payload.data;
+      state.cards = action.payload.data;
     });
     builder.addCase(getTemplates.rejected, (state, action) => {
       state.loading = false;
@@ -120,6 +119,6 @@ const templateSlice = createSlice({
   },
 });
 
-export const { reset } = templateSlice.actions;
+export const { reset } = cardSlice.actions;
 
-export default templateSlice.reducer;
+export default cardSlice.reducer;

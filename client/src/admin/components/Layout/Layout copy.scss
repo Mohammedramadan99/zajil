@@ -1,0 +1,75 @@
+@use "../../../Globals.scss" as *;
+.sidebar_links {
+  position: absolute;
+  bottom: 300px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: #fff;
+  .link,
+  a {
+    // display: flex;
+    // align-items: center;
+  }
+  .link {
+    width: 70px;
+    height: 70px;
+  }
+  a {
+    gap: 5px;
+    text-transform: capitalize;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .icon {
+      display: block;
+      position: relative;
+      line-height: 75px;
+      font-size: 1.5rem;
+      //   color: #000;
+    }
+    span {
+      //   color: #000;
+    }
+  }
+}
+
+.indicator {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  width: 80px;
+  height: 80px;
+
+  border-radius: 50%;
+  border: 7px solid;
+  transition: 0.5s ease;
+  // &::before {
+  //   content: "";
+  //   position: absolute;
+  //   top: 50%;
+  //   left: -22px;
+  //   width: 20px;
+  //   height: 20px;
+  //   background-color: transparent;
+  //   border-top-right-radius: 20px;
+  //   box-shadow: 0 -10px 0 0 $mauve_color-1;
+  // }
+  // &::after {
+  //   content: "";
+  //   position: absolute;
+  //   top: 50%;
+  //   right: -22px;
+  //   width: 20px;
+  //   height: 20px;
+  //   background-color: transparent;
+  //   border-top-left-radius: 20px;
+  //   box-shadow: 0 -10px 0 0 $mauve_color-1;
+  // }
+}
+
+// .MuiListItemIcon-root {
+//   svg path {
+//     color: #000 !important;
+//   }
+// }

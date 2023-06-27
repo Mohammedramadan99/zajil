@@ -93,7 +93,7 @@ export default function VerticalTabs({ onChange, formik }) {
       <TabPanel value={value} index={1}>
         <Stack direction={"row"} spacing={2} width={"100%"}>
           <TextField
-            name="discount"
+            name="giftName"
             label="Discount"
             value={formik.values.giftName}
             onChange={formik.handleChange}
@@ -104,7 +104,7 @@ export default function VerticalTabs({ onChange, formik }) {
             }}
           />
           <TextField
-            name="discountPoints"
+            name="giftPriceNPoints"
             label="Points"
             type="number"
             value={formik.values.giftPriceNPoints}

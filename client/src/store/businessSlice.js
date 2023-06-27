@@ -1,34 +1,66 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseUrl from "../utils/Api";
 
-function getCookie(cookieName) {
-  const cookieValue = document.cookie.match(
-    "(^|[^;]+)\\s*" + cookieName + "\\s*=\\s*([^;]+)"
-  );
-  return cookieValue ? JSON.parse(cookieValue.pop()) : null;
-}
-export const registerAction = createAsyncThunk(
-  "user/register",
-  async (userData, { rejectWithValue }) => {
+export const createBusiness = createAsyncThunk(
+  "business/create",
+  async (businessData, { rejectWithValue, getState }) => {
     try {
-      const response = await fetch(`http://localhost:3000/register`, {
+      const { auth } = getState();
+      const { user } = auth;
+      // const form = new FormData();
+      // Object.keys(values).forEach((key) => {
+      //   form.append(key, values[key]);
+      // });
+
+      const response = await fetch(`${baseUrl}/businesses`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${user.token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(businessData),
       });
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
-        return rejectWithValue(errorData.data.message);
+        return rejectWithValue({
+          message: errorData.message || "An unknown error occurred.",
+        });
       }
-      const data = await response.json();
-      console.log({ data });
-      return data;
+      const business = await response.json();
+      return business;
     } catch (error) {
       console.error(error);
       return rejectWithValue({
-        message: "An unknown error occurred. Please try again laterrr.",
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
+export const getBusinesses = createAsyncThunk(
+  "business/all",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+      // const form = new FormData();
+      // Object.keys(values).forEach((key) => {
+      //   form.append(key, values[key]);
+      // });
+
+      const response = await fetch(`${baseUrl}/businesses`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { data } = await response.json();
+      return data.rows;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
       });
     }
   }
@@ -36,14 +68,15 @@ export const registerAction = createAsyncThunk(
 
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
-  user: getCookie("userInfo") || null,
+  businesses: [],
+  business: {},
   loading: false,
   errors: null,
   errorMessage: null,
   successMessage: null,
 };
 const authSlice = createSlice({
-  name: "user",
+  name: "businesses",
   initialState,
   reducers: {
     login: (state, action) => {
@@ -58,18 +91,18 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(registerAction.pending, (state, action) => {
+    builder.addCase(createBusiness.pending, (state, action) => {
       state.loading = true;
       state.errors = null;
     });
-    builder.addCase(registerAction.fulfilled, (state, action) => {
+    builder.addCase(createBusiness.fulfilled, (state, action) => {
       console.log({ action });
       state.loading = false;
       state.errors = null;
-      state.user = null;
+      state.business = action.payload;
       state.successMessage = "user registered";
     });
-    builder.addCase(registerAction.rejected, (state, action) => {
+    builder.addCase(createBusiness.rejected, (state, action) => {
       console.log({ action });
       state.loading = false;
       state.errors = action.payload?.errors;
@@ -79,38 +112,21 @@ const authSlice = createSlice({
         : action.payload ||
           "An unknown error occurred. Please try again later.";
     });
-    builder.addCase(loginAction.pending, (state, action) => {
+    builder.addCase(getBusinesses.pending, (state, action) => {
       state.loading = true;
       state.errors = null;
     });
-    builder.addCase(loginAction.fulfilled, (state, action) => {
+    builder.addCase(getBusinesses.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
       state.successMessage = null;
-      state.user = action.payload.data;
+      state.businesses = action.payload;
     });
-    builder.addCase(loginAction.rejected, (state, action) => {
+    builder.addCase(getBusinesses.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;
       state.errorMessage =
-        action.payload || "An unknown error occurred. Please try again later.";
-    });
-    builder.addCase(logoutAction.pending, (state, action) => {
-      state.loading = true;
-      state.errors = null;
-    });
-    builder.addCase(logoutAction.fulfilled, (state, action) => {
-      state.loading = false;
-      state.errors = null;
-      state.user = {};
-      state.message = "logged out";
-    });
-    builder.addCase(logoutAction.rejected, (state, action) => {
-      state.loading = false;
-      state.errors = action.payload?.errors;
-      state.user = null;
-      state.message =
         action.payload || "An unknown error occurred. Please try again later.";
     });
   },
