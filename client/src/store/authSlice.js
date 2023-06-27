@@ -1,11 +1,26 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-function getCookie(cookieName) {
-  const cookieValue = document.cookie.match(
-    "(^|[^;]+)\\s*" + cookieName + "\\s*=\\s*([^;]+)"
-  );
-  return cookieValue ? JSON.parse(cookieValue.pop()) : null;
-}
+const loggedIn = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    const payload = token?.split(".")[1];
+    const payloadObj = JSON.parse(atob(payload));
+
+    const exp = new Date(payloadObj.exp * 1000);
+    const now = new Date();
+
+    if (now.getDate() > exp.getDate()) {
+      return null;
+    } else {
+      const { iat, exp, ...props } = payloadObj;
+      const user = { ...props, token };
+      return user;
+    }
+  } else {
+    return null;
+  }
+};
+
 export const registerAction = createAsyncThunk(
   "user/register",
   async (userData, { rejectWithValue }) => {
@@ -23,7 +38,7 @@ export const registerAction = createAsyncThunk(
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      console.log({ data });
+
       return data;
     } catch (error) {
       console.error(error);
@@ -57,18 +72,7 @@ export const loginAction = createAsyncThunk(
         );
       }
       const { data } = await response.json();
-
-      document.cookie =
-        "cookieName=cookieValue; expires=expirationDate; path=pathValue";
-      const expirationDate = new Date(
-        Date.now() + 1 * 24 * 60 * 60 * 1000
-      ).toUTCString();
-      document.cookie =
-        "userInfo=" +
-        JSON.stringify(data) +
-        "; expires=" +
-        expirationDate +
-        "; path=/";
+      localStorage.setItem("token", data.token);
       return data;
     } catch (error) {
       console.error(error);
@@ -92,7 +96,7 @@ export const logoutAction = createAsyncThunk(
 
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
-  user: getCookie("userInfo") || null,
+  user: loggedIn(),
   loading: false,
   errors: null,
   errorMessage: null,

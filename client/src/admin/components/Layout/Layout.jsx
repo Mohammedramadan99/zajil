@@ -30,7 +30,7 @@ const RootLayout = () => {
         <Grid item xs={2}>
           {!isNonMobile ? <MobileSidebar /> : <MainSidebar />}
         </Grid>
-        <Grid item ml={isNonMobile ? 0 : 15} xs={10} sm={12}>
+        <Grid item ml={isNonMobile ? 0 : 10} xs={11} sm={12}>
           <Outlet />
         </Grid>
       </Grid>

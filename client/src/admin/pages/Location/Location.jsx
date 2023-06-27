@@ -2,7 +2,6 @@ import { useTheme } from "@emotion/react";
 import { Box, Container, Grid, Stack } from "@mui/material";
 import LocationForm from "../../../admin/components/Location/LocationForm";
 import Card from "../../../admin/components/Cards/Card/Card";
-import QrcodeScanner from "../../components/QrcodeScanner/QrcodeScanner";
 
 function Location() {
   const theme = useTheme();
@@ -14,8 +13,6 @@ function Location() {
         backgroundColor: theme.palette.background.alt,
         height: "100vh",
       }}>
-      <Box width={"400px"}></Box>
-
       <Container>
         <Grid container spacing={2}>
           <Grid lg={6} item xs={12}>

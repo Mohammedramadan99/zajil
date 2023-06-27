@@ -7,39 +7,43 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../../components/Cards/Card/Card";
 import cardBg_1 from "../../../assets/images/card_bg_1.jpg";
 import { Star } from "@mui/icons-material";
 import Visa from "../../components/Cards/Card/Visa";
+
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
-import QrcodeScanner from "../../components/QrcodeScanner/QrcodeScanner";
+import { useDispatch, useSelector } from "react-redux";
+import { getTemplates, createTemplate } from "../../../store/TemplateSlice";
 
+import BusinessesTabs from "../../components/Templates/Tabs";
 function Cards() {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [open, setOpen] = useState(false);
+  const { templates } = useSelector((state) => state.templates);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  useEffect(() => {
+    dispatch(getTemplates());
+  }, []);
+  console.log({ templates });
   return (
     <Box
       sx={{
         backgroundColor: theme.palette.background.alt,
-        height: "100vh",
+        minHeight: "100vh",
         paddingBlock: 2,
+
         // paddingInline: 2,
       }}>
       <Container>
         <Grid container spacing={2}>
+          {/* Tabs */}
+          <Grid xs={12}>
+            <BusinessesTabs />
+          </Grid>
           {/* Create Card */}
           <Grid item lg={3}>
             {/* Card */}
@@ -63,23 +67,29 @@ function Cards() {
               textTransform={"capitalize"}
               textAlign={"center"}
               fontWeight={600}>
-              create a new card
+              create a new template
             </Typography>
             <ButtonGroup
               sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
               <Button variant="contained">template</Button>
-              <Button onClick={() => navigate("/admin/cards/new")}>
+              <Button onClick={() => navigate("/admin/templates/new")}>
                 empty
               </Button>
             </ButtonGroup>
           </Grid>
-          <Grid item lg={3}>
-            <Card title="holidays" bg={cardBg_1} icon={<Star />} />
-          </Grid>
-          <Grid item lg={6}>
+          {templates?.rows?.map((template) => (
+            <Grid key={template?.id} item lg={3}>
+              <Card
+                template={template}
+                title="holidays"
+                bg={cardBg_1}
+                icon={<Star />}
+              />
+            </Grid>
+          ))}
+          {/* <Grid item lg={6}>
             <Visa />
-          </Grid>
-          <QrcodeScanner />
+          </Grid> */}
         </Grid>
       </Container>
     </Box>

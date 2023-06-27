@@ -30,7 +30,7 @@ function MainSidebar() {
   const links = [
     { icon: <HomeOutlined />, text: "home", slug: "/admin" },
     { icon: <Business />, text: "business", slug: "business/new" },
-    { icon: <StyleOutlined />, text: "cards", slug: "cards" },
+    { icon: <StyleOutlined />, text: "templates", slug: "templates" },
     { icon: <PeopleAltOutlined />, text: "clients" },
     { icon: <LocationOnOutlined />, text: "location", slug: "location" },
     { icon: <ForumOutlined />, text: "messages" },

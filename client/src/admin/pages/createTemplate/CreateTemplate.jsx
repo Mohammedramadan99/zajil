@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Card from "../../components/Cards/Card/Card";
 import { Box, Container, Grid, useTheme } from "@mui/material";
-import CreateCardForm from "../../components/CreateCard/CreateCardForm";
+import CreateTemplateForm from "../../components/CreateTemplate/CreateTemplateForm";
 
 function CreateCard() {
   const theme = useTheme();
@@ -26,7 +26,7 @@ function CreateCard() {
       <Container>
         <Grid container spacing={6}>
           <Grid xs={9} item>
-            <CreateCardForm
+            <CreateTemplateForm
               tempPhoto={tempPhoto}
               setTempPhoto={setTempPhoto}
               activeImg={activeImg}

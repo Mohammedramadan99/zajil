@@ -10,8 +10,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import Dialog from "../../../components/Templates/Dialog";
 
 function Card({
+  template,
   title,
   bg,
   icon,
@@ -33,6 +35,7 @@ function Card({
   imgColor,
   setImgColor,
 }) {
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     // Whenever the textLogo or logoImg props change, update the logo image
     if (textLogo) {
@@ -49,17 +52,7 @@ function Card({
   }, [textLogo, logoImg, stickersNumber]);
 
   const boxRef = useRef(null);
-  const downloadImage = () => {
-    // html2canvas(box, { useCORS: true, x: 0, y: 0 }).then(function (canvas) {
-    //   const imgData = canvas.toDataURL("image/png");
-    //   // const link = document.createElement("a");
-    //   // link.download = "image.png";
-    //   // link.href = imgData;
-    //   // link.click();
-    // });
-  };
   useEffect(() => {
-    // downloadImage();
     const box = boxRef.current;
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
@@ -221,10 +214,17 @@ function Card({
               width: "100%",
             }}>
             <Button variant="contained">select</Button>
+            <Button onClick={() => setOpen(true)}>generate qr code</Button>
           </ButtonGroup>
         </>
       )}
-      <Button onClick={downloadImage}>Convert to Image</Button>
+      {open && (
+        <Dialog
+          open={open}
+          setOpen={setOpen}
+          url={`http://localhost:5173/admin/createCard/${template.id}/${template.businessId}`}
+        />
+      )}
     </>
   );
 }

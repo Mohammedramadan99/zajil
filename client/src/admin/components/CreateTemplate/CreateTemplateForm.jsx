@@ -38,10 +38,10 @@ import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
 import TabPanel from "./LoyaltyTabs";
-import { createCard } from "../../../store/CardSlice";
+import { createTemplate } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-function CreateCardForm({
+function CreateTemplateForm({
   tempPhoto,
   setTempPhoto,
   activeImg,
@@ -62,7 +62,7 @@ function CreateCardForm({
   setImgColor,
 }) {
   const dispatch = useDispatch();
-  // const { user } = useSelector(state.auth);
+  const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
   const [logoUrl, setLogoUrl] = useState(null);
@@ -123,7 +123,7 @@ function CreateCardForm({
           const res = await fetch("http://localhost:3000/file-upload", {
             method: "POST",
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwiZmlyc3ROYW1lIjoibW9oYW1tZWQiLCJsYXN0TmFtZSI6InJhbWFkYW4iLCJidXNpbmVzc2VzIjpbXSwicm9sZXMiOlsiYnVzaW5lc3Nfb3duZXIiXSwiZW1wbG95ZWRBdCI6W10sImlhdCI6MTY4NzczNzQ1OSwiZXhwIjoxNjg3NzQ0NjU5fQ.x3-oyprkxmRUl3VYod-ZK5wy3udfW7NRC0J9BX15VFk`,
+              Authorization: `Bearer ${user.token}`,
             },
             body: form,
           });
@@ -173,7 +173,7 @@ function CreateCardForm({
             },
           },
         };
-        dispatch(createCard(cardData));
+        dispatch(CreateTemplate(cardData));
       })();
     },
   });
@@ -635,4 +635,4 @@ function CreateCardForm({
   );
 }
 
-export default CreateCardForm;
+export default CreateTemplateForm;

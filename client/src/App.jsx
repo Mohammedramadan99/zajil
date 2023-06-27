@@ -9,14 +9,14 @@ import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
-import Cards from "./admin/pages/cards/Cards";
+import Templates from "./admin/pages/templates/Templates";
 import Location from "./admin/pages/Location/Location";
 import CreateBusiness from "./admin/pages/CreateBusiness/CreateBusiness";
 import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Business from "./admin/pages/business/Business";
-import CreateCard from "./admin/pages/createCard/CreateCard";
+import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
 const isAdmin = true;
 const router = createBrowserRouter([
   {
@@ -60,8 +60,8 @@ const router = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
-        path: "cards",
-        element: <Cards />,
+        path: "templates",
+        element: <Templates />,
       },
       {
         path: "location",
@@ -80,8 +80,8 @@ const router = createBrowserRouter([
         element: <CreateBranch />,
       },
       {
-        path: "cards/new",
-        element: <CreateCard />,
+        path: "templates/new",
+        element: <CreateTemplate />,
       },
     ],
   },
