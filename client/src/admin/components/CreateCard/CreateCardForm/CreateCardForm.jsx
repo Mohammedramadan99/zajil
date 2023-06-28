@@ -11,7 +11,7 @@ import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
-import { createCard } from "../../../../store/CardSlice";
+import { createCard, reset } from "../../../../store/CardSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function CreateCardForm() {

@@ -9,7 +9,7 @@ export const createCard = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `http://localhost:3000/businesses/${cardData.params.businessId}/cards/1/items-subscription/use`,
+        `http://localhost:3000/businesses/${cardData.params.businessId}/cards`,
         {
           method: "POST",
           headers: {

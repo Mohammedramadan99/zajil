@@ -68,6 +68,7 @@ export default function VerticalTabs({ onChange, formik }) {
           <TextField
             name="giftName"
             label="Gift"
+            required
             value={formik.values.giftName}
             onChange={formik.handleChange}
             error={Boolean(formik.errors.giftName)}
@@ -80,6 +81,7 @@ export default function VerticalTabs({ onChange, formik }) {
             name="giftPriceNPoints"
             label="Points"
             type="number"
+            required
             value={formik.values.giftPriceNPoints}
             onChange={formik.handleChange}
             error={Boolean(formik.errors.giftPriceNPoints)}

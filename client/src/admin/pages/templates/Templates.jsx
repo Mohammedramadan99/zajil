@@ -41,7 +41,6 @@ function Cards() {
         backgroundColor: theme.palette.background.alt,
         minHeight: "100vh",
         paddingBlock: 2,
-
         // paddingInline: 2,
       }}>
       <Container>

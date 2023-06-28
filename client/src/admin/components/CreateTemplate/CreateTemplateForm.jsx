@@ -33,6 +33,7 @@ import TabPanel from "./LoyaltyTabs";
 import { createTemplate, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getBusinesses } from "../../../store/businessSlice";
 
 function CreateTemplateForm({
   tempPhoto,
@@ -57,6 +58,7 @@ function CreateTemplateForm({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { template, errors, loading } = useSelector((state) => state.templates);
+  const { businesses } = useSelector((state) => state.businesses);
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
@@ -73,6 +75,7 @@ function CreateTemplateForm({
       name,
       giftName: "",
       giftPriceNPoints: "",
+      business: "",
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
@@ -139,7 +142,7 @@ function CreateTemplateForm({
 
         // console.log({ stickers });
         const cardData = {
-          params: { businessId: 1 },
+          params: { businessId: values.business },
           data: {
             ...values,
             logoUrl: uploadedImgUrls[0],
@@ -160,9 +163,9 @@ function CreateTemplateForm({
             iconUrl: uploadedImgUrls[0] || "",
             stripUrl: uploadedImgUrls[1] || activeImg.url,
             cardProps: {
-              backgroundColor: "#fff",
-              foregroundColor: "#000",
-              labelColor: "#fff",
+              backgroundColor: "rgb(255,255,255)",
+              foregroundColor: "rgb(0,0,0)",
+              labelColor: "rgb(255,255,255)",
               headerFields: [
                 {
                   key: "header",
@@ -335,6 +338,10 @@ function CreateTemplateForm({
     }
   };
   useEffect(() => {
+    dispatch(getBusinesses());
+  }, []);
+
+  useEffect(() => {
     if (template) {
       dispatch(reset());
 
@@ -388,6 +395,24 @@ function CreateTemplateForm({
                   width: "100%",
                 }}
               />
+              <FormControl required sx={{ my: 2, minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-required-label">
+                  Business
+                </InputLabel>
+                <Select
+                  name="business"
+                  label="Business"
+                  value={formik.values.business}
+                  error={Boolean(formik.errors.business)}
+                  helperText={formik.errors.business}
+                  onChange={formik.handleChange}>
+                  {businesses?.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Card Type</InputLabel>
                 <Select

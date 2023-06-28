@@ -24,6 +24,7 @@ import Business from "./admin/pages/business/Business";
 import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
 import CardControl from "./admin/pages/cardControl/CardControl";
 import CreateCard from "./admin/pages/controlCard/CreateCard";
+import Cards from "./admin/pages/cards/Cards";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -91,8 +92,12 @@ function App() {
           element: <CreateTemplate />,
         },
         {
-          path: "cards/new/:businessId/:templateId",
+          path: "cards/new/:templateId/:businessId",
           element: <CreateCard />,
+        },
+        {
+          path: "cards",
+          element: <Cards />,
         },
         {
           path: "cards/control",
