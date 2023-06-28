@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseUrl from "../utils/Api";
 
 export const createBusiness = createAsyncThunk(
   "business/create",
@@ -12,14 +11,17 @@ export const createBusiness = createAsyncThunk(
       //   form.append(key, values[key]);
       // });
 
-      const response = await fetch(`${baseUrl}/businesses`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(businessData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(businessData),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
         return rejectWithValue({
@@ -47,13 +49,16 @@ export const getBusinesses = createAsyncThunk(
       //   form.append(key, values[key]);
       // });
 
-      const response = await fetch(`${baseUrl}/businesses`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const { data } = await response.json();
       return data.rows;

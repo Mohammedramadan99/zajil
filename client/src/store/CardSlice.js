@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseUrl from "../utils/Api";
+// import { API } from "../utils/config";
 
 export const createCard = createAsyncThunk(
   "card/create",
@@ -9,7 +9,9 @@ export const createCard = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `http://localhost:3000/businesses/${cardData.params.businessId}/cards`,
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          cardData.params.businessId
+        }/cards`,
         {
           method: "POST",
           headers: {
@@ -34,7 +36,7 @@ export const createCard = createAsyncThunk(
     }
   }
 );
-export const getTemplates = createAsyncThunk(
+export const getCards = createAsyncThunk(
   "card/all",
   async (businessId, { rejectWithValue, getState }) => {
     try {
@@ -42,7 +44,42 @@ export const getTemplates = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `${baseUrl}/businesses/${businessId}/card-templates`,
+        `${import.meta.env.VITE_API_URL}/businesses/${businessId}/cards`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log({ errorData });
+        return rejectWithValue(errorData.data.message);
+      }
+      const data = await response.json();
+      console.log({ data });
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again laterrr.",
+      });
+    }
+  }
+);
+export const getCardDetails = createAsyncThunk(
+  "card/details",
+  async (params, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          params.businessId
+        }/cards/${params.cardId}`,
         {
           method: "GET",
           headers: {
@@ -103,16 +140,29 @@ const cardSlice = createSlice({
       state.loading = false;
       state.errors = action.payload?.errors;
     });
-    builder.addCase(getTemplates.pending, (state, action) => {
+    builder.addCase(getCards.pending, (state, action) => {
       state.loading = true;
       state.errors = null;
     });
-    builder.addCase(getTemplates.fulfilled, (state, action) => {
+    builder.addCase(getCards.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
       state.cards = action.payload.data;
     });
-    builder.addCase(getTemplates.rejected, (state, action) => {
+    builder.addCase(getCards.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+    });
+    builder.addCase(getCardDetails.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(getCardDetails.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.card = action.payload.data;
+    });
+    builder.addCase(getCardDetails.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
     });

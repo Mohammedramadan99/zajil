@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseUrl from "../utils/Api";
 
 export const createTemplate = createAsyncThunk(
   "templates/create",
@@ -9,7 +8,9 @@ export const createTemplate = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `http://localhost:3000/businesses/${cardData.params.businessId}/card-templates`,
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          cardData.params.businessId
+        }/card-templates`,
         {
           method: "POST",
           headers: {
@@ -42,7 +43,9 @@ export const getTemplates = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `${baseUrl}/businesses/${businessId}/card-templates`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/businesses/${businessId}/card-templates`,
         {
           method: "GET",
           headers: {

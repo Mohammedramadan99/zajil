@@ -24,7 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
-
-
-.env
-
+env/VITE_API_URL
+.env.development
+.env.production
