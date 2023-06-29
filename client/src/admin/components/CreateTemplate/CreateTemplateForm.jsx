@@ -123,7 +123,7 @@ function CreateTemplateForm({
           const form = new FormData();
           form.append("file", img);
 
-          const res = await fetch("http://localhost:3000/file-upload", {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/file-upload`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${user.token}`,
