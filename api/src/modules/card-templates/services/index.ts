@@ -114,6 +114,7 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         qrCodeFormat,
         ...rest
     } = cardTemplateProps;
+    rest.stickers = rest.stickers || [];
 
     // create a folder in the public folder to store the card template files
     const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
