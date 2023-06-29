@@ -10,7 +10,7 @@ function CreateBranch() {
       padding={2}
       sx={{
         backgroundColor: theme.palette.background.alt,
-        height: "100vh",
+        minHeight: "100vh",
       }}>
       <Container>
         <CreateBranchForm />

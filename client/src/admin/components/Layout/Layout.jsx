@@ -24,12 +24,18 @@ const RootLayout = () => {
   const { mode } = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const { user } = useSelector((state) => state.auth);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.between("0", "600"));
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Grid item>{!isNonMobile ? <MobileSidebar /> : <MainSidebar />}</Grid>
       <Grid container>
-        <Box position={"fixed"} top={20} right={30} zIndex={9999}>
+        <Box
+          position={"fixed"}
+          top={isSmallScreen ? 40 : 20}
+          right={30}
+          zIndex={9999}>
           <div className="user">
             <UserInfo />
             <Typography

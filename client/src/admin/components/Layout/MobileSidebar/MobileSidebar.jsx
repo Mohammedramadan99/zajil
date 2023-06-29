@@ -7,16 +7,17 @@ import {
   ListItemIcon,
   createTheme,
 } from "@mui/material";
-
 import {
   HomeOutlined,
   StyleOutlined,
   PeopleAltOutlined,
   ForumOutlined,
   LocationOnOutlined,
-  ViewCarousel,
+  ManageAccountsOutlined,
   Business,
+  ViewCarousel,
 } from "@mui/icons-material";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 
 import { themeSettings } from "../../../theme";
 import { useSelector } from "react-redux";
@@ -31,13 +32,38 @@ function MobileSidebar() {
 
   const transition = "1s ease";
   const links = [
-    { icon: <HomeOutlined />, text: "home", slug: "/admin" },
-    { icon: <Business />, text: "business", slug: "business/new" },
-    { icon: <StyleOutlined />, text: "templates", slug: "templates" },
-    { icon: <ViewCarousel />, text: "cards", slug: "cards" },
-    // { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "location", slug: "location" },
-    { icon: <ForumOutlined />, text: "<>" },
+    { icon: <HomeOutlined />, text: "home", path: "admin", slug: "" },
+    {
+      icon: <BusinessCenterIcon />,
+      text: "business",
+      path: "admin/business/new",
+      slug: "business/new",
+    },
+    {
+      icon: <Business />,
+      text: "branch",
+      path: "admin/branch/new",
+      slug: "branch/new",
+    },
+
+    {
+      icon: <StyleOutlined />,
+      text: "templates",
+      path: "admin/templates",
+      slug: "templates",
+    },
+    {
+      icon: <ViewCarousel />,
+      text: "cards",
+      path: "admin/cards",
+      slug: "cards",
+    },
+    {
+      icon: <LocationOnOutlined />,
+      text: "location",
+      path: "admin/location",
+      slug: "location",
+    },
   ];
   console.log({ activeitem });
   return (
