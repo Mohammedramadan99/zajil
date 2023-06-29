@@ -98,7 +98,7 @@ export const generateStickersIfPossible = async (
     const chosenStickers = card.chosenStickers || [];
 
     const stickers = itemsSubscriptionCardTemplate.stickers;
-    const stickersCount = itemsSubscriptionCardTemplate.stickersCount;
+    const stickersCount = itemsSubscriptionCardTemplate.stickersCount && 6;
 
     const stripWidth = 1125;
     const stripHeight = 432;
@@ -112,7 +112,7 @@ export const generateStickersIfPossible = async (
     const stickersPerRow = Math.min(stickersCount, MAX_STICKERS_PER_ROW);
     const numberOfRows = Math.ceil(stickersCount / stickersPerRow);
 
-    const stickerSize = innerStripHeight / numberOfRows;
+    const stickerSize = Math.min(innerStripWidth / stickersPerRow, innerStripHeight / numberOfRows);
     const stickerCellWidth = innerStripWidth / stickersPerRow;
     const stickerVerticalMargin = 5;
 
@@ -153,11 +153,16 @@ export const generateStickersIfPossible = async (
 
             compositeOperations.push({
                 input: choosenStickerBuffers[index] || stickerPlaceholderBuffer,
-                top: Math.round(
-                    row * (stickerSize + (row !== 0 ? stickerVerticalMargin : 0)) +
-                        stripHeight * margin -
-                        stickerVerticalMargin * (numberOfRows - 2),
-                ),
+                top:
+                    numberOfRows === 1
+                        ? Math.round(
+                            (stripHeight-stickerSize)/2
+                        )
+                        : Math.round(
+                              row * (stickerSize + (row !== 0 ? stickerVerticalMargin : 0)) +
+                                  stripHeight * margin -
+                                  stickerVerticalMargin * (numberOfRows - 2),
+                          ),
                 left: Math.round(
                     column * stickerCellWidth + stripWidth * margin + stickerCellWidth / 2 - stickerSize / 2,
                 ),
