@@ -1,8 +1,10 @@
 import { useTheme } from "@emotion/react";
 import {
+  Backdrop,
   Box,
   Button,
   ButtonGroup,
+  CircularProgress,
   Container,
   Grid,
   Typography,
@@ -23,12 +25,14 @@ import {
 } from "../../../store/TemplateSlice";
 
 import BusinessesTabs from "../../components/Templates/Tabs";
+import PageHeader from "../../components/PageHeader/PageHeader";
 function Cards() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { templates } = useSelector((state) => state.templates);
+  const { templates, loading } = useSelector((state) => state.templates);
   const { businesses } = useSelector((state) => state.businesses);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
 
   useEffect(() => {
     dispatch(getTemplates(businesses[0]?.id));
@@ -44,19 +48,33 @@ function Cards() {
         // paddingInline: 2,
       }}>
       <Container>
+        <PageHeader title={"Templates"} subTitle={"All Your Templates"} />
         <Grid container spacing={2}>
           {/* Tabs */}
           <Grid item xs={12}>
             <BusinessesTabs />
           </Grid>
           {/* Create Card */}
-          <Grid item lg={3}>
+          <Grid
+            item
+            lg={3}
+            md={4}
+            sm={6}
+            xs={12}
+            mb={2}
+            mt={2}
+            sx={{
+              ...(isSmallScreen && {
+                margin: "40px",
+              }),
+            }}>
             {/* Card */}
             <Box
               className="flex"
               sx={{
                 width: "100%",
-                height: "500px",
+                minHeight: "550px",
+
                 background: theme.palette.grey[800],
                 color: theme.palette.grey[700],
                 textTransform: "uppercase",
@@ -82,9 +100,22 @@ function Cards() {
               </Button>
             </ButtonGroup>
           </Grid>
-          {templates?.rows?.length > 0 ? (
+          {templates && templates?.rows?.length > 0 ? (
             templates?.rows?.map((template) => (
-              <Grid key={template?.id} item lg={3}>
+              <Grid
+                key={template?.id}
+                item
+                lg={3}
+                md={4}
+                sm={6}
+                xs={12}
+                mb={2}
+                mt={2}
+                sx={{
+                  ...(isSmallScreen && {
+                    margin: "40px",
+                  }),
+                }}>
                 <Card
                   template={template}
                   title={template?.name}
@@ -104,6 +135,13 @@ function Cards() {
                 this business don't have templates yet
               </Typography>
             </>
+          )}
+          {loading && (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={loading}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
           )}
           {/* <Grid item lg={6}>
             <Visa />

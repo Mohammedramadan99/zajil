@@ -43,6 +43,7 @@ function CreateBusinessForm() {
   return (
     <Box
       maxWidth={500}
+      width={"100%"}
       sx={{
         backgroundColor: theme.palette.grey[900],
         m: {

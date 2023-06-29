@@ -34,7 +34,11 @@ export default function BusinessesTabs({ activeTab, setActiveTab }) {
         scrollButtons="auto"
         aria-label="scrollable auto tabs example">
         {businesses.map((item) => (
-          <Tab label={item.name} onClick={() => templatesHandler(item?.id)} />
+          <Tab
+            key={item.id}
+            label={item.name}
+            onClick={() => templatesHandler(item?.id)}
+          />
         ))}
       </Tabs>
     </Box>

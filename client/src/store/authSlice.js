@@ -89,8 +89,7 @@ export const logoutAction = createAsyncThunk(
   "user/logout",
   async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
-      document.cookie =
-        "userInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      localStorage.removeItem("token");
     } catch (error) {
       console.log(error.message);
     }
@@ -166,7 +165,7 @@ const authSlice = createSlice({
     builder.addCase(logoutAction.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      state.user = {};
+      state.user = null;
       state.message = "logged out";
     });
     builder.addCase(logoutAction.rejected, (state, action) => {

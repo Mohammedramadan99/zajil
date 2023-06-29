@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   List,
@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   createTheme,
 } from "@mui/material";
-
 import {
   HomeOutlined,
   StyleOutlined,
@@ -20,26 +19,65 @@ import {
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 function MainSidebar() {
   const { mode } = useSelector((state) => state.mode);
-  const [activeitem, setActiveItem] = useState("home");
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const navigate = useNavigate();
+  const location = useLocation();
   const transition = "1s ease";
+  // const links = [
+  //   { icon: <HomeOutlined />, text: "home", slug: "/admin" },
+  //   { icon: <Business />, text: "business", slug: "/business/new" },
+  //   { icon: <StyleOutlined />, text: "templates", slug: "/templates" },
+  //   { icon: <ViewCarousel />, text: "cards", slug: "/cards" },
+  //   // { icon: <PeopleAltOutlined />, text: "clients" },
+  //   { icon: <LocationOnOutlined />, text: "location", slug: "/location" },
+  //   { icon: <ForumOutlined />, text: "messages", slug: "/messages" },
+  // ];
   const links = [
-    { icon: <HomeOutlined />, text: "home", slug: "/admin" },
-    { icon: <Business />, text: "business", slug: "business/new" },
-    { icon: <StyleOutlined />, text: "templates", slug: "templates" },
-    { icon: <ViewCarousel />, text: "cards", slug: "cards" },
-    // { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "location", slug: "location" },
-    { icon: <ForumOutlined />, text: "messages" },
+    { icon: <HomeOutlined />, text: "home", path: "admin", slug: "" },
+    {
+      icon: <BusinessCenterIcon />,
+      text: "business",
+      path: "admin/business/new",
+      slug: "business/new",
+    },
+    {
+      icon: <Business />,
+      text: "branch",
+      path: "admin/branch/new",
+      slug: "branch/new",
+    },
+
+    {
+      icon: <StyleOutlined />,
+      text: "templates",
+      path: "admin/templates",
+      slug: "templates",
+    },
+    {
+      icon: <ViewCarousel />,
+      text: "cards",
+      path: "admin/cards",
+      slug: "cards",
+    },
+    {
+      icon: <LocationOnOutlined />,
+      text: "location",
+      path: "admin/location",
+      slug: "location",
+    },
   ];
+  const activeItem = links.find(
+    (item) => item.path == location.pathname.slice(1)
+  );
+
+  console.log("location", location.pathname);
+  console.log({ activeItem });
   const handleClick = (item) => {
-    setActiveItem(item.text);
-    navigate(`${item.slug}`);
+    navigate(item.slug);
   };
   return (
     <Box
@@ -61,11 +99,11 @@ function MainSidebar() {
           position: "relative",
           justifyContent: "center",
         }}>
-        {links?.map((item, i) => (
+        {links.map((item, i) => (
           <ListItem
             key={item.text}
             onClick={() => handleClick(item)}
-            className={activeitem === item.text ? "active" : ""}
+            className={activeItem?.text === item.text ? "active" : ""}
             sx={{
               position: "relative",
               flexDirection: "column",

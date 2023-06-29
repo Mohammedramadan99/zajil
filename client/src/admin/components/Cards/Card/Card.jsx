@@ -61,7 +61,7 @@ function Card({
   return (
     <>
       {/* Card */}
-      <Phone style={{}}>
+      <Phone>
         <Stack sx={{ background: "#fff", borderRadius: "10px" }}>
           <Box
             sx={{
@@ -73,9 +73,7 @@ function Card({
               backgroundSize: "cover",
               backgroundPosition: "cover",
               paddingInline: "10px",
-              borderRadius: "20px",
             }}>
-            <Box></Box>
             <Stack
               direction={"row"}
               spacing={2}
@@ -112,7 +110,6 @@ function Card({
                       backgroundImage: `url(${activeImg?.url})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
-                      borderRadius: "10px",
                     }
                   : {
                       position: "relative",

@@ -2,7 +2,7 @@
 .main_sidebar {
   // inset: 0;
   width: 100%;
-  background-color: rgba($mauve_color-4, 0.6);
+  background-color: rgba($mauve_color-4, 0.8);
   color: #000;
   backdrop-filter: blur(10px);
   flex-direction: row;
@@ -51,6 +51,7 @@
   .links {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
 
     .link {
@@ -66,10 +67,10 @@
         gap: 40px;
 
         .text {
-          font-size: 15px;
+          font-size: 12px;
           text-transform: capitalize;
-          color: #000;
-          font-weight: 700;
+          color: #d0a1e7;
+          font-weight: 500;
         }
       }
       gap: 20px;

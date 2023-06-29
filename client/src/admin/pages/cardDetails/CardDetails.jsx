@@ -1,8 +1,10 @@
 import {
   Avatar,
+  Backdrop,
   Box,
   Button,
   Chip,
+  CircularProgress,
   Stack,
   TextField,
   Typography,
@@ -15,7 +17,7 @@ import { getCardDetails } from "../../../store/CardSlice";
 
 function CardDetails() {
   const theme = useTheme();
-  const { card } = useSelector((state) => state.cards);
+  const { card, loading } = useSelector((state) => state.cards);
   const { businessId, cardId } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -66,7 +68,8 @@ function CardDetails() {
           <TextField
             name="id"
             label="ID"
-            defaultValue="2"
+            // defaultValue={` `}
+            value={card?.id || ""}
             InputProps={{
               readOnly: true,
             }}
@@ -76,8 +79,8 @@ function CardDetails() {
           <TextField
             name="name"
             label="Client Name"
-            defaultValue={` `}
-            value={card?.clientName}
+            // defaultValue={` `}
+            value={card?.clientName || ""}
             InputProps={{
               readOnly: true,
             }}
@@ -87,8 +90,8 @@ function CardDetails() {
           <TextField
             name="name"
             label="Phone"
-            defaultValue={` `}
-            value={card?.clientPhone}
+            // defaultValue={` `}
+            value={card?.clientPhone || ""}
             InputProps={{
               readOnly: true,
             }}
@@ -112,6 +115,13 @@ function CardDetails() {
           <Chip label={`Points ${card?.loyaltyCard?.points}`} color="primary" />
         </Stack>
       </Box>
+      {!loading && (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
     </Box>
   );
 }

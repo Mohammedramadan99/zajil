@@ -37,7 +37,7 @@ function MobileSidebar() {
     { icon: <ViewCarousel />, text: "cards", slug: "cards" },
     // { icon: <PeopleAltOutlined />, text: "clients" },
     { icon: <LocationOnOutlined />, text: "location", slug: "location" },
-    { icon: <ForumOutlined />, text: "messages" },
+    { icon: <ForumOutlined />, text: "<>" },
   ];
   console.log({ activeitem });
   return (
@@ -49,8 +49,9 @@ function MobileSidebar() {
         <Menu />
       </div> */}
       <div className="links">
-        {links.map((item) => (
+        {links.map((item, i) => (
           <div
+            key={i}
             className={`link ${activeitem === item.text && "active"}`}
             onClick={() => setActiveItem(item.text)}>
             <Link to={`${item.slug}`}>

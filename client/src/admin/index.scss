@@ -82,3 +82,15 @@
   // background-color: transparent;
   // border-radius: 10px;
 }
+
+.css-qylplk-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab {
+  background-color: transparent !important;
+  position: absolute;
+  top: 0;
+  box-shadow: none !important;
+  z-index: 9999;
+
+  button {
+    // background-color: transparent !important;
+  }
+}
