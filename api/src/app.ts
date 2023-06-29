@@ -4,6 +4,7 @@ import { handleErrors } from './middlewares/methods/handleErrors.middleware';
 import cors from 'cors';
 import mainRouter from './routes';
 import fileUpload from 'express-fileupload';
+import config from './config';
 
 const app = Express();
 app.use(Express.static('public'));
@@ -16,7 +17,7 @@ app.use(
     }),
 );
 applyMiddlewaresPre(app);
-app.use(mainRouter);
+app.use(config.apiPrefix, mainRouter);
 applyMiddlewaresPost(app);
 app.use(handleErrors);
 

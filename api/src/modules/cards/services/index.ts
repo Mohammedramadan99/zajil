@@ -16,8 +16,9 @@ import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 import { ItemsSubUseDto } from '../dto/items-sub-use';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
+import { Request } from 'express';
 
-export const createCard = async (createCardDto: CreateCardDto, req: RequestMod): Promise<any> => {
+export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
      * create a card then create a loyalty card or items subscription card based on the card type
      */
@@ -64,13 +65,13 @@ export const createCard = async (createCardDto: CreateCardDto, req: RequestMod):
     // generate the pass in the public folder
     const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
 
-    // // log activity
-    // await Activity.create({
-    //     businessId: cardTemplate.businessId,
-    //     message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
-    //     type: ActivityType.CREATE_CARD,
-    //     userId: card.id,
-    // });
+    // log activity
+    await Activity.create({
+        businessId: cardTemplate.businessId,
+        message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
+        type: ActivityType.CREATE_CARD,
+        cardId: card.id,
+    });
 
     // combine the base card with the sub card in a single object
     return {
@@ -243,6 +244,18 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
         ],
     })) as Card & { cardTemplate: CardTemplate };
     if (!card) throw new HttpError(404, 'Card not found');
+
+    // Has to be a minimum of 10 minutes between scans
+    const lastScan = await Activity.findOne({
+        where: {
+            cardId: cardId,
+            type: ActivityType.SCAN_CARD,
+        },
+        order: [['createdAt', 'DESC']],
+    });
+    const now = new Date();
+    if (lastScan && now.getTime() - lastScan.createdAt.getTime() < 600000)
+        throw new HttpError(400, 'You can only add points to a card once every 10 minutes');
 
     const template = await LoyaltyCardTemplate.findOne({
         where: {

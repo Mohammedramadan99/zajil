@@ -4,6 +4,7 @@ import { ConfigInterface } from './config.interface';
 const config: ConfigInterface = {
     port: parseInt(process.env.PORT, 10) || 3000,
     host: process.env.HOST || 'localhost',
+    apiPrefix: process.env.API_PREFIX || '/api',
     bcrypt: {
         saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10,
     },

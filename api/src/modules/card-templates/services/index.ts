@@ -35,6 +35,14 @@ export const createCardTemplate = async (
             name: createCardTemplateDto.name,
             cardType: createCardTemplateDto.cardType,
             businessId,
+
+            // images
+            logoUrl: createCardTemplateDto.logoUrl || null,
+            iconUrl: createCardTemplateDto.iconUrl || null,
+            thumbnailUrl: createCardTemplateDto.thumbnailUrl || null,
+            footerUrl: createCardTemplateDto.footerUrl || null,
+            stripUrl: createCardTemplateDto.stripUrl || null,
+            backgroundUrl: createCardTemplateDto.backgroundUrl || null,
         });
 
         // Create a sub card template based on the card type
@@ -106,6 +114,7 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         qrCodeFormat,
         ...rest
     } = cardTemplateProps;
+    rest.stickers = rest.stickers || [];
 
     // create a folder in the public folder to store the card template files
     const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
@@ -177,21 +186,21 @@ export const findAllCardTemplates = async ({
     businessId: number;
     req: RequestMod;
 }) => {
-    return (
-        CardTemplate.findAndCountAll({
-            where: {
-                businessId,
-            },
-            include: FIND_INCLUDE_OPTIONS,
-            limit,
-            offset,
-        })
-            // remove null fields from each row
-            .then((result) => {
-                result.rows = result.rows.map(removeRowNullFields);
-                return result;
-            })
-    );
+    return CardTemplate.findAndCountAll({
+        where: {
+            businessId,
+        },
+        include: FIND_INCLUDE_OPTIONS,
+        limit,
+        offset,
+    }).then((result) => {
+        // remove null fields from each row
+        result.rows = result.rows.map(removeRowNullFields);
+
+        // include card JSON design
+        result.rows = result.rows.map(includeCardJsonDesign);
+        return result;
+    });
 };
 
 export const findOneCardTemplateById = async (cardTemplateId: number, businessId: number): Promise<any> => {
@@ -203,44 +212,111 @@ export const findOneCardTemplateById = async (cardTemplateId: number, businessId
         include: FIND_INCLUDE_OPTIONS,
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card template not found');
-        return removeRowNullFields(row);
+        row = removeRowNullFields(row);
+        row = includeCardJsonDesign(row);
+        return row;
     });
 };
 
 export const updateCardTemplateById = async (
     cardTemplateId: number,
-    updateCardTemplateDto: UpdateCardTemplateDto,
+    businessId: number,
+    updateCardTemplateDto: CreateCardTemplateDto,
 ): Promise<any> => {
-    const baseUpdateDto = updateCardTemplateDto.base;
+    // define variables to be used in the try catch block
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let cardTemplate: CardTemplate;
+    let cardTemplateFolderPath: string;
 
-    const cardTemplate = await CardTemplate.findOne({
+    /*
+     * create a  base card template
+     * then a sub card template based on the card type
+     */
+
+    const { cardType } = updateCardTemplateDto;
+
+    // Create a base card template
+    await CardTemplate.update(
+        {
+            name: updateCardTemplateDto.name,
+            cardType: updateCardTemplateDto.cardType,
+            businessId,
+
+            // images
+            logoUrl: updateCardTemplateDto.logoUrl || null,
+            iconUrl: updateCardTemplateDto.iconUrl || null,
+            thumbnailUrl: updateCardTemplateDto.thumbnailUrl || null,
+            footerUrl: updateCardTemplateDto.footerUrl || null,
+            stripUrl: updateCardTemplateDto.stripUrl || null,
+            backgroundUrl: updateCardTemplateDto.backgroundUrl || null,
+        },
+        {
+            where: {
+                id: cardTemplateId,
+            },
+        },
+    );
+    cardTemplate = await CardTemplate.findOne({
         where: {
             id: cardTemplateId,
         },
     });
-    if (!cardTemplate) throw new HttpError(404, 'Card template not found');
 
-    // update the base card template
-    if (baseUpdateDto) await cardTemplate.update(baseUpdateDto);
-
-    // update the sub card template
-    switch (cardTemplate.cardType) {
+    // Create a sub card template based on the card type
+    switch (cardType) {
         case CardType.LOYALTY:
+            await LoyaltyCardTemplate.update(
+                {
+                    pointsPerVisit: updateCardTemplateDto.pointsPerVisit,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await LoyaltyCardTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+            });
             break;
 
         case CardType.ITEMS_SUBSCRIPTION:
-            const itemsSubscriptionDto = updateCardTemplateDto.itemsSubscription;
-            if (!itemsSubscriptionDto) break;
-            const subTemp = await ItemsSubscriptionCardTemplate.update(itemsSubscriptionDto, {
+            // update the existing sub card template
+            await ItemsSubscriptionCardTemplate.update(
+                {
+                    maxDailyUsage: updateCardTemplateDto.maxDailyUsage,
+                    subscriptionDurationDays: updateCardTemplateDto.subscriptionDurationDays,
+                    nItems: updateCardTemplateDto.nItems,
+                    stickers: updateCardTemplateDto.stickers,
+                    stickersCount: updateCardTemplateDto.stickersCount,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await ItemsSubscriptionCardTemplate.findOne({
                 where: {
-                    id: cardTemplateId,
+                    id: cardTemplate.id,
                 },
             });
-            if (!subTemp) throw new HttpError(404, 'Card template not found');
             break;
     }
 
-    return findOneCardTemplateById(cardTemplateId, cardTemplate.businessId);
+    // create a folder in the public folder to store the card template files
+    cardTemplateFolderPath = await createCardTemplateFolder({
+        cardTemplateId: cardTemplate.id,
+        ...updateCardTemplateDto,
+    });
+
+    // combine the base card template with the sub card template in a single object
+    return {
+        ...cardTemplate.toJSON(),
+        ...subCardTemplate.toJSON(),
+    };
 };
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {
@@ -279,7 +355,7 @@ const FIND_INCLUDE_OPTIONS = [
     },
 ];
 
-const removeRowNullFields = (row) => {
+const removeRowNullFields = (row: CardTemplate) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
@@ -352,3 +428,28 @@ export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, 
 
     return gift;
 };
+
+function includeCardJsonDesign(row: any) {
+    const cardJSONPath = path.join(
+        __dirname,
+        '../../../../',
+        'public',
+        'card-templates',
+        row.id.toString(),
+        'applePass.json',
+    );
+    const cardJSON = fs.readFileSync(cardJSONPath, 'utf-8');
+    const cardJSONObj = JSON.parse(cardJSON);
+
+    // filter out some fields
+    delete cardJSONObj.formatVersion;
+    delete cardJSONObj.passTypeIdentifier;
+    delete cardJSONObj.teamIdentifier;
+    delete cardJSONObj.serialNumber;
+    delete cardJSONObj.description;
+    delete cardJSONObj.organizationName;
+    delete cardJSONObj.barcode.message;
+
+    row.design = cardJSONObj;
+    return row;
+}
