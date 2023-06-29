@@ -11,7 +11,7 @@ function Phone({ children }) {
         // border: `7px solid ${theme.palette.grey[900]}`,
         // outline: `3px solid ${theme.palette.grey[600]}`,
         width: "100%",
-        height: "500px",
+        minHeight: "550px",
         borderRadius: "20px",
         background: `${theme.palette.grey[800]}`,
       }}>

@@ -6,11 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBusinesses } from "../../../store/businessSlice";
 import { getTemplates } from "../../../store/TemplateSlice";
 import { getCards } from "../../../store/CardSlice";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 export default function BusinessesTabs() {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
-  const { businesses } = useSelector((state) => state.businesses);
+  const { businesses, loading } = useSelector((state) => state.businesses);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -30,10 +31,19 @@ export default function BusinessesTabs() {
         variant="scrollable"
         scrollButtons="auto"
         aria-label="scrollable auto tabs example">
-        {businesses.map((item) => (
-          <Tab label={item.name} onClick={() => templatesHandler(item?.id)} />
+        {businesses.map((item, i) => (
+          <Tab
+            key={i}
+            label={item.name}
+            onClick={() => templatesHandler(item?.id)}
+          />
         ))}
       </Tabs>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

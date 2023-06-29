@@ -46,7 +46,7 @@ function Cards() {
       <Container>
         <Grid container spacing={2}>
           {/* Tabs */}
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <BusinessesTabs />
           </Grid>
           {/* Create Card */}
@@ -87,7 +87,7 @@ function Cards() {
               <Grid key={template?.id} item lg={3}>
                 <Card
                   template={template}
-                  title="holidays"
+                  title={template?.name}
                   bg={cardBg_1}
                   icon={<Star />}
                 />

@@ -28,7 +28,11 @@ const RootLayout = () => {
       <CssBaseline />
       <Grid item>{!isNonMobile ? <MobileSidebar /> : <MainSidebar />}</Grid>
       <Grid container>
-        <Grid item width="100%">
+        <Grid
+          item
+          width="100%"
+          // minHeight={"100%"}
+        >
           <Outlet />
         </Grid>
       </Grid>

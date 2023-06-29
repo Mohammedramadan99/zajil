@@ -38,6 +38,41 @@ export const createBusiness = createAsyncThunk(
     }
   }
 );
+export const createBranch = createAsyncThunk(
+  "business/branch/create",
+  async (branchData, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+      // const form = new FormData();
+      // Object.keys(values).forEach((key) => {
+      //   form.append(key, values[key]);
+      // });
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/branches`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(branchData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue({
+          message: errorData.message || "An unknown error occurred.",
+        });
+      }
+      const business = await response.json();
+      return business;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
 export const getBusinesses = createAsyncThunk(
   "business/all",
   async (_, { rejectWithValue, getState }) => {
@@ -93,6 +128,7 @@ const authSlice = createSlice({
       state.errorMessage = null;
       state.successMessage = null;
       state.errors = null;
+      state.business = null;
     },
   },
   extraReducers: (builder) => {
@@ -112,10 +148,8 @@ const authSlice = createSlice({
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;
-      state.errorMessage = action.payload.errors
-        ? null
-        : action.payload ||
-          "An unknown error occurred. Please try again later.";
+      state.errorMessage =
+        action.payload || "An unknown error occurred. Please try again later.";
     });
     builder.addCase(getBusinesses.pending, (state, action) => {
       state.loading = true;
@@ -128,6 +162,23 @@ const authSlice = createSlice({
       state.businesses = action.payload;
     });
     builder.addCase(getBusinesses.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.user = null;
+      state.errorMessage =
+        action.payload || "An unknown error occurred. Please try again later.";
+    });
+    builder.addCase(createBranch.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(createBranch.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.successMessage = null;
+      state.branch = action.payload;
+    });
+    builder.addCase(createBranch.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;

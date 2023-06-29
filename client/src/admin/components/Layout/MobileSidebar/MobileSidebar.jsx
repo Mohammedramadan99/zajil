@@ -14,8 +14,8 @@ import {
   PeopleAltOutlined,
   ForumOutlined,
   LocationOnOutlined,
-  ManageAccountsOutlined,
-  Menu,
+  ViewCarousel,
+  Business,
 } from "@mui/icons-material";
 
 import { themeSettings } from "../../../theme";
@@ -31,29 +31,30 @@ function MobileSidebar() {
 
   const transition = "1s ease";
   const links = [
-    { icon: <HomeOutlined />, text: "home" },
-    { icon: <StyleOutlined />, text: "cards" },
-    { icon: <PeopleAltOutlined />, text: "clients" },
-    { icon: <LocationOnOutlined />, text: "locations" },
+    { icon: <HomeOutlined />, text: "home", slug: "/admin" },
+    { icon: <Business />, text: "business", slug: "business/new" },
+    { icon: <StyleOutlined />, text: "templates", slug: "templates" },
+    { icon: <ViewCarousel />, text: "cards", slug: "cards" },
+    // { icon: <PeopleAltOutlined />, text: "clients" },
+    { icon: <LocationOnOutlined />, text: "location", slug: "location" },
     { icon: <ForumOutlined />, text: "messages" },
-    { icon: <ManageAccountsOutlined />, text: "managers" },
   ];
   console.log({ activeitem });
   return (
     <div className={`main_sidebar items-center ${isSidebarOpen && "active"}`}>
       <div className="logo">LOGO</div>
-      <div
+      {/* <div
         className="burger flex"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
         <Menu />
-      </div>
+      </div> */}
       <div className="links">
         {links.map((item) => (
           <div
             className={`link ${activeitem === item.text && "active"}`}
             onClick={() => setActiveItem(item.text)}>
-            <Link to="#">
-              <div className={`icon flex `}> {item.icon} </div>
+            <Link to={`${item.slug}`}>
+              {/* <div className={`icon flex `}> {item.icon} </div> */}
               <div className="text"> {item.text} </div>
             </Link>
           </div>

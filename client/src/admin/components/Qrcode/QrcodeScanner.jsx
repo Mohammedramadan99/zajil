@@ -1,10 +1,11 @@
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function QrcodeScanner() {
   const [scanResult, setScanResult] = useState(null);
   const [isScannerRunning, setIsScannerRunning] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     let scanner = null;
 
@@ -44,6 +45,11 @@ function QrcodeScanner() {
       }
     };
   }, [isScannerRunning]);
+  useEffect(() => {
+    if (scanResult) {
+      navigate(`/admin/cards/control/${scanResult}`);
+    }
+  }, [scanResult]);
 
   return (
     <>

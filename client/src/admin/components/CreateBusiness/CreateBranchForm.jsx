@@ -17,16 +17,28 @@ import useBusiness from "../../../hooks/useBusiness";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useBranch from "../../../hooks/useBranch";
-import GoogleMaps from "../Location/GoogleMaps";
+
 import { useDispatch, useSelector } from "react-redux";
-import { getBusinesses } from "../../../store/businessSlice";
+import {
+  getBusinesses,
+  createBranch,
+  reset,
+} from "../../../store/businessSlice";
+import GoogleMaps from "./GoogleMaps";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 function CreateBranchForm() {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { businesses } = useSelector((state) => state.businesses);
-  const { createBranch, data } = useBranch();
+  const { businesses, branch } = useSelector((state) => state.businesses);
+
   const [success, setSuccess] = useState("");
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyC8mNgASs0OW8OQW8VZd_R1QjIAIVz7YQg",
+    // googleMapsApiKey: "AIzaSyDR-XNouBIpOk0K9t-HmlIM3KnCHifEHhY",
+  });
+  const [selectedAddress, setSelectedAddress] = useState("");
+
   useEffect(() => {
     dispatch(getBusinesses());
   }, []);
@@ -47,21 +59,28 @@ function CreateBranchForm() {
   const handleSubmit = async (values) => {
     const branchData = {
       businessId: values.business,
-      address: "ain shams",
+      address: selectedAddress,
       name: values.name,
     };
-    const result = await createBranch(branchData);
-    result && setSuccess(`${values.name} branch created successfully`);
+    dispatch(createBranch(branchData));
   };
+  useEffect(() => {
+    branch && setSuccess(`${branch.data.name} branch created successfully`);
+  }, [branch]);
+
+  useEffect(() => {
+    dispatch(reset());
+  }, []);
+
   return (
     businesses?.length > 0 && (
       <Box
         sx={{
           maxWidth: 700,
           // width: "100%",
-          m: "50px auto",
+          m: "20px auto",
           backgroundColor: theme.palette.grey[900],
-          p: 5,
+          p: "10px 40px 30px",
         }}>
         {success && (
           <Alert variant="outlined" severity="success">
@@ -86,7 +105,11 @@ function CreateBranchForm() {
           </span>
         </Typography>
         <Box component="form" onSubmit={formik.handleSubmit}>
-          <Stack direction="row" alignItems={"center"} spacing={2}>
+          <Stack
+            direction="row"
+            alignItems={"center"}
+            spacing={2}
+            sx={{ mb: 2 }}>
             <TextField
               name="name"
               label="Name"
@@ -106,7 +129,6 @@ function CreateBranchForm() {
                 label="Business"
                 value={formik.values.business}
                 error={Boolean(formik.errors.business)}
-                helperText={formik.errors.business}
                 onChange={formik.handleChange}>
                 {businesses?.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
@@ -116,6 +138,20 @@ function CreateBranchForm() {
               </Select>
             </FormControl>
           </Stack>
+          <TextField
+            name="location"
+            label="Location"
+            value={selectedAddress}
+            sx={{ width: "100%", mb: 2 }}
+            // required
+          />
+          {!isLoaded && <div>Loading...</div>}
+          {isLoaded && (
+            <GoogleMaps
+              selectedAddress={selectedAddress}
+              setSelectedAddress={setSelectedAddress}
+            />
+          )}
 
           {/* <GoogleMaps w={"100%"} /> */}
           <Button

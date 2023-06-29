@@ -10,7 +10,7 @@ import {
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { createCard, reset } from "../../../../store/CardSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,12 +43,12 @@ function CreateCardForm() {
       })
     );
   };
+
   useEffect(() => {
     if (card) {
       dispatch(reset());
-      navigate("/admin/cards");
     }
-  }, [card]);
+  }, []);
   return (
     <Box
       maxWidth={500}
@@ -61,63 +61,86 @@ function CreateCardForm() {
       }}
       p={5}
       borderRadius={5}>
-      <Typography
-        variant="h1"
-        textTransform={"capitalize"}
-        fontWeight={600}
-        mb={4}
-        mt={2}>
-        create{" "}
-        <span
-          style={{
-            display: "inline-block",
-            color: theme.palette.primary[500],
-          }}>
-          card
-        </span>
-      </Typography>
-      <Box component="form" onSubmit={formik.handleSubmit}>
-        {error && (
-          <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-        <Stack spacing={2}>
-          <TextField
-            name="clientName"
-            label="Client Name"
-            value={formik.values.clientName}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.clientName)}
-            helperText={formik.errors.clientName}
-            sx={{ width: "100%" }}
-          />
-          <TextField
-            name="clientPhone"
-            label="Client Phone"
-            value={formik.values.clientPhone}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.clientPhone)}
-            helperText={formik.errors.clientPhone}
-            sx={{ width: "100%" }}
-          />
+      {!card ? (
+        <>
+          <Typography
+            variant="h1"
+            textTransform={"capitalize"}
+            fontWeight={600}
+            mb={4}
+            mt={2}>
+            create{" "}
+            <span
+              style={{
+                display: "inline-block",
+                color: theme.palette.primary[500],
+              }}>
+              card
+            </span>
+          </Typography>
+          <Box component="form" onSubmit={formik.handleSubmit}>
+            {error && (
+              <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            <Stack spacing={2}>
+              <TextField
+                name="clientName"
+                label="Client Name"
+                value={formik.values.clientName}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.clientName)}
+                helperText={formik.errors.clientName}
+                sx={{ width: "100%" }}
+              />
+              <TextField
+                name="clientPhone"
+                label="Client Phone"
+                value={formik.values.clientPhone}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.clientPhone)}
+                helperText={formik.errors.clientPhone}
+                sx={{ width: "100%" }}
+              />
+            </Stack>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "100%", mt: 4 }}
+              disabled={loading}>
+              Create
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <Stack direction={"row"} spacing={2} justifyContent={"center"}>
+          {/* <Button variant="contained" onClick={() => downloadCard()}>
+            download the card
+          </Button> */}
+          <Button variant="contained">
+            <Link
+              className="flex"
+              to={`${import.meta.env.VITE_API_URL}${card.cardUri}`}
+              target="_blank"
+              download>
+              Download the card
+            </Link>
+          </Button>
+
+          <Button variant="contained">
+            <Link to="/admin/cards">cards</Link>
+          </Button>
         </Stack>
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{ width: "100%", mt: 4 }}
-          disabled={loading}>
-          Create
-        </Button>
-        <Typography
-          variant="body1"
-          sx={{ my: 2, color: theme.palette.grey[500] }}>
-          {" "}
-          {/* <span style={{ fontWeight: 600, color: "#ccc" }}>Note:</span> Creating
+      )}
+      <Typography
+        variant="body1"
+        sx={{ my: 2, color: theme.palette.grey[500] }}>
+        {" "}
+        {/* <span style={{ fontWeight: 600, color: "#ccc" }}>Note:</span> Creating
           a business will make you able to create a branch, that means you
           cannot create a branch if you don't have a business. */}
-        </Typography>
-      </Box>
+      </Typography>
     </Box>
   );
 }

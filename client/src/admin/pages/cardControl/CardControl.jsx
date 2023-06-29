@@ -1,9 +1,19 @@
 import { Box, Container, useTheme } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
+import { useDispatch } from "react-redux";
+
+import { getCardDetails } from "../../../store/CardSlice";
+import { useParams } from "react-router-dom";
 
 function CardControl() {
   const theme = useTheme();
+  const { cardId } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getCardDetails(cardId));
+  }, []);
+
   return (
     <Box
       padding={2}

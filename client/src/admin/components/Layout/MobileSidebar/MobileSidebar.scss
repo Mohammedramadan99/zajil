@@ -55,13 +55,11 @@
 
     .link {
       position: relative;
-      width: 100%;
-      height: 80px;
       border-radius: 12px;
       border: 8px solid transparent;
       transition: $main_speed;
       display: flex;
-
+      flex-wrap: wrap;
       a {
         display: flex;
         align-items: center;
@@ -70,9 +68,8 @@
         .text {
           font-size: 15px;
           text-transform: capitalize;
-          //   letter-spacing: 1.8px;
+          color: #000;
           font-weight: 700;
-          display: none;
         }
       }
       gap: 20px;

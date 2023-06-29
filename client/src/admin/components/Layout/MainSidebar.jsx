@@ -16,6 +16,7 @@ import {
   LocationOnOutlined,
   ManageAccountsOutlined,
   Business,
+  ViewCarousel,
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
@@ -31,7 +32,8 @@ function MainSidebar() {
     { icon: <HomeOutlined />, text: "home", slug: "/admin" },
     { icon: <Business />, text: "business", slug: "business/new" },
     { icon: <StyleOutlined />, text: "templates", slug: "templates" },
-    { icon: <PeopleAltOutlined />, text: "clients" },
+    { icon: <ViewCarousel />, text: "cards", slug: "cards" },
+    // { icon: <PeopleAltOutlined />, text: "clients" },
     { icon: <LocationOnOutlined />, text: "location", slug: "location" },
     { icon: <ForumOutlined />, text: "messages" },
   ];

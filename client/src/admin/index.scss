@@ -1,10 +1,15 @@
 * {
   color: #fff;
 }
+.bgs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
 .card-bg {
   position: relative;
   height: 170px;
-  width: 250px;
+  width: 100%;
   border-radius: 10px;
   overflow: hidden;
   &.active,
@@ -42,9 +47,11 @@
 }
 
 .sticky {
-  position: sticky;
-  top: 40px;
-  height: 100px;
+  @media (min-width: 900px) {
+    position: sticky;
+    top: 40px;
+    height: 100px;
+  }
 }
 
 .stickers {

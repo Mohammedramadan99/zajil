@@ -26,6 +26,7 @@ import CardControl from "./admin/pages/cardControl/CardControl";
 import CreateCard from "./admin/pages/controlCard/CreateCard";
 import Cards from "./admin/pages/cards/Cards";
 import CardDetails from "./admin/pages/CardDetails/CardDetails";
+import Scan from "./admin/pages/Scan/Scan";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -105,8 +106,12 @@ function App() {
           element: <CardDetails />,
         },
         {
-          path: "cards/control",
+          path: "cards/control/:cardId",
           element: <CardControl />,
+        },
+        {
+          path: "scan",
+          element: <Scan />,
         },
       ],
     },

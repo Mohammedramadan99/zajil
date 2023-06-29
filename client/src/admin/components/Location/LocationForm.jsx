@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import GoogleMaps from "./GoogleMaps";
+import GoogleMaps from "../CreateBusiness/GoogleMaps";
 import { useJsApiLoader } from "@react-google-maps/api";
 import useBranch from "../../../hooks/useBranch";
 // "399H+WWW, Al Warshah, Madinat Al-Amal, Nasr City, Cairo Governorate, Egypt"

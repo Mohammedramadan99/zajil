@@ -17,9 +17,11 @@ function CreateBusinessForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errorMessage: error, loading } = useSelector(
-    (state) => state.businesses
-  );
+  const {
+    errorMessage: error,
+    loading,
+    business,
+  } = useSelector((state) => state.businesses);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -34,7 +36,7 @@ function CreateBusinessForm() {
   const handleSubmit = async (values) => {
     // const result = await createBusiness(values);
     dispatch(createBusiness(values));
-    if (result) {
+    if (business) {
       navigate("/admin/branch/new");
     }
   };
@@ -68,7 +70,7 @@ function CreateBusinessForm() {
       <Box component="form" onSubmit={formik.handleSubmit}>
         {error && (
           <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-            {error}
+            {error.message}
           </Alert>
         )}
         <div>

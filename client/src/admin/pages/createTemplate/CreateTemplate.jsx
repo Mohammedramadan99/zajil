@@ -19,13 +19,13 @@ function CreateCard() {
     <Box
       sx={{
         backgroundColor: theme.palette.background.alt,
-        minHeight: "100vh",
         paddingBlock: 4,
-        flexGrow: 1,
+        // flexGrow: 1,
+        minHeight: "100vh",
       }}>
       <Container>
         <Grid container spacing={6}>
-          <Grid xs={9} item>
+          <Grid md={8} xs={12} item>
             <CreateTemplateForm
               tempPhoto={tempPhoto}
               setTempPhoto={setTempPhoto}
@@ -47,9 +47,15 @@ function CreateCard() {
               setImgColor={setImgColor}
             />
           </Grid>
-          <Grid xs={3} item>
+          <Grid md={4} xs={12} item>
             <div className="sticky">
-              <Box width={"100%"} m={"auto"}>
+              <Box
+                sx={{
+                  width: "100%",
+                  m: "auto",
+                  "@media (max-width: 900px)": { width: "50%" },
+                  "@media (max-width: 500px)": { width: "80%" },
+                }}>
                 <Card
                   title="holidays"
                   withControl={false}

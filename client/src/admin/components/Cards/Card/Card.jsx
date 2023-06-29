@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Phone from "./Phone/Phone";
 import cardBg_1 from "../../../../assets/images/card_bg_1.jpg";
+import qrcode from "../../../../assets/images/qrcode.png";
 
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   Grid,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import Dialog from "../../../components/Templates/Dialog";
 
@@ -34,6 +36,7 @@ function Card({
   setImgColor,
 }) {
   const [open, setOpen] = useState(false);
+  const theme = useTheme();
   useEffect(() => {
     // Whenever the textLogo or logoImg props change, update the logo image
     if (textLogo) {
@@ -58,19 +61,21 @@ function Card({
   return (
     <>
       {/* Card */}
-      <Phone>
-        <Stack>
+      <Phone style={{}}>
+        <Stack sx={{ background: "#fff", borderRadius: "10px" }}>
           <Box
             sx={{
               width: "100%",
               minHeight: "90px",
               height: "100%",
               background: `url(${bg}) no-repeat`,
+
               backgroundSize: "cover",
               backgroundPosition: "cover",
               paddingInline: "10px",
               borderRadius: "20px",
             }}>
+            <Box></Box>
             <Stack
               direction={"row"}
               spacing={2}
@@ -144,8 +149,8 @@ function Card({
                       }
                     : {}
                 }>
-                {[...Array(stickersNumber || 1)].map((item) => (
-                  <div className="sticker flex">
+                {[...Array(stickersNumber || 1)].map((item, i) => (
+                  <div className="sticker flex" key={i}>
                     <div className="icon flex">
                       <img src={activeIcon} alt="" width={20} />
                     </div>
@@ -165,12 +170,16 @@ function Card({
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography variant={"body2"}> {name} </Typography>
+              <Typography variant={"body2"} color={theme.palette.primary[500]}>
+                {" "}
+                {name}{" "}
+              </Typography>
             </Box>
           </Box>
           <Box
             display={"flex"}
             justifyContent={"space-between"}
+            color={theme.palette.primary[500]}
             px={2}
             mb={2}
             gap={2}>
@@ -184,12 +193,17 @@ function Card({
             </Box>
           </Box>
           <Box className="flex">
-            <div style={{ background: "#fff", padding: "10px" }}>
-              <img
-                src={activeScanType?.icon}
+            <div>
+              {/* <img
+                src={qrcode}
                 alt=""
                 width={activeScanType?.type === "barCode" ? 200 : 80}
                 height={80}
+              /> */}
+              <img
+                src={qrcode}
+                alt=""
+                width={activeScanType?.type === "barCode" ? 200 : 140}
               />
             </div>
           </Box>

@@ -1,8 +1,11 @@
 import {
   Alert,
+  Backdrop,
   Box,
   Button,
+  CircularProgress,
   FormControl,
+  Grid,
   Input,
   InputLabel,
   MenuItem,
@@ -163,9 +166,9 @@ function CreateTemplateForm({
             iconUrl: uploadedImgUrls[0] || "",
             stripUrl: uploadedImgUrls[1] || activeImg.url,
             cardProps: {
-              backgroundColor: "rgb(255,255,255)",
+              backgroundColor: "rgb(0,0,0)",
               foregroundColor: "rgb(0,0,0)",
-              labelColor: "rgb(255,255,255)",
+              labelColor: "rgb(166,61,255)",
               headerFields: [
                 {
                   key: "header",
@@ -404,7 +407,7 @@ function CreateTemplateForm({
                   label="Business"
                   value={formik.values.business}
                   error={Boolean(formik.errors.business)}
-                  helperText={formik.errors.business}
+                  required
                   onChange={formik.handleChange}>
                   {businesses?.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -506,7 +509,7 @@ function CreateTemplateForm({
               textAlign={"center"}>
               easily add your own personal touch!
             </Typography>
-            <Box display={"flex"} flexWrap={"wrap"} gap={2}>
+            {/* <Box display={"flex"} flexWrap={"wrap"} gap={2}>
               {bgs.map(({ id, url }) => (
                 <div
                   key={id}
@@ -515,7 +518,7 @@ function CreateTemplateForm({
                   }`}>
                   <img
                     src={url}
-                    width={250}
+                    width={"100%"}
                     height={170}
                     alt="card img"
                     style={{ objectFit: "cover" }}
@@ -556,7 +559,65 @@ function CreateTemplateForm({
                 }}
                 style={{ maxWidth: "250px", width: "100%", height: "170px" }}
               />
-            </Box>
+            </Box> */}
+            <div className="bgs">
+              {bgs.map(({ id, url }) => (
+                <box
+                  key={id}
+                  flexBasis={"unset !important"}
+                  maxWidth={"100%"}
+                  className={`card-bg ${
+                    activeImg.url === url ? "active" : ""
+                  }`}>
+                  <img
+                    src={url}
+                    width={"100%"}
+                    height={170}
+                    alt="card img"
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div className="overlay">
+                    <div className="icon">
+                      <AddCircleOutlinedIcon
+                        onClick={() => cardBgHandler({ url })}
+                        sx={{
+                          color: theme.palette.primary[600],
+                        }}
+                      />
+                    </div>
+                  </div>
+                </box>
+              ))}
+              <div
+                className={`card-bg ${
+                  activeImg.color === color ? "active" : ""
+                }`}
+                style={{ background: color }}>
+                <div className="overlay">
+                  <div className="icon">
+                    <AddCircleOutlinedIcon
+                      onClick={() => cardBgHandler({ color })}
+                      sx={{
+                        color: theme.palette.primary[600],
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <HexColorPicker
+                color={color}
+                onChange={(newColor) => {
+                  setColor(newColor);
+                  cardBgHandler({ color: newColor });
+                }}
+                style={{
+                  // maxWidth: "250px",
+                  width: "100%",
+                  height: "170px",
+                  // marginLeft: "15px",
+                }}
+              />
+            </div>
           </AccordionDetails>
         </Accordion>
 
@@ -727,8 +788,9 @@ function CreateTemplateForm({
                     Scan by {/*  type? , or just scan ? */}
                   </div>
                   <Box display={"flex"} alignItems={"center"} gap={1}>
-                    {scanTypes.map((item) => (
+                    {scanTypes.map((item, i) => (
                       <div
+                        key={i}
                         className="flex"
                         style={{
                           background: "#fff",
@@ -763,6 +825,11 @@ function CreateTemplateForm({
           disabled={loading}>
           submit
         </Button>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </form>
     </Box>
   );
