@@ -15,6 +15,14 @@ export class CardTemplate extends Model {
     public cardType!: CardType;
     public businessId!: number;
 
+    // images
+    public readonly logoUrl: string;
+    public readonly iconUrl: string;
+    public readonly thumbnailUrl: string;
+    public readonly footerUrl: string;
+    public readonly stripUrl: string;
+    public readonly backgroundUrl: string;
+
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -41,6 +49,30 @@ export const init = (sequelize: Sequelize) =>
             businessId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+            },
+            logoUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            iconUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            thumbnailUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            footerUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            stripUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            backgroundUrl: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
         },
         {

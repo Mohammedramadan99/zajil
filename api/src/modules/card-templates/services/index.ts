@@ -35,6 +35,14 @@ export const createCardTemplate = async (
             name: createCardTemplateDto.name,
             cardType: createCardTemplateDto.cardType,
             businessId,
+
+            // images
+            logoUrl: createCardTemplateDto.logoUrl || null,
+            iconUrl: createCardTemplateDto.iconUrl || null,
+            thumbnailUrl: createCardTemplateDto.thumbnailUrl || null,
+            footerUrl: createCardTemplateDto.footerUrl || null,
+            stripUrl: createCardTemplateDto.stripUrl || null,
+            backgroundUrl: createCardTemplateDto.backgroundUrl || null,
         });
 
         // Create a sub card template based on the card type
@@ -177,21 +185,21 @@ export const findAllCardTemplates = async ({
     businessId: number;
     req: RequestMod;
 }) => {
-    return (
-        CardTemplate.findAndCountAll({
-            where: {
-                businessId,
-            },
-            include: FIND_INCLUDE_OPTIONS,
-            limit,
-            offset,
-        })
-            // remove null fields from each row
-            .then((result) => {
-                result.rows = result.rows.map(removeRowNullFields);
-                return result;
-            })
-    );
+    return CardTemplate.findAndCountAll({
+        where: {
+            businessId,
+        },
+        include: FIND_INCLUDE_OPTIONS,
+        limit,
+        offset,
+    }).then((result) => {
+        // remove null fields from each row
+        result.rows = result.rows.map(removeRowNullFields);
+
+        // include card JSON design
+        result.rows = result.rows.map(includeCardJsonDesign);
+        return result;
+    });
 };
 
 export const findOneCardTemplateById = async (cardTemplateId: number, businessId: number): Promise<any> => {
@@ -203,7 +211,9 @@ export const findOneCardTemplateById = async (cardTemplateId: number, businessId
         include: FIND_INCLUDE_OPTIONS,
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card template not found');
-        return removeRowNullFields(row);
+        row = removeRowNullFields(row);
+        row = includeCardJsonDesign(row);
+        return row;
     });
 };
 
@@ -279,7 +289,7 @@ const FIND_INCLUDE_OPTIONS = [
     },
 ];
 
-const removeRowNullFields = (row) => {
+const removeRowNullFields = (row: CardTemplate) => {
     row = row.toJSON();
     for (const key in row) if (row[key] === null) delete row[key];
     return row;
@@ -352,3 +362,28 @@ export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, 
 
     return gift;
 };
+
+function includeCardJsonDesign(row: any) {
+    const cardJSONPath = path.join(
+        __dirname,
+        '../../../../',
+        'public',
+        'card-templates',
+        row.id.toString(),
+        'applePass.json',
+    );
+    const cardJSON = fs.readFileSync(cardJSONPath, 'utf-8');
+    const cardJSONObj = JSON.parse(cardJSON);
+
+    // filter out some fields
+    delete cardJSONObj.formatVersion;
+    delete cardJSONObj.passTypeIdentifier;
+    delete cardJSONObj.teamIdentifier;
+    delete cardJSONObj.serialNumber;
+    delete cardJSONObj.description;
+    delete cardJSONObj.organizationName;
+    delete cardJSONObj.barcode.message;
+
+    row.design = cardJSONObj;
+    return row;
+}
