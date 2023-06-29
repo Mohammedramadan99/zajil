@@ -17,7 +17,7 @@ cardTemplatesRouter.get('/', CardTemplateController.getAll);
 cardTemplatesRouter.get('/:id', CardTemplateController.getOne);
 
 // Update Card Template by Template ID
-cardTemplatesRouter.patch('/:id', validateMiddleware(UpdateCardTemplateDto), CardTemplateController.update);
+cardTemplatesRouter.patch('/:id', validateMiddleware(CreateCardTemplateDto), CardTemplateController.update);
 
 // Delete Card Template by Template ID
 cardTemplatesRouter.delete('/:id', CardTemplateController.delete);

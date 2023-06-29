@@ -219,38 +219,103 @@ export const findOneCardTemplateById = async (cardTemplateId: number, businessId
 
 export const updateCardTemplateById = async (
     cardTemplateId: number,
-    updateCardTemplateDto: UpdateCardTemplateDto,
+    businessId: number,
+    updateCardTemplateDto: CreateCardTemplateDto,
 ): Promise<any> => {
-    const baseUpdateDto = updateCardTemplateDto.base;
+    // define variables to be used in the try catch block
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let cardTemplate: CardTemplate;
+    let cardTemplateFolderPath: string;
 
-    const cardTemplate = await CardTemplate.findOne({
+    /*
+     * create a  base card template
+     * then a sub card template based on the card type
+     */
+
+    const { cardType } = updateCardTemplateDto;
+
+    // Create a base card template
+    await CardTemplate.update(
+        {
+            name: updateCardTemplateDto.name,
+            cardType: updateCardTemplateDto.cardType,
+            businessId,
+
+            // images
+            logoUrl: updateCardTemplateDto.logoUrl || null,
+            iconUrl: updateCardTemplateDto.iconUrl || null,
+            thumbnailUrl: updateCardTemplateDto.thumbnailUrl || null,
+            footerUrl: updateCardTemplateDto.footerUrl || null,
+            stripUrl: updateCardTemplateDto.stripUrl || null,
+            backgroundUrl: updateCardTemplateDto.backgroundUrl || null,
+        },
+        {
+            where: {
+                id: cardTemplateId,
+            },
+        },
+    );
+    cardTemplate = await CardTemplate.findOne({
         where: {
             id: cardTemplateId,
         },
     });
-    if (!cardTemplate) throw new HttpError(404, 'Card template not found');
 
-    // update the base card template
-    if (baseUpdateDto) await cardTemplate.update(baseUpdateDto);
-
-    // update the sub card template
-    switch (cardTemplate.cardType) {
+    // Create a sub card template based on the card type
+    switch (cardType) {
         case CardType.LOYALTY:
+            await LoyaltyCardTemplate.update(
+                {
+                    pointsPerVisit: updateCardTemplateDto.pointsPerVisit,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await LoyaltyCardTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+            });
             break;
 
         case CardType.ITEMS_SUBSCRIPTION:
-            const itemsSubscriptionDto = updateCardTemplateDto.itemsSubscription;
-            if (!itemsSubscriptionDto) break;
-            const subTemp = await ItemsSubscriptionCardTemplate.update(itemsSubscriptionDto, {
+            // update the existing sub card template
+            await ItemsSubscriptionCardTemplate.update(
+                {
+                    maxDailyUsage: updateCardTemplateDto.maxDailyUsage,
+                    subscriptionDurationDays: updateCardTemplateDto.subscriptionDurationDays,
+                    nItems: updateCardTemplateDto.nItems,
+                    stickers: updateCardTemplateDto.stickers,
+                    stickersCount: updateCardTemplateDto.stickersCount,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await ItemsSubscriptionCardTemplate.findOne({
                 where: {
-                    id: cardTemplateId,
+                    id: cardTemplate.id,
                 },
             });
-            if (!subTemp) throw new HttpError(404, 'Card template not found');
             break;
     }
 
-    return findOneCardTemplateById(cardTemplateId, cardTemplate.businessId);
+    // create a folder in the public folder to store the card template files
+    cardTemplateFolderPath = await createCardTemplateFolder({
+        cardTemplateId: cardTemplate.id,
+        ...updateCardTemplateDto,
+    });
+
+    // combine the base card template with the sub card template in a single object
+    return {
+        ...cardTemplate.toJSON(),
+        ...subCardTemplate.toJSON(),
+    };
 };
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {
