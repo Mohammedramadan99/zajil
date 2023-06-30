@@ -7,7 +7,7 @@ import fileUpload from 'express-fileupload';
 import config from './config';
 
 const app = Express();
-app.use(Express.static('public'));
+app.use(config.apiPrefix, Express.static('public'));
 app.use(cors());
 app.use(Express.json());
 app.use(
