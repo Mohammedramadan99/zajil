@@ -43,6 +43,12 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
                 cardId: props.cardId,
                 cardType: appleJSONObj.type,
             }),
+
+            // to work with passbook
+            semantics: {},
+            userInfo: {},
+            sharingProhibited: true,
+            
         },
     );
 
