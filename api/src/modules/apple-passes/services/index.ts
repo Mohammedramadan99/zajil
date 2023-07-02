@@ -48,7 +48,6 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
             semantics: {},
             userInfo: {},
             sharingProhibited: true,
-            
         },
     );
 
@@ -103,6 +102,8 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
             pass.addBuffer('strip@2x.png', strip);
         }
     }
+
+    pass.setLocations();
 
     return pass;
 }
