@@ -11,6 +11,7 @@ import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
+import { uploadFile } from '../../aws/s3';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -93,8 +94,6 @@ export const createCardTemplate = async (
         if (subCardTemplate) await subCardTemplate.destroy();
         // delete the base card template
         if (cardTemplate) await cardTemplate.destroy();
-        // delete the card template folder
-        if (cardTemplateFolderPath) fs.rmdirSync(cardTemplateFolderPath);
 
         // continue throwing the error
         throw error;
@@ -117,41 +116,47 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
     rest.stickers = rest.stickers || [];
 
     // create a folder in the public folder to store the card template files
-    const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
-    if (!fs.existsSync(cardTemplateFolderPath)) fs.mkdirSync(cardTemplateFolderPath);
+    const cardTemplateFolderPath = `card-templates/${cardTemplateId}`;
 
     // create JSON files for apple and google passes
-    const applePassJsonPath = path.join(cardTemplateFolderPath, 'applePass.json');
-    const googlePassJsonPath = path.join(cardTemplateFolderPath, 'googlePass.json');
+    const applePassJsonPath = `${cardTemplateFolderPath}/applePass.json`;
+    const googlePassJsonPath = `${cardTemplateFolderPath}/googlePass.json`;
 
     // create the apple pass json file
-    if (!fs.existsSync(applePassJsonPath))
-        fs.writeFileSync(
-            applePassJsonPath,
-            JSON.stringify(
-                {
-                    ...rest.cardProps,
-                    ...APPLE_PASS_PLACEHOLDER({
-                        serialNumber: 'SERIAL_NUMBER',
-                        description: 'Test Apple Wallet Card',
-                        organizationName: `Test Organization`,
-                        designType,
-                        qrCodeMessage: 'QR_CODE_MESSAGE',
-                        qrCodeFormat,
-                    }),
-                },
-                null,
-                4,
+    uploadFile(
+        {
+            name: 'applePass.json',
+            data: Buffer.from(
+                JSON.stringify(
+                    {
+                        ...rest.cardProps,
+                        ...APPLE_PASS_PLACEHOLDER({
+                            serialNumber: 'SERIAL_NUMBER',
+                            description: 'Test Apple Wallet Card',
+                            organizationName: `Test Organization`,
+                            designType,
+                            qrCodeMessage: 'QR_CODE_MESSAGE',
+                            qrCodeFormat,
+                        }),
+                    },
+                    null,
+                    4,
+                ),
             ),
-        );
+        },
+        cardTemplateFolderPath,
+    );
 
     // create the google pass json file
-    if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
+    uploadFile(
+        {
+            name: 'googlePass.json',
+            data: Buffer.from('{}'),
+        },
+        cardTemplateFolderPath,
+    );
 
-    // Create sticker images folder
-    if (!fs.existsSync(path.join(cardTemplateFolderPath, 'stickers')))
-        fs.mkdirSync(path.join(cardTemplateFolderPath, 'stickers'));
-
+    
     // download the logo and icon images
     const imagesToDownload = [
         { url: logoUrl, path: 'logo.png' },
@@ -168,8 +173,7 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         })),
     ]
         .filter(({ url }) => url)
-        .map((image) => downloadImageToFolder(image.url, path.join(cardTemplateFolderPath, image.path)));
-
+        .map((image) => downloadImageToFolder(image.url, `${cardTemplateFolderPath}/${image.path}`));
     await Promise.all(imagesToDownload);
 
     return cardTemplateFolderPath;
