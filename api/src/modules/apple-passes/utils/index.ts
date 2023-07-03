@@ -6,6 +6,7 @@ import { LoyaltyCard } from '../../cards/models/loyalty-card.model';
 import { PKPass } from 'passkit-generator';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import sharp, { OverlayOptions, Sharp } from 'sharp';
+import { getFile } from '../../aws/s3';
 
 interface Cache {
     certificates:
@@ -121,10 +122,11 @@ export const generateStickersIfPossible = async (
             async (sticker) =>
                 await handleStickerSharpToBuffer(
                     sharp(
-                        path.resolve(
-                            __dirname,
-                            `../../../../public/card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
-                        ),
+                        (
+                            await getFile(
+                                `card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
+                            )
+                        ).Body as Buffer,
                     ),
                     stickerSize,
                 ),
@@ -155,9 +157,7 @@ export const generateStickersIfPossible = async (
                 input: choosenStickerBuffers[index] || stickerPlaceholderBuffer,
                 top:
                     numberOfRows === 1
-                        ? Math.round(
-                            (stripHeight-stickerSize)/2
-                        )
+                        ? Math.round((stripHeight - stickerSize) / 2)
                         : Math.round(
                               row * (stickerSize + (row !== 0 ? stickerVerticalMargin : 0)) +
                                   stripHeight * margin -

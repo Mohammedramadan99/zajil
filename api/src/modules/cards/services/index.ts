@@ -17,6 +17,7 @@ import { ItemsSubUseDto } from '../dto/items-sub-use';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
 import { Request } from 'express';
+import { uploadFile } from '../../aws/s3';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -89,14 +90,20 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
     });
 
     // create a folder in the public folder to store the card template files
-    const cardPath = path.join(__dirname, `../../../../public/cards/${cardId}.pkpass`);
+    const cardPath = `cards/${cardId}.pkpass`;
 
     // write the pass to the public folder
     const passBuffer = pass.getAsBuffer();
-    fs.writeFileSync(cardPath, passBuffer);
+    const obj = await uploadFile(
+        {
+            name: cardPath.split('/').pop(),
+            data: passBuffer,
+        },
+        cardPath.split('/').slice(0, -1).join('/'),
+    );
 
     // return the uri using the public folder as the root
-    return cardPath.replace(path.join(__dirname, '../../../../public'), '');
+    return obj.Location;
 };
 
 export const findAllCards = async ({
