@@ -5,21 +5,23 @@ import { generateStickersIfPossible, getCertificates, populateVariables } from '
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
-import { getFile } from '../../aws/s3';
+import { getFile, s3LocationToKey } from '../../aws/s3';
+import { CardTemplate } from '../../card-templates/models/card-template.model';
 
 export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
+    const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId);
     const folderPath = `card-templates/${props.cardTemplateId}`;
 
     const [appleJSON, certificates] = await Promise.all([getFile(`${folderPath}/applePass.json`), getCertificates()]);
 
     // get images from the card template folder
     const [icon, logo, thumbnail, footer, strip, background] = await Promise.all([
-        getFile(`${folderPath}/icon.png`),
-        getFile(`${folderPath}/logo.png`),
-        getFile(`${folderPath}/thumbnail.png`).catch(() => null),
-        getFile(`${folderPath}/footer.png`).catch(() => null),
-        getFile(`${folderPath}/strip.png`).catch(() => null),
-        getFile(`${folderPath}/background.png`).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.iconUrl)),
+        getFile(s3LocationToKey(cardTemplate.logoUrl)),
+        getFile(s3LocationToKey(cardTemplate.thumbnailUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.footerUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.stripUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.backgroundUrl)).catch(() => null),
     ]);
 
     const appleJSONObj: IAppleCardProps = JSON.parse(

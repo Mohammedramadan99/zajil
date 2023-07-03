@@ -58,3 +58,9 @@ export const deleteFolder = async (dir) => {
 
     if (listedObjects.IsTruncated) await deleteFile(dir);
 };
+
+export const s3LocationToKey = (location: string) => {
+    if (!location) return null;
+    const key = location.split('amazonaws.com/')[1];
+    return key;
+};
