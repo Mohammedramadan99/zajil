@@ -64,7 +64,11 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     }
 
     // generate the pass in the public folder
-    const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
+    const cardObj = await generatePassFromTemplate(card.id, cardTemplate.id);
+
+    card.s3Key = cardObj.Key;
+    card.s3Location = cardObj.Location;
+    await card.save();
 
     // log activity
     await Activity.create({
@@ -78,11 +82,10 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     return {
         ...card.toJSON(),
         ...subCard.toJSON(),
-        cardUri,
     };
 };
 
-const generatePassFromTemplate = async (cardId: number, cardTemplateId: number): Promise<string> => {
+const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) => {
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
         serialNumber: cardId.toString(),
@@ -103,7 +106,7 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
     );
 
     // return the uri using the public folder as the root
-    return obj.Location;
+    return obj;
 };
 
 export const findAllCards = async ({
