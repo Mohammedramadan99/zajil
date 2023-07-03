@@ -11,7 +11,7 @@ import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
-import { deleteFolder, uploadFile } from '../../aws/s3';
+import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -169,10 +169,19 @@ const createCardTemplateFolder = async (
         { url: backgroundUrl, path: 'background.png' },
 
         // stickers
-        ...rest.stickers.map((stickerProps) => ({
-            url: stickerProps.imageUrl,
-            path: `stickers/${stickerProps.title}.${stickerProps.imageType}`,
-        })),
+        ...rest.stickers.map((stickerProps) => {
+            let fileName = `${stickerProps.title}.${stickerProps.imageType}`;
+
+            // if the url from s3, get the path from the url
+            if (stickerProps.imageUrl.includes(`https://${BUCKET_NAME}.s3`)) {
+                fileName = stickerProps.imageUrl.split('/').pop();
+            }
+
+            return {
+                url: stickerProps.imageUrl,
+                path: `stickers/${fileName}`,
+            };
+        }),
     ]
         .filter(({ url }) => url)
         .map((image) => downloadImageToFolder(image.url, `${cardTemplateFolderPath}/${image.path}`));

@@ -2,7 +2,7 @@ import { GetObjectOutput, ManagedUpload } from 'aws-sdk/clients/s3';
 import { s3 } from '.';
 import config from '../../config';
 
-const BUCKET_NAME = config.aws.s3.bucketName;
+export const BUCKET_NAME = config.aws.s3.bucketName;
 
 export const uploadFile = async (
     file: {
