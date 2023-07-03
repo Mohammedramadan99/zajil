@@ -14,6 +14,7 @@ export class CardTemplate extends Model {
     public name!: string;
     public cardType!: CardType;
     public businessId!: number;
+    public design: any;
 
     // images
     public readonly logoUrl: string;
@@ -72,6 +73,10 @@ export const init = (sequelize: Sequelize) =>
             },
             backgroundUrl: {
                 type: DataTypes.STRING,
+                allowNull: true,
+            },
+            design: {
+                type: DataTypes.JSON,
                 allowNull: true,
             },
         },
