@@ -100,7 +100,7 @@ export const createCardTemplate = async (
         // delete the base card template
         if (cardTemplate) await cardTemplate.destroy();
         // delete the folder
-        if (cardTemplateFolderPath) deleteFolder(cardTemplateFolderPath);
+        if (cardTemplateFolderPath) await deleteFolder(cardTemplateFolderPath);
 
         // continue throwing the error
         throw error;
@@ -142,7 +142,7 @@ const createCardTemplateFolder = async (
     const googlePassJsonPath = `${cardTemplateFolderPath}/googlePass.json`;
 
     // create the apple pass json file
-    uploadFile(
+    await uploadFile(
         {
             name: 'applePass.json',
             data: Buffer.from(JSON.stringify(applePassDesign, null, 4)),
@@ -151,7 +151,7 @@ const createCardTemplateFolder = async (
     );
 
     // create the google pass json file
-    uploadFile(
+    await uploadFile(
         {
             name: 'googlePass.json',
             data: Buffer.from('{}'),
@@ -331,11 +331,15 @@ export const updateCardTemplateById = async (
 };
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {
-    return CardTemplate.destroy({
+    const res = await CardTemplate.destroy({
         where: {
             id: cardTemplateId,
         },
     });
+
+    await deleteFolder(`card-templates/${cardTemplateId}`);
+
+    return res;
 };
 
 // Helpers
