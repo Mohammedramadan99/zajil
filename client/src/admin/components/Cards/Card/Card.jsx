@@ -231,7 +231,7 @@ function Card({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`http://localhost:5173/admin/cards/new/${template.id}/${template.businessId}`}
+          url={`/admin/cards/new/${template.id}/${template.businessId}`}
         />
       )}
     </>
