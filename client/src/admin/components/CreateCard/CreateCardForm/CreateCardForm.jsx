@@ -121,7 +121,7 @@ function CreateCardForm() {
           <Button variant="contained">
             <Link
               className="flex"
-              to={`${import.meta.env.VITE_API_URL}${card.cardUri}`}
+              to={card.s3Location}
               target="_blank"
               download>
               Download the card
