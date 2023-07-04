@@ -99,7 +99,7 @@ export const generateStickersIfPossible = async (
     const chosenStickers = card.chosenStickers || [];
 
     const stickers = itemsSubscriptionCardTemplate.stickers;
-    const stickersCount = itemsSubscriptionCardTemplate.stickersCount && 6;
+    const stickersCount = itemsSubscriptionCardTemplate.stickersCount;
 
     const stripWidth = 1125;
     const stripHeight = 432;
