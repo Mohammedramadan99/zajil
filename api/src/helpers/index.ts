@@ -123,6 +123,7 @@ export const downloadImageToFolder = async (imageURL: string, path: string) => {
                 {
                     name: path.split('/').pop() || '',
                     data: Buffer.from(x),
+                    contentType: imageType || undefined,
                 },
                 path.split('/').slice(0, -1).join('/'),
             ),

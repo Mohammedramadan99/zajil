@@ -146,6 +146,7 @@ const createCardTemplateFolder = async (
         {
             name: 'applePass.json',
             data: Buffer.from(JSON.stringify(applePassDesign, null, 4)),
+            contentType: 'application/json',
         },
         cardTemplateFolderPath,
     );
@@ -155,6 +156,7 @@ const createCardTemplateFolder = async (
         {
             name: 'googlePass.json',
             data: Buffer.from('{}'),
+            contentType: 'application/json',
         },
         cardTemplateFolderPath,
     );

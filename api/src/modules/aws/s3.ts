@@ -8,6 +8,7 @@ export const uploadFile = async (
     file: {
         name: string;
         data: Buffer;
+        contentType?: string;
     },
     folder: string,
 ): Promise<ManagedUpload.SendData> => {
@@ -15,6 +16,7 @@ export const uploadFile = async (
         Bucket: BUCKET_NAME,
         Key: `${folder}/${file.name}`,
         Body: file.data,
+        ContentType: file.contentType || 'application/octet-stream',
     };
     return await s3.upload(params).promise();
 };

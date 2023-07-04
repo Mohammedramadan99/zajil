@@ -101,6 +101,7 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) 
         {
             name: cardPath.split('/').pop(),
             data: passBuffer,
+            contentType: 'application/vnd.apple.pkpass',
         },
         cardPath.split('/').slice(0, -1).join('/'),
     );
