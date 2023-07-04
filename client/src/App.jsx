@@ -25,7 +25,7 @@ import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
 import CardControl from "./admin/pages/cardControl/CardControl";
 import CreateCard from "./admin/pages/controlCard/CreateCard";
 import Cards from "./admin/pages/cards/Cards";
-import CardDetails from "./admin/pages/CardDetails/CardDetails";
+import CardDetails from "./admin/pages/cardDetails/CardDetails";
 import Scan from "./admin/pages/Scan/Scan";
 
 function App() {
