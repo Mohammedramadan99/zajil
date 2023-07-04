@@ -6,7 +6,7 @@ import { LoyaltyCard } from '../../cards/models/loyalty-card.model';
 import { PKPass } from 'passkit-generator';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import sharp, { OverlayOptions, Sharp } from 'sharp';
-import { getFile } from '../../aws/s3';
+import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
 
 interface Cache {
     certificates:
@@ -122,11 +122,15 @@ export const generateStickersIfPossible = async (
             async (sticker) =>
                 await handleStickerSharpToBuffer(
                     sharp(
-                        (
-                            await getFile(
-                                `card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
-                            )
-                        ).Body as Buffer,
+                        await getFile(
+                            sticker.imageUrl.includes(`https://${BUCKET_NAME}.s3`)
+                                ? s3LocationToKey(sticker.imageUrl)
+                                : `card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
+                        )
+                            .then((out) => out.Body)
+                            .catch((err) => {
+                                console.error(err);
+                            }),
                     ),
                     stickerSize,
                 ),

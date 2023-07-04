@@ -32,7 +32,14 @@ export const getFile = async (key: string) => {
         Bucket: BUCKET_NAME,
         Key: key,
     };
-    return await s3.getObject(params).promise();
+    return await s3
+        .getObject(params)
+        .promise()
+        .catch((err) => {
+            console.log(err);
+            console.log('key', key);
+            return null;
+        });
 };
 
 export const deleteFolder = async (dir) => {
