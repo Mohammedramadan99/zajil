@@ -25,7 +25,7 @@ import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
 import CardControl from "./admin/pages/cardControl/CardControl";
 import CreateCard from "./admin/pages/controlCard/CreateCard";
 import Cards from "./admin/pages/cards/Cards";
-import CardDetails from "./admin/pages/CardDetails/CardDetails";
+import CardDetails from "./admin/pages/cardDetails/CardDetails";
 import Scan from "./admin/pages/Scan/Scan";
 
 function App() {
@@ -62,6 +62,16 @@ function App() {
       ],
     },
     {
+      path: "/Card",
+      element: <DashboardLayout />,
+      children: [
+        {
+          path: "create/:templateId/:businessId",
+          element: <CreateCard />,
+        },
+      ],
+    },
+    {
       path: "/admin",
       element: user ? <DashboardLayout /> : <Navigate to={"/auth/login"} />,
       children: [
@@ -92,10 +102,6 @@ function App() {
         {
           path: "templates/new",
           element: <CreateTemplate />,
-        },
-        {
-          path: "cards/new/:templateId/:businessId",
-          element: <CreateCard />,
         },
         {
           path: "cards",

@@ -31,13 +31,14 @@ export default function BusinessesTabs() {
         variant="scrollable"
         scrollButtons="auto"
         aria-label="scrollable auto tabs example">
-        {businesses.map((item, i) => (
-          <Tab
-            key={i}
-            label={item.name}
-            onClick={() => templatesHandler(item?.id)}
-          />
-        ))}
+        {businesses &&
+          businesses.map((item, i) => (
+            <Tab
+              key={i}
+              label={item.name}
+              onClick={() => templatesHandler(item?.id)}
+            />
+          ))}
       </Tabs>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

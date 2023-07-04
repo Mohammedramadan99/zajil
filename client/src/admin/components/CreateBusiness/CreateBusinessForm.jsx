@@ -71,7 +71,7 @@ function CreateBusinessForm() {
       <Box component="form" onSubmit={formik.handleSubmit}>
         {error && (
           <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-            {error.message}
+            {error}
           </Alert>
         )}
         <div>

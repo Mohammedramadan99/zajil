@@ -11,6 +11,7 @@ import { APPLE_PASS_PLACEHOLDER } from '../../apple-passes/consts';
 import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
+import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -21,6 +22,7 @@ export const createCardTemplate = async (
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
     let cardTemplate: CardTemplate;
     let cardTemplateFolderPath: string;
+    let applePassDesign;
 
     try {
         /*
@@ -45,6 +47,15 @@ export const createCardTemplate = async (
             backgroundUrl: createCardTemplateDto.backgroundUrl || null,
         });
 
+        // create a folder in the public folder to store the card template files
+        [cardTemplateFolderPath, applePassDesign] = await createCardTemplateFolder({
+            cardTemplateId: cardTemplate.id,
+            ...createCardTemplateDto,
+        });
+
+        cardTemplate.design = applePassDesign;
+        cardTemplate.save();
+
         // Create a sub card template based on the card type
         switch (cardType) {
             case CardType.LOYALTY:
@@ -60,6 +71,7 @@ export const createCardTemplate = async (
                         templateId: cardTemplate.id,
                     })),
                 );
+                ``;
                 break;
 
             case CardType.ITEMS_SUBSCRIPTION:
@@ -74,12 +86,6 @@ export const createCardTemplate = async (
                 break;
         }
 
-        // create a folder in the public folder to store the card template files
-        cardTemplateFolderPath = await createCardTemplateFolder({
-            cardTemplateId: cardTemplate.id,
-            ...createCardTemplateDto,
-        });
-
         // combine the base card template with the sub card template in a single object
         return {
             ...cardTemplate.toJSON(),
@@ -93,15 +99,17 @@ export const createCardTemplate = async (
         if (subCardTemplate) await subCardTemplate.destroy();
         // delete the base card template
         if (cardTemplate) await cardTemplate.destroy();
-        // delete the card template folder
-        if (cardTemplateFolderPath) fs.rmdirSync(cardTemplateFolderPath);
+        // delete the folder
+        if (cardTemplateFolderPath) await deleteFolder(cardTemplateFolderPath);
 
         // continue throwing the error
         throw error;
     }
 };
 
-const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto & { cardTemplateId: number }) => {
+const createCardTemplateFolder = async (
+    cardTemplateProps: CreateCardTemplateDto & { cardTemplateId: number },
+): Promise<[string, any]> => {
     const {
         cardTemplateId,
         designType,
@@ -117,40 +125,41 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
     rest.stickers = rest.stickers || [];
 
     // create a folder in the public folder to store the card template files
-    const cardTemplateFolderPath = path.join(__dirname, `../../../../public/card-templates/${cardTemplateId}`);
-    if (!fs.existsSync(cardTemplateFolderPath)) fs.mkdirSync(cardTemplateFolderPath);
+    const cardTemplateFolderPath = `card-templates/${cardTemplateId}`;
 
     // create JSON files for apple and google passes
-    const applePassJsonPath = path.join(cardTemplateFolderPath, 'applePass.json');
-    const googlePassJsonPath = path.join(cardTemplateFolderPath, 'googlePass.json');
+    const applePassDesign = {
+        ...rest.cardProps,
+        ...APPLE_PASS_PLACEHOLDER({
+            serialNumber: 'SERIAL_NUMBER',
+            description: 'Test Apple Wallet Card',
+            organizationName: `Test Organization`,
+            designType,
+            qrCodeMessage: 'QR_CODE_MESSAGE',
+            qrCodeFormat,
+        }),
+    };
+    const googlePassJsonPath = `${cardTemplateFolderPath}/googlePass.json`;
 
     // create the apple pass json file
-    if (!fs.existsSync(applePassJsonPath))
-        fs.writeFileSync(
-            applePassJsonPath,
-            JSON.stringify(
-                {
-                    ...rest.cardProps,
-                    ...APPLE_PASS_PLACEHOLDER({
-                        serialNumber: 'SERIAL_NUMBER',
-                        description: 'Test Apple Wallet Card',
-                        organizationName: `Test Organization`,
-                        designType,
-                        qrCodeMessage: 'QR_CODE_MESSAGE',
-                        qrCodeFormat,
-                    }),
-                },
-                null,
-                4,
-            ),
-        );
+    await uploadFile(
+        {
+            name: 'applePass.json',
+            data: Buffer.from(JSON.stringify(applePassDesign, null, 4)),
+            contentType: 'application/json',
+        },
+        cardTemplateFolderPath,
+    );
 
     // create the google pass json file
-    if (!fs.existsSync(googlePassJsonPath)) fs.writeFileSync(googlePassJsonPath, '{}');
-
-    // Create sticker images folder
-    if (!fs.existsSync(path.join(cardTemplateFolderPath, 'stickers')))
-        fs.mkdirSync(path.join(cardTemplateFolderPath, 'stickers'));
+    await uploadFile(
+        {
+            name: 'googlePass.json',
+            data: Buffer.from('{}'),
+            contentType: 'application/json',
+        },
+        cardTemplateFolderPath,
+    );
 
     // download the logo and icon images
     const imagesToDownload = [
@@ -162,17 +171,25 @@ const createCardTemplateFolder = async (cardTemplateProps: CreateCardTemplateDto
         { url: backgroundUrl, path: 'background.png' },
 
         // stickers
-        ...rest.stickers.map((stickerProps) => ({
-            url: stickerProps.imageUrl,
-            path: `stickers/${stickerProps.title}.${stickerProps.imageType}`,
-        })),
+        ...rest.stickers.map((stickerProps) => {
+            let fileName = `${stickerProps.title}.${stickerProps.imageType}`;
+
+            // if the url from s3, get the path from the url
+            if (stickerProps.imageUrl.includes(`https://${BUCKET_NAME}.s3`)) {
+                fileName = stickerProps.imageUrl.split('/').pop();
+            }
+
+            return {
+                url: stickerProps.imageUrl,
+                path: `stickers/${fileName}`,
+            };
+        }),
     ]
         .filter(({ url }) => url)
-        .map((image) => downloadImageToFolder(image.url, path.join(cardTemplateFolderPath, image.path)));
-
+        .map((image) => downloadImageToFolder(image.url, `${cardTemplateFolderPath}/${image.path}`));
     await Promise.all(imagesToDownload);
 
-    return cardTemplateFolderPath;
+    return [cardTemplateFolderPath, applePassDesign];
 };
 
 export const findAllCardTemplates = async ({
@@ -198,7 +215,7 @@ export const findAllCardTemplates = async ({
         result.rows = result.rows.map(removeRowNullFields);
 
         // include card JSON design
-        result.rows = result.rows.map(includeCardJsonDesign);
+        result.rows = result.rows.map(parseDesign);
         return result;
     });
 };
@@ -213,7 +230,7 @@ export const findOneCardTemplateById = async (cardTemplateId: number, businessId
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card template not found');
         row = removeRowNullFields(row);
-        row = includeCardJsonDesign(row);
+        row = parseDesign(row);
         return row;
     });
 };
@@ -227,6 +244,7 @@ export const updateCardTemplateById = async (
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
     let cardTemplate: CardTemplate;
     let cardTemplateFolderPath: string;
+    let applePassDesign: any;
 
     /*
      * create a  base card template
@@ -241,6 +259,7 @@ export const updateCardTemplateById = async (
             name: updateCardTemplateDto.name,
             cardType: updateCardTemplateDto.cardType,
             businessId,
+            design: applePassDesign,
 
             // images
             logoUrl: updateCardTemplateDto.logoUrl || null,
@@ -261,6 +280,15 @@ export const updateCardTemplateById = async (
             id: cardTemplateId,
         },
     });
+
+    // create a folder in the public folder to store the card template files
+    [cardTemplateFolderPath, applePassDesign] = await createCardTemplateFolder({
+        cardTemplateId: cardTemplate.id,
+        ...updateCardTemplateDto,
+    });
+
+    cardTemplate.design = applePassDesign;
+    await cardTemplate.save();
 
     // Create a sub card template based on the card type
     switch (cardType) {
@@ -306,12 +334,6 @@ export const updateCardTemplateById = async (
             break;
     }
 
-    // create a folder in the public folder to store the card template files
-    cardTemplateFolderPath = await createCardTemplateFolder({
-        cardTemplateId: cardTemplate.id,
-        ...updateCardTemplateDto,
-    });
-
     // combine the base card template with the sub card template in a single object
     return {
         ...cardTemplate.toJSON(),
@@ -320,11 +342,15 @@ export const updateCardTemplateById = async (
 };
 
 export const deleteCardTemplateById = async (cardTemplateId: number) => {
-    return CardTemplate.destroy({
+    const res = await CardTemplate.destroy({
         where: {
             id: cardTemplateId,
         },
     });
+
+    await deleteFolder(`card-templates/${cardTemplateId}`);
+
+    return res;
 };
 
 // Helpers
@@ -429,17 +455,8 @@ export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, 
     return gift;
 };
 
-function includeCardJsonDesign(row: any) {
-    const cardJSONPath = path.join(
-        __dirname,
-        '../../../../',
-        'public',
-        'card-templates',
-        row.id.toString(),
-        'applePass.json',
-    );
-    const cardJSON = fs.readFileSync(cardJSONPath, 'utf-8');
-    const cardJSONObj = JSON.parse(cardJSON);
+function parseDesign(row: any) {
+    const cardJSONObj = row.design;
 
     // filter out some fields
     delete cardJSONObj.formatVersion;

@@ -5,27 +5,27 @@ import { generateStickersIfPossible, getCertificates, populateVariables } from '
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
+import { getFile, s3LocationToKey } from '../../aws/s3';
+import { CardTemplate } from '../../card-templates/models/card-template.model';
 
 export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
-    const folderPath = path.resolve(__dirname, `../../../../public/card-templates/${props.cardTemplateId}`);
+    const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId);
+    const folderPath = `card-templates/${props.cardTemplateId}`;
 
-    const [appleJSON, certificates] = await Promise.all([
-        fs.readFile(`${folderPath}/applePass.json`),
-        getCertificates(),
-    ]);
+    const [appleJSON, certificates] = await Promise.all([getFile(`${folderPath}/applePass.json`), getCertificates()]);
 
     // get images from the card template folder
     const [icon, logo, thumbnail, footer, strip, background] = await Promise.all([
-        fs.readFile(`${folderPath}/icon.png`),
-        fs.readFile(`${folderPath}/logo.png`),
-        fs.readFile(`${folderPath}/thumbnail.png`).catch(() => null),
-        fs.readFile(`${folderPath}/footer.png`).catch(() => null),
-        fs.readFile(`${folderPath}/strip.png`).catch(() => null),
-        fs.readFile(`${folderPath}/background.png`).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.iconUrl)),
+        getFile(s3LocationToKey(cardTemplate.logoUrl)),
+        getFile(s3LocationToKey(cardTemplate.thumbnailUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.footerUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.stripUrl)).catch(() => null),
+        getFile(s3LocationToKey(cardTemplate.backgroundUrl)).catch(() => null),
     ]);
 
     const appleJSONObj: IAppleCardProps = JSON.parse(
-        await populateVariables(appleJSON.toString(), Number(props.cardId)),
+        await populateVariables(appleJSON.Body.toString(), Number(props.cardId)),
     );
 
     const pass = new PKPass(
@@ -48,7 +48,6 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
             semantics: {},
             userInfo: {},
             sharingProhibited: true,
-            
         },
     );
 
@@ -70,39 +69,46 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
     });
 
     // add icon images
-    pass.addBuffer('icon.png', icon);
-    pass.addBuffer('icon@2x.png', icon);
+    pass.addBuffer('icon.png', icon.Body as Buffer);
+    pass.addBuffer('icon@2x.png', icon.Body as Buffer);
 
     // add logo images
-    pass.addBuffer('logo.png', logo);
-    pass.addBuffer('logo@2x.png', logo);
+    pass.addBuffer('logo.png', logo.Body as Buffer);
+    pass.addBuffer('logo@2x.png', logo.Body as Buffer);
 
     // add thumbnail image
     if (thumbnail) {
-        pass.addBuffer('thumbnail.png', thumbnail);
-        pass.addBuffer('thumbnail@2x.png', thumbnail);
+        pass.addBuffer('thumbnail.png', thumbnail.Body as Buffer);
+        pass.addBuffer('thumbnail@2x.png', thumbnail.Body as Buffer);
     }
     // add footer image
     if (footer) {
-        pass.addBuffer('footer.png', footer);
-        pass.addBuffer('footer@2x.png', footer);
+        pass.addBuffer('footer.png', footer.Body as Buffer);
+        pass.addBuffer('footer@2x.png', footer.Body as Buffer);
     }
     // add background image
     if (background) {
-        pass.addBuffer('background.png', background);
-        pass.addBuffer('background@2x.png', background);
+        pass.addBuffer('background.png', background.Body as Buffer);
+        pass.addBuffer('background@2x.png', background.Body as Buffer);
     }
 
     // add strip image
     if (strip) {
         // generate stickers if possible
-        const success = await generateStickersIfPossible(pass, props.cardTemplateId, Number(props.cardId), strip);
+        const success = await generateStickersIfPossible(
+            pass,
+            props.cardTemplateId,
+            Number(props.cardId),
+            strip.Body as Buffer,
+        );
 
         if (!success) {
-            pass.addBuffer('strip.png', strip);
-            pass.addBuffer('strip@2x.png', strip);
+            pass.addBuffer('strip.png', strip.Body as Buffer);
+            pass.addBuffer('strip@2x.png', strip.Body as Buffer);
         }
     }
+
+    pass.setLocations();
 
     return pass;
 }

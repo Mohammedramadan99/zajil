@@ -7,6 +7,7 @@ import { sign, verify } from 'jsonwebtoken';
 import { User } from '../modules/users/models/user.model';
 import { NextFunction } from 'express';
 import { writeFileSync } from 'fs';
+import { uploadFile } from '../modules/aws/s3';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {
@@ -112,8 +113,19 @@ export const downloadImageToFolder = async (imageURL: string, path: string) => {
     }).then((res) => res.headers.get('content-type'));
     // if (!imageType || !imageType.includes('image')) throw new HttpError(400, 'Invalid image URL');
 
+    console.log(path.split('/').slice(0, -1).join('/'));
+
     // download the image
     return fetch(imageURL)
         .then((x) => x.arrayBuffer())
-        .then((x) => writeFileSync(path, Buffer.from(x)));
+        .then((x) =>
+            uploadFile(
+                {
+                    name: path.split('/').pop() || '',
+                    data: Buffer.from(x),
+                    contentType: imageType || undefined,
+                },
+                path.split('/').slice(0, -1).join('/'),
+            ),
+        );
 };

@@ -156,7 +156,8 @@ const authSlice = createSlice({
       state.errors = action.payload?.errors;
       state.user = null;
       state.errorMessage =
-        action.payload || "An unknown error occurred. Please try again later.";
+        action.payload.message ||
+        "An unknown error occurred. Please try again later.";
     });
     builder.addCase(logoutAction.pending, (state, action) => {
       state.loading = true;

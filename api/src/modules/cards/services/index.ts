@@ -17,6 +17,7 @@ import { ItemsSubUseDto } from '../dto/items-sub-use';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
 import { Request } from 'express';
+import { getFile, uploadFile } from '../../aws/s3';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -63,7 +64,11 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     }
 
     // generate the pass in the public folder
-    const cardUri = await generatePassFromTemplate(card.id, cardTemplate.id);
+    const cardObj = await generatePassFromTemplate(card.id, cardTemplate.id);
+
+    card.s3Key = cardObj.Key;
+    card.s3Location = cardObj.Location;
+    await card.save();
 
     // log activity
     await Activity.create({
@@ -77,11 +82,10 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     return {
         ...card.toJSON(),
         ...subCard.toJSON(),
-        cardUri,
     };
 };
 
-const generatePassFromTemplate = async (cardId: number, cardTemplateId: number): Promise<string> => {
+const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) => {
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
         serialNumber: cardId.toString(),
@@ -89,14 +93,21 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number):
     });
 
     // create a folder in the public folder to store the card template files
-    const cardPath = path.join(__dirname, `../../../../public/cards/${cardId}.pkpass`);
+    const cardPath = `cards/${cardId}.pkpass`;
 
     // write the pass to the public folder
     const passBuffer = pass.getAsBuffer();
-    fs.writeFileSync(cardPath, passBuffer);
+    const obj = await uploadFile(
+        {
+            name: cardPath.split('/').pop(),
+            data: passBuffer,
+            contentType: 'application/vnd.apple.pkpass',
+        },
+        cardPath.split('/').slice(0, -1).join('/'),
+    );
 
     // return the uri using the public folder as the root
-    return cardPath.replace(path.join(__dirname, '../../../../public'), '');
+    return obj;
 };
 
 export const findAllCards = async ({
@@ -556,7 +567,7 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
     if (!card) throw new HttpError(404, 'Card not found');
 
     // load the pkpass file
-    const pkpassBuffer = fs.readFileSync(path.join(__dirname, `../../../../public/cards/${card.id}.pkpass`));
+    const pkpassBuffer = (await getFile(card.s3Key))?.Body as Buffer;
 
     // send the pkpass file
     console.log('sendUpdatedPass Success');

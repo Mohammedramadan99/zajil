@@ -12,6 +12,8 @@ export class Card extends Model {
     public templateId!: number;
     public deviceLibraryIdentifier: string;
     public pushToken: string;
+    public s3Key: string;
+    public s3Location: string;
 
     // stickers
     public chosenStickers: StickerDto[];
@@ -50,6 +52,14 @@ export const init = (sequelize: Sequelize) =>
             },
             chosenStickers: {
                 type: DataTypes.JSON,
+                allowNull: true,
+            },
+            s3Key: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            s3Location: {
+                type: DataTypes.STRING,
                 allowNull: true,
             },
         },

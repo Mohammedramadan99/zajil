@@ -16,7 +16,7 @@ const useBranch = () => {
         form.append(key, values[key]);
       });
       const user = getCookie("userInfo");
-      const response = await fetch(`http://localhost:3000/branches`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/branches`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${user.token}`,

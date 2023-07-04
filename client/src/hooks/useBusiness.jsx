@@ -16,7 +16,7 @@ const useBusiness = () => {
         form.append(key, values[key]);
       });
       const user = getCookie("userInfo");
-      const response = await fetch(`http://localhost:3000/businesses`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/businesses`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -42,7 +42,7 @@ const useBusiness = () => {
     setPending(true);
     try {
       const user = getCookie("userInfo");
-      const response = await fetch(`http://localhost:3000/businesses`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/businesses`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${user.token}`,
