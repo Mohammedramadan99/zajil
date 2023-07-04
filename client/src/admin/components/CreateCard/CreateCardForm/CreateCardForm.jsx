@@ -121,7 +121,7 @@ function CreateCardForm() {
           <Button variant="contained">
             <Link
               className="flex"
-              to={card.s3Location}
+              to={`https://walletpass.io?u=${card.s3Location}`}
               target="_blank"
               download>
               Download the card
