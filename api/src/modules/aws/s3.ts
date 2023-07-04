@@ -70,6 +70,6 @@ export const deleteFolder = async (dir) => {
 
 export const s3LocationToKey = (location: string) => {
     if (!location) return null;
-    const key = location.split('amazonaws.com/')[1];
+    const key = location.split('amazonaws.com/')[1].replace('+', ' ');
     return key;
 };
