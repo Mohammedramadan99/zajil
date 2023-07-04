@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Dialog from "../../../components/Templates/Dialog";
 
-function Card({
+function ShowCard({
   template,
   title,
   bg,
@@ -37,27 +37,13 @@ function Card({
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-  useEffect(() => {
-    // Whenever the textLogo or logoImg props change, update the logo image
-    if (textLogo) {
-      setLogoImg(null);
-      setTextLogo(textLogo);
-    } else if (logoImg) {
-      setTextLogo(null);
-      setLogoImg(logoImg);
-    }
-    if (stickersNumber) {
-      setStickersNumber(stickersNumber);
-    }
-    console.log({ stickersNumber });
-  }, [textLogo, logoImg, stickersNumber]);
 
   const boxRef = useRef(null);
   useEffect(() => {
     const box = boxRef.current;
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
-
+  console.log("temp", template);
   return (
     <>
       {/* Card */}
@@ -73,8 +59,7 @@ function Card({
               width: "100%",
               minHeight: "90px",
               height: "100%",
-              background: `url(${bg}) no-repeat`,
-
+              // background: `url(${template.stripUrl}) no-repeat`,
               backgroundSize: "cover",
               backgroundPosition: "cover",
               paddingInline: "10px",
@@ -85,10 +70,14 @@ function Card({
               alignItems={"center"}
               justifyContent={"space-between"}>
               <Box>
-                {logoImg && (
-                  <img src={logoImg} id="photo" width={30} height={30} />
+                {template.logoUrl && (
+                  <img
+                    src={template.logoUrl}
+                    id="photo"
+                    width={30}
+                    height={30}
+                  />
                 )}
-
                 {/* )} */}
                 {textLogo && <span> {textLogo} </span>}
               </Box>
@@ -103,10 +92,10 @@ function Card({
               mt={2}
               flexWrap={"wrap"}
               sx={
-                activeImg?.url
+                template.stripUrl
                   ? {
                       position: "relative",
-                      backgroundImage: `url(${activeImg?.url})`,
+                      backgroundImage: `url(${template.stripUrl})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                     }
@@ -114,41 +103,48 @@ function Card({
                       position: "relative",
                     }
               }>
-              {activeImg?.color && (
-                <div
-                  className="strip"
-                  ref={boxRef}
-                  style={{
-                    backgroundColor: activeImg?.color,
-                  }}></div>
-              )}
+              {activeImg?.color && <img src={template.stripUrl} alt="" />}
               <div
                 className="stickers"
                 style={
-                  stickersNumber > 20
+                  template.itemsSubscriptionCardTemplate?.stickers?.length > 27
                     ? {
-                        gridTemplateColumns: "repeat(auto-fit, 30px)",
-                        gridTemplateRows: "repeat(4, 30px)",
+                        gridTemplateColumns: "repeat(auto-fit, 25px)",
+                        gridTemplateRows: "repeat(5, 25px)",
                         justifyContent: "space-between",
                         gap: "5px",
                       }
-                    : stickersNumber > 10
+                    : template.itemsSubscriptionCardTemplate?.stickers?.length >
+                      18
                     ? {
-                        // gridTemplateColumns: "repeat(auto-fit, 25px)",
-                        // gridTemplateRows: "repeat(3, 25px)",
+                        gridTemplateColumns: "repeat(auto-fit, 25px)",
+                        gridTemplateRows: "repeat(4, 25px)",
                         justifyContent: "space-between",
                         gap: "5px",
                       }
-                    : stickersNumber > 8
+                    : template.itemsSubscriptionCardTemplate?.stickers?.length >
+                      6
                     ? {
                         justifyContent: "space-between",
                       }
                     : {}
                 }>
-                {[...Array(stickersNumber || 1)].map((item, i) => (
+                {[
+                  ...Array(
+                    template.itemsSubscriptionCardTemplate?.stickers?.length ||
+                      1
+                  ),
+                ].map((item, i) => (
                   <div className="sticker flex" key={i}>
                     <div className="icon flex">
-                      <img src={activeIcon} alt="" width="100%" />
+                      <img
+                        src={
+                          template.itemsSubscriptionCardTemplate?.stickers[i]
+                            .imageUrl
+                        }
+                        alt=""
+                        width={20}
+                      />
                     </div>
                   </div>
                 ))}
@@ -167,8 +163,7 @@ function Card({
                 Name{" "}
               </Typography>
               <Typography variant={"body2"} color={theme.palette.primary[500]}>
-                {" "}
-                {name}{" "}
+                {template.name}
               </Typography>
             </Box>
           </Box>
@@ -237,4 +232,4 @@ function Card({
   );
 }
 
-export default Card;
+export default ShowCard;

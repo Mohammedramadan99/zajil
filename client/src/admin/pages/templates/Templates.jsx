@@ -26,6 +26,7 @@ import {
 
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import ShowCard from "../../components/Cards/Card/ShowCard";
 function Cards() {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -116,8 +117,8 @@ function Cards() {
                     margin: "40px",
                   }),
                 }}>
-                <Card
-                  template={template}
+                <ShowCard
+                  template={template || null}
                   title={template?.name}
                   bg={cardBg_1}
                   icon={<Star />}
@@ -132,7 +133,7 @@ function Cards() {
                 textAlign={"center"}
                 pl={5}
                 pt={2}>
-                this business don't have templates yet
+                this business Doesn't have templates yet
               </Typography>
             </>
           )}

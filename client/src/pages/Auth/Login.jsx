@@ -73,7 +73,7 @@ function Login() {
           )}
           {errorMessage && (
             <Alert severity="error" sx={{ marginBottom: 4 }}>
-              {/* {errorMessage} */}
+              {errorMessage}
             </Alert>
           )}
           <Box

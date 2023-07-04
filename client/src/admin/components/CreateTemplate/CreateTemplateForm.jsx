@@ -86,7 +86,7 @@ function CreateTemplateForm({
       brandName: yup.string().required(),
       nItems: yup.number(),
       name: yup.string().required(),
-      stickersNumber: yup.number().required(),
+      stickersNumber: yup.number().min(1).max(30).required(),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
       giftName: yup.string(),
@@ -123,13 +123,16 @@ function CreateTemplateForm({
           const form = new FormData();
           form.append("file", img);
 
-          const res = await fetch(`${import.meta.env.VITE_API_URL}/file-upload`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            body: form,
-          });
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/file-upload`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              body: form,
+            }
+          );
           const imgUrl = await res.json();
           console.log({ imgUrl });
           if (img.name === "logoUrl") {
