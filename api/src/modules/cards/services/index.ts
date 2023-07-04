@@ -17,7 +17,7 @@ import { ItemsSubUseDto } from '../dto/items-sub-use';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
 import { Request } from 'express';
-import { uploadFile } from '../../aws/s3';
+import { getFile, uploadFile } from '../../aws/s3';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -566,7 +566,7 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
     if (!card) throw new HttpError(404, 'Card not found');
 
     // load the pkpass file
-    const pkpassBuffer = fs.readFileSync(path.join(__dirname, `../../../../public/cards/${card.id}.pkpass`));
+    const pkpassBuffer = (await getFile(card.s3Key))?.Body as Buffer;
 
     // send the pkpass file
     console.log('sendUpdatedPass Success');
