@@ -109,8 +109,8 @@ export const getBusinesses = createAsyncThunk(
 
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
-  businesses: [],
-  business: {},
+  businesses: null,
+  business: null,
   loading: false,
   errors: null,
   errorMessage: null,

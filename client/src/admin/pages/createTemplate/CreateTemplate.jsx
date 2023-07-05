@@ -14,7 +14,9 @@ function CreateCard() {
   const [activeIcon, setActiveIcon] = useState("");
   const [activeScanType, setActiveScanType] = useState("");
   const [name, setName] = useState("");
-
+  const [barcode, setBarcode] = useState("");
+  const [labelColor, setLabelColor] = useState(theme.palette.primary[400]);
+  const [backgroundColor, setBackgroundColor] = useState("#fff");
   return (
     <Box
       sx={{
@@ -45,6 +47,12 @@ function CreateCard() {
               setActiveScanType={setActiveScanType}
               imgColor={imgColor}
               setImgColor={setImgColor}
+              barcode={barcode}
+              setBarcode={setBarcode}
+              labelColor={labelColor}
+              setLabelColor={setLabelColor}
+              backgroundColor={backgroundColor}
+              setBackgroundColor={setBackgroundColor}
             />
           </Grid>
           <Grid md={4} xs={12} item>
@@ -76,6 +84,12 @@ function CreateCard() {
                   setActiveScanType={setActiveScanType}
                   imgColor={imgColor}
                   setImgColor={setImgColor}
+                  barcode={barcode}
+                  setBarcode={setBarcode}
+                  labelColor={labelColor}
+                  setLabelColor={setLabelColor}
+                  backgroundColor={backgroundColor}
+                  setBackgroundColor={setBackgroundColor}
                 />
               </Box>
             </div>

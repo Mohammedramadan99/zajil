@@ -50,7 +50,7 @@ function ShowCard({
       <Phone>
         <Stack
           sx={{
-            background: "#fff",
+            background: template.design.backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
           }}>
@@ -158,11 +158,14 @@ function ShowCard({
             mt={1}
             gap={2}>
             <Box>
-              <Typography variant={"body2"} fontWeight={600}>
+              <Typography
+                variant={"body2"}
+                fontWeight={600}
+                color={template.design.labelColor}>
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography variant={"body2"} color={theme.palette.primary[500]}>
+              <Typography variant={"body2"} color={template.design.labelColor}>
                 {template.name}
               </Typography>
             </Box>
@@ -170,7 +173,7 @@ function ShowCard({
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            color={theme.palette.primary[500]}
+            color={template.design.labelColor}
             px={2}
             mb={2}
             gap={2}>
@@ -225,7 +228,7 @@ function ShowCard({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`http://localhost:5173/admin/cards/new/${template.id}/${template.businessId}`}
+          url={`/card/create/${template.id}/${template.businessId}`}
         />
       )}
     </>

@@ -27,13 +27,15 @@ function Card({
   withControl = true,
   textLogo,
   activeImg,
-
   activeIcon,
-
   name,
-
   activeScanType,
   setImgColor,
+  labelColor,
+  setLabelColor,
+  backgroundColor,
+  setBackgroundColor,
+  barcode,
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -64,7 +66,7 @@ function Card({
       <Phone>
         <Stack
           sx={{
-            background: "#fff",
+            background: backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
           }}>
@@ -162,11 +164,11 @@ function Card({
             mt={1}
             gap={2}>
             <Box>
-              <Typography variant={"body2"} fontWeight={600}>
+              <Typography variant={"body2"} fontWeight={600} color={labelColor}>
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography variant={"body2"} color={theme.palette.primary[500]}>
+              <Typography variant={"body2"} color={labelColor}>
                 {" "}
                 {name}{" "}
               </Typography>
@@ -175,7 +177,7 @@ function Card({
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            color={theme.palette.primary[500]}
+            color={labelColor}
             px={2}
             mb={2}
             gap={2}>
@@ -197,7 +199,7 @@ function Card({
                 height={80}
               /> */}
               <img
-                src={qrcode}
+                src={activeScanType.url}
                 alt=""
                 width={activeScanType?.type === "barCode" ? 200 : 140}
               />
@@ -230,7 +232,7 @@ function Card({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`/admin/cards/new/${template.id}/${template.businessId}`}
+          url={`/card/create/${template.id}/${template.businessId}`}
         />
       )}
     </>

@@ -26,7 +26,7 @@ import { HexColorPicker } from "react-colorful";
 
 import ScanIcon1 from "../../../assets/images/stickers/barcode_icon-1.png";
 import ScanIcon2 from "../../../assets/images/stickers/qrCode_icon-1.png";
-import barcode from "../../../assets/images/barcode-1.png";
+import barcodeimg from "../../../assets/images/barcode-1.png";
 import qrcode from "../../../assets/images/qrcode.png";
 
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
@@ -57,6 +57,12 @@ function CreateTemplateForm({
   setActiveScanType,
   imgColor,
   setImgColor,
+  barcode,
+  setBarcode,
+  labelColor,
+  setLabelColor,
+  backgroundColor,
+  setBackgroundColor,
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -151,10 +157,11 @@ function CreateTemplateForm({
           params: { businessId: values.business },
           data: {
             ...values,
+            name: formik.values.cardName,
             logoUrl: uploadedImgUrls[0],
             logoText: values.brandName,
             nItems: stickersNumber,
-            stickersCount: stickersIcons?.length,
+            stickersCount: stickersNumber,
             stickers: activeStickers,
             priceNPoints: values.giftPriceNPoints,
             pointsPerVisit: 10,
@@ -168,14 +175,29 @@ function CreateTemplateForm({
 
             iconUrl: uploadedImgUrls[0] || "",
             stripUrl: uploadedImgUrls[1] || activeImg.url,
+            qrCodeFormat: barcode,
             cardProps: {
-              backgroundColor: "rgb(0,0,0)",
-              foregroundColor: "rgb(0,0,0)",
-              labelColor: "rgb(166,61,255)",
+              backgroundColor: hexToRgb(backgroundColor),
+              labelColor: "rgb(0,0,0)",
+              foregroundColor: hexToRgb(labelColor),
               headerFields: [
                 {
                   key: "header",
-                  label: "ORG",
+                  label: "",
+                  value: "",
+                },
+              ],
+              secondaryFields: [
+                {
+                  key: "header",
+                  label: "name",
+                  value: formik.values.name,
+                },
+              ],
+              auxiliaryFields: [
+                {
+                  key: "header",
+                  label: "",
                   value: "",
                 },
               ],
@@ -239,12 +261,14 @@ function CreateTemplateForm({
   const scanTypes = [
     {
       icon: ScanIcon1,
-      type: "barCode",
-      url: barcode,
+      type: "PKBarcodeFormatCode128",
+      // type: "PKBarcodeFormatAztec", // qr
+      // type: "PKBarcodeFormatPDF417", // bar
+      url: barcodeimg,
     },
     {
       icon: ScanIcon2,
-      type: "qrCode",
+      type: "PKBarcodeFormatQR",
       url: qrcode,
     },
   ];
@@ -355,6 +379,13 @@ function CreateTemplateForm({
     }
   }, [template]);
 
+  const hexToRgb = (hex) => {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  };
   return (
     <Box>
       <form onSubmit={formik.handleSubmit}>
@@ -512,57 +543,6 @@ function CreateTemplateForm({
               textAlign={"center"}>
               easily add your own personal touch!
             </Typography>
-            {/* <Box display={"flex"} flexWrap={"wrap"} gap={2}>
-              {bgs.map(({ id, url }) => (
-                <div
-                  key={id}
-                  className={`card-bg ${
-                    activeImg.url === url ? "active" : ""
-                  }`}>
-                  <img
-                    src={url}
-                    width={"100%"}
-                    height={170}
-                    alt="card img"
-                    style={{ objectFit: "cover" }}
-                  />
-                  <div className="overlay">
-                    <div className="icon">
-                      <AddCircleOutlinedIcon
-                        onClick={() => cardBgHandler({ url })}
-                        sx={{
-                          color: theme.palette.primary[600],
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div
-                className={`card-bg ${
-                  activeImg.color === color ? "active" : ""
-                }`}
-                style={{ background: color }}>
-                <div className="overlay">
-                  <div className="icon">
-                    <AddCircleOutlinedIcon
-                      onClick={() => cardBgHandler({ color })}
-                      sx={{
-                        color: theme.palette.primary[600],
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <HexColorPicker
-                color={color}
-                onChange={(newColor) => {
-                  setColor(newColor);
-                  cardBgHandler({ color: newColor });
-                }}
-                style={{ maxWidth: "250px", width: "100%", height: "170px" }}
-              />
-            </Box> */}
             <div className="bgs">
               {bgs.map(({ id, url }) => (
                 <box
@@ -621,6 +601,44 @@ function CreateTemplateForm({
                 }}
               />
             </div>
+            <Stack direction={"row"} spacing={2} mt={5}>
+              <Box width={"50%"}>
+                <Typography variant="h4" mb={2} fontWeight={600}>
+                  {" "}
+                  Background Color{" "}
+                </Typography>
+                <HexColorPicker
+                  color={backgroundColor}
+                  onChange={(newColor) => {
+                    setBackgroundColor(newColor);
+                  }}
+                  style={{
+                    // maxWidth: "250px",
+                    width: "100%",
+                    height: "170px",
+                    // marginLeft: "15px",
+                  }}
+                />
+              </Box>
+              <Box width={"50%"}>
+                <Typography variant="h4" mb={2} fontWeight={600}>
+                  {" "}
+                  text Color{" "}
+                </Typography>
+                <HexColorPicker
+                  color={labelColor}
+                  onChange={(newColor) => {
+                    setLabelColor(newColor);
+                  }}
+                  style={{
+                    // maxWidth: "250px",
+                    width: "100%",
+                    height: "170px",
+                    // marginLeft: "15px",
+                  }}
+                />
+              </Box>
+            </Stack>
           </AccordionDetails>
         </Accordion>
 
@@ -805,7 +823,10 @@ function CreateTemplateForm({
                               : "transparent"
                           }`,
                         }}
-                        onClick={() => setActiveScanType(item)}>
+                        onClick={() => {
+                          setActiveScanType(item);
+                          setBarcode(item.type);
+                        }}>
                         <img
                           src={item.icon}
                           alt="scan-icon"
