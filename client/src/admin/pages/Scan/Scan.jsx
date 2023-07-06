@@ -1,6 +1,7 @@
 import { Box, Container, useTheme } from "@mui/material";
 import React from "react";
 import QrcodeScanner from "../../components/Qrcode/QrcodeScanner";
+import QRscanner from "../../components/Qrcode/QRscanner";
 
 function Scan() {
   const theme = useTheme();
@@ -12,8 +13,9 @@ function Scan() {
         minHeight: "100vh",
       }}>
       <Container>
-        <Box width={300}>
-          <QrcodeScanner />
+        <Box maxWidth={700} maxHeight={300} height={"100%"} width={"100%"}>
+          {/* <QrcodeScanner /> */}
+          <QRscanner />
         </Box>
       </Container>
     </Box>
