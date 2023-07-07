@@ -63,6 +63,12 @@ function CreateTemplateForm({
   setLabelColor,
   backgroundColor,
   setBackgroundColor,
+  headerFieldValue,
+  setHeaderFieldValue,
+  headerFieldLabel,
+  setHeaderFieldLabel,
+  textColor,
+  setTextColor,
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,6 +91,8 @@ function CreateTemplateForm({
       giftName: "",
       giftPriceNPoints: "",
       business: "",
+      headerFieldLabel,
+      headerFieldValue,
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
@@ -178,13 +186,13 @@ function CreateTemplateForm({
             qrCodeFormat: barcode,
             cardProps: {
               backgroundColor: hexToRgb(backgroundColor),
-              labelColor: "rgb(0,0,0)",
-              foregroundColor: hexToRgb(labelColor),
+              labelColor: hexToRgb(labelColor),
+              foregroundColor: hexToRgb(textColor),
               headerFields: [
                 {
                   key: "header",
-                  label: "",
-                  value: "",
+                  label: values.headerFieldLabel,
+                  value: values.headerFieldValue,
                 },
               ],
               secondaryFields: [
@@ -601,44 +609,6 @@ function CreateTemplateForm({
                 }}
               />
             </div>
-            <Stack direction={"row"} spacing={2} mt={5}>
-              <Box width={"50%"}>
-                <Typography variant="h4" mb={2} fontWeight={600}>
-                  {" "}
-                  Background Color{" "}
-                </Typography>
-                <HexColorPicker
-                  color={backgroundColor}
-                  onChange={(newColor) => {
-                    setBackgroundColor(newColor);
-                  }}
-                  style={{
-                    // maxWidth: "250px",
-                    width: "100%",
-                    height: "170px",
-                    // marginLeft: "15px",
-                  }}
-                />
-              </Box>
-              <Box width={"50%"}>
-                <Typography variant="h4" mb={2} fontWeight={600}>
-                  {" "}
-                  text Color{" "}
-                </Typography>
-                <HexColorPicker
-                  color={labelColor}
-                  onChange={(newColor) => {
-                    setLabelColor(newColor);
-                  }}
-                  style={{
-                    // maxWidth: "250px",
-                    width: "100%",
-                    height: "170px",
-                    // marginLeft: "15px",
-                  }}
-                />
-              </Box>
-            </Stack>
           </AccordionDetails>
         </Accordion>
 
@@ -692,7 +662,7 @@ function CreateTemplateForm({
                     </label>
                   </div>
                 </div>
-                <Stack direction="row" spacing={2}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     name="brandName"
                     label="Brand Name"
@@ -716,7 +686,7 @@ function CreateTemplateForm({
                     }}
                   />
                 </Stack>
-                <Stack direction={"row"} spacing={2}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     name="stickersNumber"
                     label="Stickers Number"
@@ -736,7 +706,9 @@ function CreateTemplateForm({
                       max: 30,
                     }}
                     sx={{
-                      width: "50%",
+                      width: "100%",
+                      xs: { width: "100%" },
+                      sm: { width: "50%" },
                     }}
                   />
                   <TextField
@@ -755,11 +727,13 @@ function CreateTemplateForm({
                       max: 30,
                     }}
                     sx={{
-                      width: "50%",
+                      width: "100%",
+                      xs: { width: "100%" },
+                      sm: { width: "50%" },
                     }}
                   />
                 </Stack>
-                <Stack direction={"row"}>
+                <Stack direction={{ xs: "column", sm: "row" }}>
                   <Box>
                     <div
                       style={{
@@ -798,6 +772,49 @@ function CreateTemplateForm({
                       })}
                     </div>
                   </Box>
+                </Stack>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <TextField
+                    name="headerFieldLabel"
+                    label="field"
+                    value={headerFieldLabel}
+                    onChange={(e) => {
+                      setHeaderFieldLabel(e.target.value);
+                      formik.setFieldValue("headerFieldLabel", e.target.value);
+                    }}
+                    error={Boolean(formik.errors.stickersNumber)}
+                    helperText={formik.errors.stickersNumber}
+                    inputProps={{
+                      min: 1,
+                      max: 30,
+                    }}
+                    sx={{
+                      width: "100%",
+                      xs: { width: "100%" },
+                      sm: { width: "50%" },
+                    }}
+                  />
+                  <TextField
+                    name="headerFieldValue"
+                    label="value"
+                    type="text"
+                    value={headerFieldValue}
+                    onChange={(e) => {
+                      setHeaderFieldValue(e.target.value);
+                      formik.setFieldValue("headerFieldValue", e.target.value);
+                    }}
+                    error={Boolean(formik.errors.name)}
+                    helperText={formik.errors.name}
+                    inputProps={{
+                      min: 1,
+                      max: 30,
+                    }}
+                    sx={{
+                      width: "100%",
+                      xs: { width: "100%" },
+                      sm: { width: "50%" },
+                    }}
+                  />
                 </Stack>
                 <Stack>
                   <div
@@ -841,7 +858,74 @@ function CreateTemplateForm({
             </Box>
           </AccordionDetails>
         </Accordion>
+        {/* ############ Accordion 4 ############ */}
+        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2a-content"
+            id="panel2a-header">
+            <Typography>Choose Your Colors</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack direction={"row"} spacing={2} mt={5}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="h4" mb={2} fontWeight={600}>
+                    {" "}
+                    Label Color{" "}
+                  </Typography>
+                  <HexColorPicker
+                    color={labelColor}
+                    onChange={(newColor) => {
+                      setLabelColor(newColor);
+                    }}
+                    style={{
+                      // maxWidth: "250px",
+                      width: "100%",
+                      height: "170px",
+                      // marginLeft: "15px",
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="h4" mb={2} fontWeight={600}>
+                    {" "}
+                    Background Color{" "}
+                  </Typography>
+                  <HexColorPicker
+                    color={backgroundColor}
+                    onChange={(newColor) => {
+                      setBackgroundColor(newColor);
+                    }}
+                    style={{
+                      // maxWidth: "250px",
+                      width: "100%",
+                      height: "170px",
+                      // marginLeft: "15px",
+                    }}
+                  />
+                </Grid>
 
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="h4" mb={2} fontWeight={600}>
+                    {" "}
+                    Text Color{" "}
+                  </Typography>
+                  <HexColorPicker
+                    color={textColor}
+                    onChange={(newColor) => setTextColor(newColor)}
+                    style={{
+                      // maxWidth: "250px",
+                      width: "100%",
+                      height: "170px",
+                      // marginLeft: "15px",
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
         <Button
           type="submit"
           variant="contained"

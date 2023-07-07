@@ -47,6 +47,9 @@
 }
 
 .sticky {
+  &.top-120 {
+    top: 120px;
+  }
   @media (min-width: 900px) {
     position: sticky;
     top: 40px;

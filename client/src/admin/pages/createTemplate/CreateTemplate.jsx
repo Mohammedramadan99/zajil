@@ -16,7 +16,10 @@ function CreateCard() {
   const [name, setName] = useState("");
   const [barcode, setBarcode] = useState("");
   const [labelColor, setLabelColor] = useState(theme.palette.primary[400]);
+  const [textColor, setTextColor] = useState(theme.palette.primary[400]);
   const [backgroundColor, setBackgroundColor] = useState("#fff");
+  const [headerFieldValue, setHeaderFieldValue] = useState("");
+  const [headerFieldLabel, setHeaderFieldLabel] = useState("");
   return (
     <Box
       sx={{
@@ -53,10 +56,16 @@ function CreateCard() {
               setLabelColor={setLabelColor}
               backgroundColor={backgroundColor}
               setBackgroundColor={setBackgroundColor}
+              headerFieldValue={headerFieldValue}
+              setHeaderFieldValue={setHeaderFieldValue}
+              headerFieldLabel={headerFieldLabel}
+              setHeaderFieldLabel={setHeaderFieldLabel}
+              textColor={textColor}
+              setTextColor={setTextColor}
             />
           </Grid>
           <Grid md={4} xs={12} item>
-            <div className="sticky">
+            <div className="sticky top-120">
               <Box
                 sx={{
                   width: "100%",
@@ -88,8 +97,14 @@ function CreateCard() {
                   setBarcode={setBarcode}
                   labelColor={labelColor}
                   setLabelColor={setLabelColor}
+                  textColor={textColor}
+                  setTextColor={setTextColor}
                   backgroundColor={backgroundColor}
                   setBackgroundColor={setBackgroundColor}
+                  headerFieldValue={headerFieldValue}
+                  setHeaderFieldValue={setHeaderFieldValue}
+                  headerFieldLabel={headerFieldLabel}
+                  setHeaderFieldLabel={setHeaderFieldLabel}
                 />
               </Box>
             </div>

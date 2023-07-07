@@ -18,7 +18,6 @@ function Card({
   template,
   title,
   bg,
-
   logoImg,
   setLogoImg,
   setTextLogo,
@@ -36,6 +35,12 @@ function Card({
   backgroundColor,
   setBackgroundColor,
   barcode,
+  headerFieldValue,
+  setHeaderFieldValue,
+  headerFieldLabel,
+  setHeaderFieldLabel,
+  textColor,
+  setTextColor,
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -94,10 +99,16 @@ function Card({
                 {/* )} */}
                 {textLogo && <span> {textLogo} </span>}
               </Box>
-              {/* <Box>
-                <Typography variant="body1">ORG</Typography>
-                <Typography variant="body2">mohammed</Typography>
-              </Box> */}
+              <Box>
+                <Typography variant="h6" color={labelColor}>
+                  {" "}
+                  {headerFieldLabel}{" "}
+                </Typography>
+                <Typography variant="body2" color={labelColor}>
+                  {" "}
+                  {headerFieldValue}{" "}
+                </Typography>
+              </Box>
             </Stack>
             <Stack
               direction={"row"}
@@ -164,11 +175,11 @@ function Card({
             mt={1}
             gap={2}>
             <Box>
-              <Typography variant={"body2"} fontWeight={600} color={labelColor}>
+              <Typography variant={"body2"} fontWeight={600} color={textColor}>
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography variant={"body2"} color={labelColor}>
+              <Typography variant={"body2"} color={textColor}>
                 {" "}
                 {name}{" "}
               </Typography>
@@ -177,7 +188,7 @@ function Card({
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            color={labelColor}
+            color={textColor}
             px={2}
             mb={2}
             gap={2}>
