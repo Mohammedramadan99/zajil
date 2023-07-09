@@ -10,10 +10,12 @@ function CardControl() {
   const theme = useTheme();
   const { cardId } = useParams();
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getCardDetails(cardId));
-  }, []);
 
+  useEffect(() => {
+    if (cardId) {
+      dispatch(getCardDetails({ cardId }));
+    }
+  }, [cardId]);
   return (
     <Box
       padding={2}

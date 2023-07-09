@@ -77,9 +77,7 @@ export const getCardDetails = createAsyncThunk(
       const { user } = auth;
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/businesses/${
-          params.businessId
-        }/cards/${params.cardId}`,
+        `${import.meta.env.VITE_API_URL}/card-info/${params.cardId}`,
         {
           method: "GET",
           headers: {
@@ -96,6 +94,77 @@ export const getCardDetails = createAsyncThunk(
       const data = await response.json();
       console.log({ data });
       return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again laterrr.",
+      });
+    }
+  }
+);
+export const AddPointToLoyaltyCard = createAsyncThunk(
+  "card/addPoint",
+  async (params, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          params.businessId
+        }/cards/${params.cardId}/loyalty/add-points`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log({ errorData });
+        return rejectWithValue(errorData.data.message);
+      }
+      const data = await response.json();
+      dispatch(getCardDetails({ cardId: params.cardId }));
+      return;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again laterrr.",
+      });
+    }
+  }
+);
+export const redeemGift = createAsyncThunk(
+  "card/redeemGift",
+  async (body, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          body.params.businessId
+        }/cards/${body.params.cardId}/loyalty/redeem-gift`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: body.giftId,
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log({ errorData });
+        return rejectWithValue(errorData.data.message);
+      }
+      const data = await response.json();
+      dispatch(getCardDetails({ cardId: params.cardId }));
+      return;
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -165,6 +234,34 @@ const cardSlice = createSlice({
     builder.addCase(getCardDetails.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
+    });
+    builder.addCase(AddPointToLoyaltyCard.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(AddPointToLoyaltyCard.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+    });
+    builder.addCase(AddPointToLoyaltyCard.rejected, (state, action) => {
+      console.log("Error:", action.payload);
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(redeemGift.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(redeemGift.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+    });
+    builder.addCase(redeemGift.rejected, (state, action) => {
+      console.log("Error:", action.payload);
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.errorMessage = action.payload;
     });
   },
 });

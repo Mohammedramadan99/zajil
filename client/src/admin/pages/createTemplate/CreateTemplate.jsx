@@ -17,7 +17,7 @@ function CreateCard() {
   const [barcode, setBarcode] = useState("");
   const [labelColor, setLabelColor] = useState(theme.palette.primary[400]);
   const [textColor, setTextColor] = useState(theme.palette.primary[400]);
-  const [backgroundColor, setBackgroundColor] = useState("#fff");
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [headerFieldValue, setHeaderFieldValue] = useState("");
   const [headerFieldLabel, setHeaderFieldLabel] = useState("");
   return (

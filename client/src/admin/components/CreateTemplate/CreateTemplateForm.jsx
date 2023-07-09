@@ -185,7 +185,7 @@ function CreateTemplateForm({
             stripUrl: uploadedImgUrls[1] || activeImg.url,
             qrCodeFormat: barcode,
             cardProps: {
-              backgroundColor: hexToRgb(backgroundColor),
+              backgroundColor: hexToRgb(backgroundColor || "#ffffff"),
               labelColor: hexToRgb(labelColor),
               foregroundColor: hexToRgb(textColor),
               headerFields: [

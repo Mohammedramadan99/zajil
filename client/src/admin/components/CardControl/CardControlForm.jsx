@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Chip,
@@ -9,11 +10,34 @@ import {
 } from "@mui/material";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutline";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AddPointToLoyaltyCard,
+  redeemGift,
+  getCardDetails,
+} from "../../../store/CardSlice";
 
 function CardControlForm() {
+  const dispatch = useDispatch();
   const theme = useTheme();
+  const { card, loading, errorMessage } = useSelector((state) => state.cards);
+  const addPointsHandler = () => {
+    dispatch(
+      AddPointToLoyaltyCard({
+        businessId: card.cardTemplate.businessId,
+        cardId: card.id,
+      })
+    );
+  };
+  const redeemHandler = () => {
+    dispatch(redeemGift());
+  };
 
-  return (
+  return loading ? (
+    <>loading</>
+  ) : (
     <Box
       maxWidth={500}
       sx={{
@@ -40,11 +64,16 @@ function CardControlForm() {
           Control
         </span>
       </Typography>
+      {errorMessage && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
       <Stack spacing={2} mb={2}>
         <TextField
-          name="id"
           label="ID"
-          defaultValue="2"
+          defaultValue={card?.id || ""}
           InputProps={{
             readOnly: true,
           }}
@@ -52,9 +81,8 @@ function CardControlForm() {
           sx={{ width: "100%" }}
         />
         <TextField
-          name="name"
           label="Name"
-          defaultValue="Mohammed Ramadan"
+          defaultValue={card?.clientName || ""}
           InputProps={{
             readOnly: true,
           }}
@@ -73,11 +101,16 @@ function CardControlForm() {
           color="error">
           decrease
         </Button>
-        <Chip label="0" color="warning" variant="outlined" />
+        <Chip
+          label={card?.loyaltyCard?.points}
+          color="warning"
+          variant="outlined"
+        />
         <Button
           variant="outlined"
           endIcon={<AddCircleOutlinedIcon />}
-          color="success">
+          color="success"
+          onClick={addPointsHandler}>
           increase
         </Button>
       </Stack>
@@ -96,7 +129,8 @@ function CardControlForm() {
         <Button
           variant="outlined"
           endIcon={<AddCircleOutlinedIcon />}
-          color="success">
+          color="success"
+          onClick={redeemHandler}>
           increase
         </Button>
       </Stack>
