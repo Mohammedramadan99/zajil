@@ -138,7 +138,7 @@ export const findAllCards = async ({
     );
 };
 
-export const findOneCardById = async (cardId: number, businessId: number): Promise<any> => {
+export const findOneCardById = async (cardId: number, req: RequestMod): Promise<any> => {
     return Card.findOne({
         where: {
             id: cardId,
@@ -147,9 +147,6 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
             {
                 model: CardTemplate,
                 as: 'cardTemplate',
-                where: {
-                    businessId,
-                },
                 required: true,
 
                 include: [
@@ -173,6 +170,17 @@ export const findOneCardById = async (cardId: number, businessId: number): Promi
         ],
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
+
+        // check if the card business belongs to the user
+        const userBusinessIds = req.user.businesses.map((b) => b.id);
+        const bussinessesUserWorksFor = req.user.employedAt.map((e) => e.businessId);
+        if (
+            ![...userBusinessIds, ...bussinessesUserWorksFor].includes(
+                (row as Card & { cardTemplate: CardTemplate }).cardTemplate.businessId,
+            )
+        )
+            throw new HttpError(403, 'Forbidden, card does not belong to any of your businesses');
+
         return removeRowNullFields(row);
     });
 };
@@ -181,6 +189,7 @@ export const updateCardById = async (
     cardId: number,
     businessId: number,
     updateCardDto: UpdateCardDto,
+    req: RequestMod,
 ): Promise<any> => {
     const baseUpdateDto = updateCardDto.base;
     const card = await Card.findOne({
@@ -229,7 +238,7 @@ export const updateCardById = async (
         cardId: card.id,
     });
 
-    return findOneCardById(cardId, businessId);
+    return findOneCardById(cardId, req);
 };
 
 export const deleteCardById = async (cardId: number) => {

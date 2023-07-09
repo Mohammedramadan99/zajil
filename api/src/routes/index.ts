@@ -20,6 +20,9 @@ mainRouter.use('/users', usersRouter);
 mainRouter.use('/businesses', businessesRouter);
 mainRouter.use('/branches', branchesRouter);
 
+// Get Card Info by ID
+mainRouter.get('/card-info/:id', CardController.getOne);
+
 // file upload
 mainRouter.use('/file-upload', fileUploadRouter);
 

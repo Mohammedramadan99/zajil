@@ -35,11 +35,11 @@ export default {
     middleware: authMiddleware,
     condition: (req: RequestMod, res: Response, next: NextFunction) => {
         const exceptRegex = [
-            /\/login/, // /login
-            /\/register/, // /register
-            /\/activate-account/, // /activate-account
+            /\/login/,                                            // /login
+            /\/register/,                                         // /register
+            /\/activate-account/,                                 // /activate-account
             { path: /\/businesses\/\d+\/cards/, method: 'POST' }, // /businesses/:id/cards
-            /\/v1\/.*/, // /v1/*
+            /\/v1\/.*/,                                           // /v1/*
         ];
 
         return !exceptRegex.some((regex) => {

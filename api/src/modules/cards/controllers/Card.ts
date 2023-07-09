@@ -30,10 +30,9 @@ export const CardController: ICRUDController & {
 
     getOne: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
-        const businessId = Number(req.params.businessId);
 
         cardServices
-            .findOneCardById(cardId, businessId)
+            .findOneCardById(cardId, req)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
@@ -55,13 +54,13 @@ export const CardController: ICRUDController & {
                 else next(new HttpError(500, err.message));
             });
     },
-    update: function (req: Request, res: Response, next: NextFunction): void {
+    update: function (req: RequestMod, res: Response, next: NextFunction): void {
         const cardId = Number(req.params.id);
         const businessId = Number(req.params.businessId);
         const body: UpdateCardDto = req.body;
 
         cardServices
-            .updateCardById(cardId, businessId, body)
+            .updateCardById(cardId, businessId, body, req)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
