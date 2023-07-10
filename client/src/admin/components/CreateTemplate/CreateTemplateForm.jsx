@@ -190,21 +190,21 @@ function CreateTemplateForm({
               foregroundColor: hexToRgb(textColor),
               headerFields: [
                 {
-                  key: "header",
+                  key: `${Math.floor(Math.random() * 100000000) + 1}`,
                   label: values.headerFieldLabel,
                   value: values.headerFieldValue,
                 },
               ],
               secondaryFields: [
                 {
-                  key: "header",
+                  key: `${Math.floor(Math.random() * 100000000) + 1}`,
                   label: "name",
                   value: formik.values.name,
                 },
               ],
               auxiliaryFields: [
                 {
-                  key: "header",
+                  key: `${Math.floor(Math.random() * 100000000) + 1}`,
                   label: "",
                   value: "",
                 },

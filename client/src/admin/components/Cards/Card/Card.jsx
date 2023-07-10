@@ -104,7 +104,7 @@ function Card({
                   {" "}
                   {headerFieldLabel}{" "}
                 </Typography>
-                <Typography variant="body2" color={labelColor}>
+                <Typography variant="body2" color={textColor}>
                   {" "}
                   {headerFieldValue}{" "}
                 </Typography>
@@ -175,7 +175,7 @@ function Card({
             mt={1}
             gap={2}>
             <Box>
-              <Typography variant={"body2"} fontWeight={600} color={textColor}>
+              <Typography variant={"body2"} fontWeight={600} color={labelColor}>
                 {" "}
                 Name{" "}
               </Typography>
