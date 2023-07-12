@@ -5,6 +5,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
+  Stack,
   createTheme,
 } from "@mui/material";
 import {
@@ -16,6 +17,7 @@ import {
   ManageAccountsOutlined,
   Business,
   ViewCarousel,
+  Menu,
 } from "@mui/icons-material";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 
@@ -67,18 +69,22 @@ function MobileSidebar() {
   ];
   console.log({ activeitem });
   return (
-    <div className={`main_sidebar items-center ${isSidebarOpen && "active"}`}>
-      <div className="logo">LOGO</div>
-      {/* <div
-        className="burger flex"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        <Menu />
-      </div> */}
-      <div className="links">
+    <div
+      className={`main_sidebar items-center ${isSidebarOpen ? "show" : ""}`}>
+      <Stack>
+        <div className="logo">LOGO</div>
+        <div
+          className="burger flex"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          <Menu />
+        </div>
+      </Stack>
+
+      <Stack className="links">
         {links.map((item, i) => (
           <div
             key={i}
-            className={`link ${activeitem === item.text && "active"}`}
+            className={`link ${activeitem === item.text ? "active" : ""}`}
             onClick={() => setActiveItem(item.text)}>
             <Link to={`${item.slug}`}>
               {/* <div className={`icon flex `}> {item.icon} </div> */}
@@ -86,7 +92,7 @@ function MobileSidebar() {
             </Link>
           </div>
         ))}
-      </div>
+      </Stack>
     </div>
   );
 }
