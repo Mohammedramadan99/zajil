@@ -1,15 +1,17 @@
-import { Box, Container, useTheme } from "@mui/material";
+import { Box, Container, Grid, useTheme } from "@mui/material";
 import React, { useEffect } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { getCardDetails } from "../../../store/CardSlice";
 import { useParams } from "react-router-dom";
+import ShowCard from "../../components/Cards/Card/ShowCard";
 
 function CardControl() {
   const theme = useTheme();
   const { cardId } = useParams();
   const dispatch = useDispatch();
+  const { card, loading, errorMessage } = useSelector((state) => state.cards);
 
   useEffect(() => {
     if (cardId) {
@@ -24,7 +26,14 @@ function CardControl() {
         height: "100vh",
       }}>
       <Container>
-        <CardControlForm />
+        <Grid container>
+          <Grid item xs={12} md={9}>
+            <CardControlForm />
+          </Grid>
+          <Grid item xs={3} md={3}>
+            {card?.cardTemplate && <ShowCard template={card?.cardTemplate}/>}
+          </Grid>
+        </Grid>
       </Container>
     </Box>
   );

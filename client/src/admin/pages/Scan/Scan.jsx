@@ -1,6 +1,6 @@
 import { Box, Container, useTheme } from "@mui/material";
 import React from "react";
-import QrcodeScanner from "../../components/Qrcode/QrcodeScanner";
+
 import QRscanner from "../../components/Qrcode/QRscanner";
 
 function Scan() {

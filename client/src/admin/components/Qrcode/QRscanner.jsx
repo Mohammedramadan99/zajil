@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { QrReader } from "react-qr-reader";
-import { useDispatch, useSelector } from "react-redux";
-import { getCardDetails } from "../../../store/CardSlice";
 import { useNavigate } from "react-router-dom";
 
 const QRscanner = (props) => {

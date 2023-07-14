@@ -18,7 +18,6 @@ function ShowCard({
   template,
   title,
   bg,
-
   logoImg,
   setLogoImg,
   setTextLogo,

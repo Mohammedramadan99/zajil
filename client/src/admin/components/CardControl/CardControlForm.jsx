@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutline";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,6 +23,7 @@ function CardControlForm() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { card, loading, errorMessage } = useSelector((state) => state.cards);
+  const [activeSticker, setActiveSticker] = useState({});
   const addPointsHandler = () => {
     dispatch(
       AddPointToLoyaltyCard({
@@ -34,7 +35,39 @@ function CardControlForm() {
   const redeemHandler = () => {
     dispatch(redeemGift());
   };
+  const addStickerHandler = (item) => {
+    if (card.cardTemplate.cardType === "LOYALTY") {
+      const stickerIndex = activeSticker.id === item.id;
 
+      if (stickerIndex !== -1) {
+        setActiveSticker({});
+      } else {
+        setActiveSticker(
+          activeSticker.concat({
+            id: item.id,
+            imageUrl: item.imageUrl,
+            title: "test",
+            imageType: "png",
+          })
+        );
+      }
+    } else {
+      const stickerIndex = activeSticker.id === item.id;
+
+      if (stickerIndex !== -1) {
+        setActiveSticker({});
+      } else {
+        setActiveSticker(
+          activeSticker.concat({
+            id: item.id,
+            imageUrl: item.imageUrl,
+            title: "test",
+            imageType: "png",
+          })
+        );
+      }
+    }
+  };
   return loading ? (
     <>loading</>
   ) : (
@@ -133,6 +166,24 @@ function CardControlForm() {
           onClick={redeemHandler}>
           increase
         </Button>
+      </Stack>
+      <Stack direction="row" spacing={2} mt={2} justifyContent={"space-between"}>
+        <div className="stickers-icons">
+          {card?.cardTemplate?.itemsSubscriptionCardTemplate?.stickers?.map(
+            (item) => {
+              const isActive = activeSticker.id === item.id;
+              return (
+                <div
+                  className={isActive ? "icon active" : "icon"}
+                  style={{padding:"10px"}}
+                  onClick={() => addStickerHandler(item)}
+                  key={item.id}>
+                  <img src={item.imageUrl} alt="" width={20} />
+                </div>
+              );
+            }
+          )}
+        </div>
       </Stack>
     </Box>
   );
