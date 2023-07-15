@@ -17,8 +17,9 @@ import {
   AddPointToLoyaltyCard,
   redeemGift,
   getCardDetails,
+  reset,
 } from "../../../store/CardSlice";
-
+import {toast} from 'react-toastify'
 function CardControlForm() {
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -68,9 +69,15 @@ function CardControlForm() {
       }
     }
   };
-  return loading ? (
-    <>loading</>
-  ) : (
+
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage)
+    }
+    dispatch(reset())
+  }, [errorMessage])
+  
+  return (
     <Box
       maxWidth={500}
       sx={{
@@ -79,8 +86,12 @@ function CardControlForm() {
           xs: "30px auto",
           lg: "100px auto auto",
         },
+        p: {
+          xs: 2,
+          lg:5
+        }
       }}
-      p={5}
+      
       borderRadius={5}>
       <Typography
         variant="h1"
@@ -97,11 +108,6 @@ function CardControlForm() {
           Control
         </span>
       </Typography>
-      {errorMessage && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {errorMessage}
-        </Alert>
-      )}
 
       <Stack spacing={2} mb={2}>
         <TextField
@@ -131,6 +137,9 @@ function CardControlForm() {
         <Button
           variant="outlined"
           startIcon={<RemoveCircleOutlinedIcon />}
+          size="small"
+          sx={{fontSize:"9px"}}
+
           color="error">
           decrease
         </Button>
@@ -141,8 +150,10 @@ function CardControlForm() {
         />
         <Button
           variant="outlined"
-          endIcon={<AddCircleOutlinedIcon />}
+          endIcon={<AddCircleOutlinedIcon  />}
           color="success"
+          size="small"
+          sx={{fontSize:"9px"}}
           onClick={addPointsHandler}>
           increase
         </Button>
@@ -155,13 +166,17 @@ function CardControlForm() {
         <Button
           variant="outlined"
           startIcon={<RemoveCircleOutlinedIcon />}
+          sx={{fontSize:"9px"}}
+
           color="error">
           decrease
         </Button>
         <Chip label="0" color="warning" variant="outlined" />
         <Button
           variant="outlined"
-          endIcon={<AddCircleOutlinedIcon />}
+          endIcon={<AddCircleOutlinedIcon  />}
+          sx={{fontSize:"9px"}}
+
           color="success"
           onClick={redeemHandler}>
           increase

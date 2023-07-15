@@ -13,7 +13,7 @@ function Scan() {
         minHeight: "100vh",
       }}>
       <Container>
-        <Box maxWidth={700} maxHeight={300} height={"100%"} width={"100%"}>
+        <Box maxWidth={900} maxHeight={300} height={"100%"} width={"100%"} margin={"auto"}>
           {/* <QrcodeScanner /> */}
           <QRscanner />
         </Box>

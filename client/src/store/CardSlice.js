@@ -178,6 +178,7 @@ const initialState = {
   cards: null,
   card: null,
   loading: false,
+  updating:false,
   errors: null,
   errorMessage: null,
   successMessage: null,
@@ -187,8 +188,6 @@ const cardSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.card = null;
-      state.cards = null;
       state.errors = null;
       state.errorMessage = null;
       state.successMessage = null;
@@ -236,16 +235,16 @@ const cardSlice = createSlice({
       state.errors = action.payload?.errors;
     });
     builder.addCase(AddPointToLoyaltyCard.pending, (state, action) => {
-      state.loading = true;
+      state.updating = true;
       state.errors = null;
     });
     builder.addCase(AddPointToLoyaltyCard.fulfilled, (state, action) => {
-      state.loading = false;
+      state.updating = false;
       state.errors = null;
     });
     builder.addCase(AddPointToLoyaltyCard.rejected, (state, action) => {
       console.log("Error:", action.payload);
-      state.loading = false;
+      state.updating = false;
       state.errors = action.payload?.errors;
       state.errorMessage = action.payload;
     });

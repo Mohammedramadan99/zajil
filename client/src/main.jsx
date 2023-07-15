@@ -7,12 +7,27 @@ import { Provider } from "react-redux";
 
 import store from "./store/store";
 import "./index.scss";
+import { Flip, Slide, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
       <Provider store={store}>
         <App />
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          transition={Flip}
+        />
       </Provider>
     </I18nextProvider>
   </React.StrictMode>

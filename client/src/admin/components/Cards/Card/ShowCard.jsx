@@ -26,13 +26,11 @@ function ShowCard({
   withControl = true,
   textLogo,
   activeImg,
-
   activeIcon,
-
   name,
-
   activeScanType,
   setImgColor,
+  control
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -44,15 +42,15 @@ function ShowCard({
   }, [activeImg?.color]);
   console.log("temp", template);
   return (
-    <>
+    <Box mt={control ? 12 : "unset"}>
       {/* Card */}
-      <Phone>
+      <Phone >
         <Stack
           sx={{
             background: template.design.backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
-          }}>
+          }} >
           <Box
             sx={{
               width: "100%",
@@ -202,7 +200,7 @@ function ShowCard({
           </Box>
         </Stack>
       </Phone>
-      {withControl && (
+      {!control && withControl && (
         <>
           <Typography
             variant="h4"
@@ -230,7 +228,7 @@ function ShowCard({
           url={`/card/create/${template.id}/${template.businessId}`}
         />
       )}
-    </>
+    </Box>
   );
 }
 

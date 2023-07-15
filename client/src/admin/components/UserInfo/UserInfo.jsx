@@ -19,6 +19,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import { logoutAction } from "../../../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 // const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
 //   position: "fixed",
 //   "&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft": {
@@ -35,7 +36,10 @@ const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
   //   top: theme.spacing(2),
   //   right: theme.spacing(2),
 }));
-const actions = [{ id: 1, icon: <LogoutIcon />, name: "Log Out" }];
+const actions = [
+  { id: 1, icon: <LogoutIcon />, name: "Log Out" },
+  { id: 2, icon: <QrCodeScannerIcon />, name: "Scan" },
+];
 
 export default function PlaygroundSpeedDial() {
   const dispatch = useDispatch();
@@ -46,6 +50,9 @@ export default function PlaygroundSpeedDial() {
     if (action.id === 1) {
       dispatch(logoutAction());
       navigate("/auth/login");
+    }
+    if (action.id === 2) {
+      navigate("/admin/scan");
     }
   };
   return (

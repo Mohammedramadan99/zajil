@@ -6,32 +6,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCardDetails } from "../../../store/CardSlice";
 import { useParams } from "react-router-dom";
 import ShowCard from "../../components/Cards/Card/ShowCard";
+import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
 
 function CardControl() {
   const theme = useTheme();
   const { cardId } = useParams();
   const dispatch = useDispatch();
-  const { card, loading, errorMessage } = useSelector((state) => state.cards);
+  const { card,updating, loading, errorMessage } = useSelector((state) => state.cards);
 
   useEffect(() => {
     if (cardId) {
       dispatch(getCardDetails({ cardId }));
     }
   }, [cardId]);
-  return (
+  return loading ? (
+    <>
+      loading
+    </>
+  ): (
     <Box
       padding={2}
       sx={{
         backgroundColor: theme.palette.background.alt,
-        height: "100vh",
+        minHeight: "100vh",
       }}>
       <Container>
         <Grid container>
+        {updating && <BackdropSpinner/>}
           <Grid item xs={12} md={9}>
             <CardControlForm />
           </Grid>
-          <Grid item xs={3} md={3}>
-            {card?.cardTemplate && <ShowCard template={card?.cardTemplate}/>}
+          <Grid item xs={12} sm={6}  md={3} margin={"auto"}>
+            {card?.cardTemplate && <ShowCard control={true} template={card?.cardTemplate}/>}
           </Grid>
         </Grid>
       </Container>
