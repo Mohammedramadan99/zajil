@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBusinesses } from "../../../store/businessSlice";
 import { getTemplates } from "../../../store/TemplateSlice";
 import { getCards } from "../../../store/CardSlice";
-import { Backdrop, CircularProgress } from "@mui/material";
+import BackdropSpinner from '../../../components/Loading/BackdropSpinner'
 
 export default function BusinessesTabs() {
   const dispatch = useDispatch();
@@ -15,9 +15,9 @@ export default function BusinessesTabs() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getBusinesses());
+  // }, []);
 
   //   fetch Here according to the active tab
   const templatesHandler = (id) => {
@@ -40,11 +40,7 @@ export default function BusinessesTabs() {
             />
           ))}
       </Tabs>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      {loading && <BackdropSpinner/>}
     </Box>
   );
 }

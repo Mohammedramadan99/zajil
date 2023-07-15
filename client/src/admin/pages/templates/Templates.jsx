@@ -34,10 +34,17 @@ function Cards() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { businesses } = useSelector((state) => state.businesses);
+  const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
+  
   useEffect(() => {
-    dispatch(getBusinesses());
+      !templates && dispatch(getBusinesses());
   }, []);
+
+  useEffect(() => {
+    businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
+    dispatch(reset());
+  }, [businesses]);
   return (
     <Box
       sx={{

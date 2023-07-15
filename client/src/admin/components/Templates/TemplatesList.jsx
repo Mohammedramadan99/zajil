@@ -26,10 +26,10 @@ function TemplatesList() {
   const { businesses } = useSelector((state) => state.businesses);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
 
-  useEffect(() => {
-    businesses.length > 0 && dispatch(getTemplates(businesses[0].id));
-    dispatch(reset());
-  }, [businesses]);
+  // useEffect(() => {
+  //   businesses.length > 0 && dispatch(getTemplates(businesses[0].id));
+  //   dispatch(reset());
+  // }, []);
   return (
     <>
       {templates && templates?.rows && templates?.rows?.length > 0 ? (

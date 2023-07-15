@@ -19,8 +19,9 @@ import {
 } from "@mui/icons-material";
 import { themeSettings } from "../../theme";
 import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link, redirect } from "react-router-dom";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+
 function MainSidebar() {
   const { mode } = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
@@ -37,47 +38,47 @@ function MainSidebar() {
   //   { icon: <ForumOutlined />, text: "messages", slug: "/messages" },
   // ];
   const links = [
-    { icon: <HomeOutlined />, text: "home", path: "admin", slug: "" },
+    { icon: <HomeOutlined />, text: "home", path: "", slug: "admin" },
     {
       icon: <BusinessCenterIcon />,
       text: "business",
-      path: "admin/business/new",
+      path: "/admin/business/new",
       slug: "business/new",
     },
     {
       icon: <Business />,
       text: "branch",
-      path: "admin/branch/new",
+      path: "/admin/branch/new",
       slug: "branch/new",
     },
 
     {
       icon: <StyleOutlined />,
       text: "templates",
-      path: "admin/templates",
+      path: "/admin/templates",
       slug: "templates",
     },
     {
       icon: <ViewCarousel />,
       text: "cards",
-      path: "admin/cards",
+      path: "/admin/cards",
       slug: "cards",
     },
     {
       icon: <LocationOnOutlined />,
       text: "location",
-      path: "admin/location",
+      path: "/admin/location",
       slug: "location",
     },
   ];
-  const activeItem = links.find(
-    (item) => item.path == location.pathname.slice(1)
-  );
+  const activeItem =
+    links.find((item) => item.path == location.pathname.slice(0)) ||
+    (links[0].slug == location.pathname.slice(1) && links[0]);
 
   console.log("location", location.pathname);
   console.log({ activeItem });
   const handleClick = (item) => {
-    navigate(item.slug);
+    navigate(item.path);
   };
   return (
     <Box
@@ -180,9 +181,9 @@ function MainSidebar() {
         <div
           className="indicator"
           style={{
-            backgroundColor: "#0003",
+            backgroundColor: activeItem ? "#0003" : "transparent",
             borderColor: "transparent",
-            backdropFilter: "blur(10px)",
+            backdropFilter: activeItem ? "blur(10px)" : "",
           }}>
           <span
             style={{
@@ -192,10 +193,10 @@ function MainSidebar() {
               left: " -22px",
               width: " 20px",
               height: " 20px",
-              backgroundColor: " transparent",
+              backgroundColor: "transparent",
               borderTopRightRadius: " 20px",
               boxShadow: `0 -10px 0 0 #0001`,
-              backdropFilter: "blur(10px)",
+              backdropFilter: activeItem  ? "blur(10px)" : "",
             }}></span>
           <span
             style={{
@@ -205,10 +206,11 @@ function MainSidebar() {
               right: " -22px",
               width: " 20px",
               height: " 20px",
-              backgroundColor: " transparent",
-              borderTopLeftRadius: " 20px",
+              backgroundColor: "transparent",
+              borderTopLeftRadius: "20px",
               boxShadow: `0 -10px 0 0 transparent`,
-              backdropFilter: "blur(10px)",
+              backdropFilter: activeItem  ? "blur(10px)" : "",
+              
             }}></span>
         </div>
       </List>
