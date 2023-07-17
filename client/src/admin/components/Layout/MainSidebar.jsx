@@ -210,7 +210,6 @@ function MainSidebar() {
               borderTopLeftRadius: "20px",
               boxShadow: `0 -10px 0 0 transparent`,
               backdropFilter: activeItem  ? "blur(10px)" : "",
-              
             }}></span>
         </div>
       </List>

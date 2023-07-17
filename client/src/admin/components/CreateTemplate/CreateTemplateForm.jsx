@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
+import { AddAPhoto } from "@mui/icons-material";
 import * as yup from "yup";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -23,7 +24,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { HexColorPicker } from "react-colorful";
-
+import {toast} from 'react-toastify'
 import ScanIcon1 from "../../../assets/images/stickers/barcode_icon-1.png";
 import ScanIcon2 from "../../../assets/images/stickers/qrCode_icon-1.png";
 import barcodeimg from "../../../assets/images/barcode-1.png";
@@ -37,6 +38,7 @@ import { createTemplate, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getBusinesses } from "../../../store/businessSlice";
+import AddIcon from "@mui/icons-material/Add";
 
 function CreateTemplateForm({
   tempPhoto,
@@ -79,6 +81,8 @@ function CreateTemplateForm({
   const [activeStickers, setActiveStickers] = useState([]);
   const [logoUrl, setLogoUrl] = useState(null);
   const [stripUrl, setStripUrl] = useState(null);
+  const [newStrip, setNewStrip] = useState(null);
+  const [uploadStickerLoading, setUploadStickerLoading] = useState(false);
   const theme = useTheme();
 
   const formik = useFormik({
@@ -180,7 +184,6 @@ function CreateTemplateForm({
               },
             ],
             designType: "storeCard",
-
             iconUrl: uploadedImgUrls[0] || "",
             stripUrl: uploadedImgUrls[1] || activeImg.url,
             qrCodeFormat: barcode,
@@ -244,7 +247,7 @@ function CreateTemplateForm({
     { text: "Subscription", type: "ITEMS_SUBSCRIPTION" },
   ];
 
-  const stickersIcons = [
+  const [stickersIcons, setStickersIcons] = useState([
     {
       id: 1,
       icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/meat.png",
@@ -265,7 +268,7 @@ function CreateTemplateForm({
       id: 5,
       icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-2.png",
     },
-  ];
+  ]);
   const scanTypes = [
     {
       icon: ScanIcon1,
@@ -294,15 +297,54 @@ function CreateTemplateForm({
       file.type
     );
     const validSize = file.size <= 512 * 1024;
-    if (!validExtension || !validSize) {
+    if (!validSize) {
+      toast.error("The image size should be less than 512KB.");
       return false;
+    } else if (!validExtension) {
+      toast.error("The image format is not supported. Please upload a JPEG, PNG, or JPG file.");
+      return false;
+      
     }
     const url = URL.createObjectURL(file);
-    console.log({ url });
+
     setTextLogo(null);
     setLogoImg(url);
     setTempPhoto(file);
   };
+
+  const onStickerIconChange = async (e) => {
+    if (e.target.files.length <= 0) {
+      return false;
+    }
+    const file = e.target.files[0];
+    const validExtension = new RegExp("^image/(jpeg|png|jpg)$", "ig").test(
+      file.type
+    );
+    const validSize = file.size <= 512 * 1024;
+    if (!validExtension || !validSize) {
+      return false;
+    }
+    const form = new FormData();
+    form.append("file", file);
+    setUploadStickerLoading(true);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/file-upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: form,
+    });
+    const imgUrl = await res.json();
+
+    const newStickersIcons = [
+      ...stickersIcons,
+      { id: Math.floor(Math.random() * 1000) + 1, icon: imgUrl?.data?.url },
+    ];
+    setUploadStickerLoading(false);
+
+    setStickersIcons(newStickersIcons);
+  };
+
   useEffect(() => {
     if (textLogo) {
       setLogoImg(null);
@@ -766,10 +808,28 @@ function CreateTemplateForm({
                             className={isActive ? "icon active" : "icon"}
                             onClick={() => addStickerHandler(item)}
                             key={item.id}>
-                            <img src={item.icon} alt="" width={30} />
+                            {uploadStickerLoading ? (
+                              <CircularProgress />
+                            ) : (
+                              <img src={item.icon} alt="" width={30} />
+                            )}
                           </div>
                         );
                       })}
+                      <label
+                        className="icon"
+                        // onClick={() => addStickerHandler(item)}
+                      >
+                        {/* <input type="file" onChange={onStickerIconChange} /> */}
+                        <AddAPhoto fontSize="medium" />
+                        <input
+                          type="file"
+                          multiple={false}
+                          accept="image/jpeg,image/jpg,image/png"
+                          style={{ display: "none" }}
+                          onChange={onStickerIconChange}
+                        />
+                      </label>
                     </div>
                   </Box>
                 </Stack>
