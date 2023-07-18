@@ -37,7 +37,7 @@ function CardControl() {
             <CardControlForm />
           </Grid>
           <Grid item xs={12} sm={6}  md={3} margin={"auto"}>
-            {card?.cardTemplate && <ShowCard control={true} template={card?.cardTemplate}/>}
+            {card?.cardTemplate && <ShowCard control={true} template={card}/>}
           </Grid>
         </Grid>
       </Container>

@@ -303,7 +303,6 @@ function CreateTemplateForm({
     } else if (!validExtension) {
       toast.error("The image format is not supported. Please upload a JPEG, PNG, or JPG file.");
       return false;
-      
     }
     const url = URL.createObjectURL(file);
 
