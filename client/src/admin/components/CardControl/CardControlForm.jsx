@@ -19,12 +19,12 @@ import {
   getCardDetails,
   reset,
 } from "../../../store/CardSlice";
-import {toast} from 'react-toastify'
-function CardControlForm() {
+import { toast } from "react-toastify";
+function CardControlForm({activeSticker, setActiveSticker}) {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { card, loading, errorMessage } = useSelector((state) => state.cards);
-  const [activeSticker, setActiveSticker] = useState({});
+  
   const addPointsHandler = () => {
     dispatch(
       AddPointToLoyaltyCard({
@@ -39,9 +39,10 @@ function CardControlForm() {
   const addStickerHandler = (item) => {
     if (card.cardTemplate.cardType === "LOYALTY") {
       const stickerIndex = activeSticker.id === item.id;
+      console.log({stickerIndex})
 
       if (stickerIndex !== -1) {
-        setActiveSticker({});
+        return false
       } else {
         setActiveSticker(
           activeSticker.concat({
@@ -53,30 +54,40 @@ function CardControlForm() {
         );
       }
     } else {
-      const stickerIndex = activeSticker.id === item.id;
-
-      if (stickerIndex !== -1) {
-        setActiveSticker({});
-      } else {
+      const stickerIndex = activeSticker?.find(sticker => sticker.imageUrl === item.imageUrl);
+      console.log({ item })
+      if (activeSticker.length < card?.itemsSubscriptionCard?.nItems) {
         setActiveSticker(
           activeSticker.concat({
-            id: item.id,
+            id: Math.floor(Math.random() * 100000) + 1,
             imageUrl: item.imageUrl,
             title: "test",
             imageType: "png",
           })
         );
       }
+      // if (stickerIndex) {
+      //   setActiveSticker(activeSticker?.filter(sticker => sticker.imageUrl !== stickerIndex.imageUrl))
+      // } else {
+      //   setActiveSticker(
+      //     activeSticker.concat({
+      //       id: Math.floor(Math.random() * 100000) + 1,
+      //       imageUrl: item.imageUrl,
+      //       title: "test",
+      //       imageType: "png",
+      //     })
+      //   );
+      // }
     }
   };
-
+  console.log({ activeSticker });
   useEffect(() => {
     if (errorMessage) {
-      toast.error(errorMessage)
+      toast.error(errorMessage);
     }
-    dispatch(reset())
-  }, [errorMessage])
-  
+    dispatch(reset());
+  }, [errorMessage]);
+
   return (
     <Box
       maxWidth={500}
@@ -88,10 +99,9 @@ function CardControlForm() {
         },
         p: {
           xs: 2,
-          lg:5
-        }
+          lg: 5,
+        },
       }}
-      
       borderRadius={5}>
       <Typography
         variant="h1"
@@ -129,60 +139,65 @@ function CardControlForm() {
           sx={{ width: "100%" }}
         />
       </Stack>
-      <Typography variant="body2" py={2} color="primary">
-        {" "}
-        Add Points
-      </Typography>
-      <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-        <Button
-          variant="outlined"
-          startIcon={<RemoveCircleOutlinedIcon />}
-          size="small"
-          sx={{fontSize:"9px"}}
-
-          color="error">
-          decrease
-        </Button>
-        <Chip
-          label={card?.loyaltyCard?.points}
-          color="warning"
-          variant="outlined"
-        />
-        <Button
-          variant="outlined"
-          endIcon={<AddCircleOutlinedIcon  />}
-          color="success"
-          size="small"
-          sx={{fontSize:"9px"}}
-          onClick={addPointsHandler}>
-          increase
-        </Button>
-      </Stack>
-      <Typography variant="body2" py={2} color="primary">
-        {" "}
-        Redeem Rewards
-      </Typography>
-      <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-        <Button
-          variant="outlined"
-          startIcon={<RemoveCircleOutlinedIcon />}
-          sx={{fontSize:"9px"}}
-
-          color="error">
-          decrease
-        </Button>
-        <Chip label="0" color="warning" variant="outlined" />
-        <Button
-          variant="outlined"
-          endIcon={<AddCircleOutlinedIcon  />}
-          sx={{fontSize:"9px"}}
-
-          color="success"
-          onClick={redeemHandler}>
-          increase
-        </Button>
-      </Stack>
-      <Stack direction="row" spacing={2} mt={2} justifyContent={"space-between"}>
+      {card?.cardTemplate?.cardType === "LOYALTY" && (
+        <Box>
+          <Typography variant="body2" py={2} color="primary">
+            {" "}
+            Add Points
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent={"space-between"}>
+            <Button
+              variant="outlined"
+              startIcon={<RemoveCircleOutlinedIcon />}
+              size="small"
+              sx={{ fontSize: "9px" }}
+              color="error">
+              decrease
+            </Button>
+            <Chip
+              label={card?.loyaltyCard?.points}
+              color="warning"
+              variant="outlined"
+            />
+            <Button
+              variant="outlined"
+              endIcon={<AddCircleOutlinedIcon />}
+              color="success"
+              size="small"
+              sx={{ fontSize: "9px" }}
+              onClick={addPointsHandler}>
+              increase
+            </Button>
+          </Stack>
+          <Typography variant="body2" py={2} color="primary">
+            {" "}
+            Redeem Rewards
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent={"space-between"}>
+            <Button
+              variant="outlined"
+              startIcon={<RemoveCircleOutlinedIcon />}
+              sx={{ fontSize: "9px" }}
+              color="error">
+              decrease
+            </Button>
+            <Chip label="0" color="warning" variant="outlined" />
+            <Button
+              variant="outlined"
+              endIcon={<AddCircleOutlinedIcon />}
+              sx={{ fontSize: "9px" }}
+              color="success"
+              onClick={redeemHandler}>
+              increase
+            </Button>
+          </Stack>
+        </Box>
+      )}
+      <Stack
+        direction="row"
+        spacing={2}
+        mt={2}
+        justifyContent={"space-between"}>
         <div className="stickers-icons">
           {card?.cardTemplate?.itemsSubscriptionCardTemplate?.stickers?.map(
             (item) => {
@@ -190,7 +205,7 @@ function CardControlForm() {
               return (
                 <div
                   className={isActive ? "icon active" : "icon"}
-                  style={{padding:"10px"}}
+                  style={{ padding: "10px" }}
                   onClick={() => addStickerHandler(item)}
                   key={item.id}>
                   <img src={item.imageUrl} alt="" width={20} />

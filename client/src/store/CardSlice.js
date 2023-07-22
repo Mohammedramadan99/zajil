@@ -178,7 +178,8 @@ const initialState = {
   cards: null,
   card: null,
   loading: false,
-  updating:false,
+  updating: false,
+  cardCreated:false,
   errors: null,
   errorMessage: null,
   successMessage: null,
@@ -192,6 +193,7 @@ const cardSlice = createSlice({
       state.errorMessage = null;
       state.successMessage = null;
       state.errors = null;
+      state.cardCreated = null
     },
   },
   extraReducers: (builder) => {
@@ -202,7 +204,8 @@ const cardSlice = createSlice({
     builder.addCase(createCard.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      state.card = action.payload.data;
+      // state.card = action.payload.data;
+      state.cardCreated = true
     });
     builder.addCase(createCard.rejected, (state, action) => {
       state.loading = false;

@@ -13,22 +13,27 @@ import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { createCard, reset } from "../../../../store/CardSlice";
 import { useDispatch, useSelector } from "react-redux";
+import BasicSelect from "../../GlobalComponents/BasicSelect";
 
 function CreateCardForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { templateId, businessId } = useParams();
-  const { error, loading, card } = useSelector((state) => state.cards);
+  const { error, loading, card, cardCreated } = useSelector(
+    (state) => state.cards
+  );
 
   const formik = useFormik({
     initialValues: {
       clientName: "",
       clientPhone: "",
+      gender: "",
     },
     validationSchema: yup.object({
       clientName: yup.string().required("Client Name is required"),
       clientPhone: yup.string().required("Client Phone  is required"),
+      gender: yup.string().required("gender is required"),
     }),
     onSubmit(values) {
       handleSubmit(values);
@@ -49,6 +54,7 @@ function CreateCardForm() {
       dispatch(reset());
     }
   }, []);
+  console.log("formik values", formik.values);
   return (
     <Box
       maxWidth={500}
@@ -61,7 +67,7 @@ function CreateCardForm() {
       }}
       p={5}
       borderRadius={5}>
-      {!card ? (
+      {!cardCreated ? (
         <>
           <Typography
             variant="h1"
@@ -103,6 +109,11 @@ function CreateCardForm() {
                 helperText={formik.errors.clientPhone}
                 sx={{ width: "100%" }}
               />
+              <BasicSelect
+                options={["Male", "Female"]}
+                value={formik.values.gender}
+                onChange={formik.handleChange}
+              />
             </Stack>
             <Button
               type="submit"
@@ -118,19 +129,19 @@ function CreateCardForm() {
           {/* <Button variant="contained" onClick={() => downloadCard()}>
             download the card
           </Button> */}
-          <Button variant="contained">
-            <Link
-              className="flex"
-              to={`https://walletpass.io?u=${card.s3Location}`}
-              target="_blank"
-              download>
-              Download the card
-            </Link>
-          </Button>
 
-          <Button variant="contained">
-            <Link to="/admin/cards">cards</Link>
-          </Button>
+          <Link
+            className="flex"
+            to={`https://walletpass.io?u=${card.s3Location}`}
+            target="_blank"
+            download>
+            <img
+              src={
+                "https://www.walletpasses.io/badges/badge_web_generic_en@2x.png"
+              }
+              alt="wallet_img"
+            />
+          </Link>
         </Stack>
       )}
       <Typography

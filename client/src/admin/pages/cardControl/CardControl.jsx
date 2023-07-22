@@ -1,5 +1,5 @@
 import { Box, Container, Grid, useTheme } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,18 +12,18 @@ function CardControl() {
   const theme = useTheme();
   const { cardId } = useParams();
   const dispatch = useDispatch();
-  const { card,updating, loading, errorMessage } = useSelector((state) => state.cards);
-
+  const { card, updating, loading, errorMessage } = useSelector(
+    (state) => state.cards
+  );
+  const [activeSticker, setActiveSticker] = useState([]);
   useEffect(() => {
     if (cardId) {
       dispatch(getCardDetails({ cardId }));
     }
   }, [cardId]);
   return loading ? (
-    <>
-      loading
-    </>
-  ): (
+    <>loading</>
+  ) : (
     <Box
       padding={2}
       sx={{
@@ -32,12 +32,15 @@ function CardControl() {
       }}>
       <Container>
         <Grid container>
-        {updating && <BackdropSpinner/>}
+          {updating && <BackdropSpinner />}
           <Grid item xs={12} md={9}>
-            <CardControlForm />
+            <CardControlForm
+              activeSticker={activeSticker}
+              setActiveSticker={setActiveSticker}
+            />
           </Grid>
-          <Grid item xs={12} sm={6}  md={3} margin={"auto"}>
-            {card?.cardTemplate && <ShowCard control={true} template={card}/>}
+          <Grid item xs={12} sm={6} md={3} margin={"auto"}>
+            {card?.cardTemplate && <ShowCard control={true} template={card} activeSticker={activeSticker} setActiveSticker={setActiveSticker} />}
           </Grid>
         </Grid>
       </Container>

@@ -31,6 +31,7 @@ function ShowCard({
   activeScanType,
   setImgColor,
   control,
+  activeSticker, setActiveSticker
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -134,7 +135,14 @@ function ShowCard({
                     </div>
                   </div>
                 ))}
-                {[...Array(template.itemsSubscriptionCard?.nItems || 1)].map(
+                {activeSticker?.map((item, i) => (
+                  <div className="sticker flex" key={i}>
+                    <div className="icon flex">
+                      <img src={item?.imageUrl} alt="" width={20} />
+                    </div>
+                  </div>
+                ))}
+                {[...Array(template.itemsSubscriptionCard?.nItems - activeSticker.length )].map(
                   (item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">
@@ -232,7 +240,7 @@ function ShowCard({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`/card/create/${template.cardTemplate?.id}/${template.cardTemplate?.businessId}`}
+          url={`/card/create/${template?.id}/${template?.businessId}`}
         />
       )}
     </Box>
