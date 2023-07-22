@@ -9,6 +9,7 @@ import { CreateUserDto } from '../modules/users/dto/create-user';
 import cardsRouter from './cards.router';
 import { CardController } from '../modules/cards/controllers/Card';
 import fileUploadRouter from './file-upload.router';
+import notificationsRouter from './notifications.router';
 
 const mainRouter = express.Router();
 mainRouter.post('/register', validateMiddleware(CreateUserDto), UsersController.create);
@@ -19,6 +20,7 @@ mainRouter.post('/request-account-activation', UsersController.requestAccountAct
 mainRouter.use('/users', usersRouter);
 mainRouter.use('/businesses', businessesRouter);
 mainRouter.use('/branches', branchesRouter);
+mainRouter.use('/notifications', notificationsRouter);
 
 // Get Card Info by ID
 mainRouter.get('/card-info/:id', CardController.getOne);
