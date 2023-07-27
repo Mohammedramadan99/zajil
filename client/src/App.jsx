@@ -138,10 +138,10 @@ function App() {
 
   useEffect(() => {
     AOS.init({
-      duration: 1000, // animation duration
-      once: false, // animation only once
-      easing: "ease-in-out", // animation easing function
-      offset: 50, // animation start offset
+      duration: 1000,
+      once: false,
+      easing: "ease-in-out",
+      offset: 50,
     });
   }, []);
   return (
