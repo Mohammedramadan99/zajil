@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Box, Container, Grid, Stack } from "@mui/material";
-import LocationForm from "../../../admin/components/Location/LocationForm";
-import Card from "../../../admin/components/Cards/Card/Card";
+import LocationForm from "../../components/Location/LocationForm";
+import Card from "../../components/Cards/Card/Card";
 
 function Location() {
   const theme = useTheme();

@@ -18,8 +18,6 @@ import Templates from "./admin/pages/templates/Templates";
 import Location from "./admin/pages/Location/Location";
 import CreateBusiness from "./admin/pages/CreateBusiness/CreateBusiness";
 import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import Business from "./admin/pages/business/Business";
 import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
 import CardControl from "./admin/pages/cardControl/CardControl";
@@ -27,6 +25,9 @@ import CreateCard from "./admin/pages/controlCard/CreateCard";
 import Cards from "./admin/pages/cards/Cards";
 import CardDetails from "./admin/pages/cardDetails/CardDetails";
 import Scan from "./admin/pages/Scan/Scan";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import Notifications from "./admin/pages/notifications/Notifications";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -118,6 +119,10 @@ function App() {
         {
           path: "scan",
           element: <Scan />,
+        },
+        {
+          path: "notifications",
+          element: <Notifications />,
         },
       ],
     },
