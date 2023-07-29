@@ -336,6 +336,12 @@ export const getActivities = async (user: User, limit: number, businessId?: numb
     const userBusinesses = user.businesses.map((business) => business.id);
     const businessToUse = businessId ? [businessId] : userBusinesses;
 
+    if (businessId) {
+        // check if user has access to this business
+        if (!userBusinesses.includes(businessId))
+            throw new HttpError(403, 'Forbidden, user does not have access to this business');
+    }
+
     return await Activity.findAll({
         include: [
             {
@@ -361,4 +367,55 @@ export const getActivities = async (user: User, limit: number, businessId?: numb
         order: [['id', 'DESC']],
         limit,
     });
+};
+
+export const getActivitiesChart = async (
+    user: User,
+    startDate: string,
+    endDate: string,
+    nPoints: number,
+    businessId?: number,
+) => {
+    const userBusinesses = user.businesses.map((business) => business.id);
+    let businessToUse: number[] = [];
+
+    if (businessId) {
+        // check if user has access to this business
+        if (!userBusinesses.includes(businessId))
+            throw new HttpError(403, 'Forbidden, user does not have access to this business');
+
+        businessToUse = [businessId];
+    } else {
+        businessToUse = userBusinesses;
+    }
+
+    // find activities between startDate and endDate
+    const activities = await Activity.findAll({
+        where: {
+            createdAt: {
+                [Op.between]: [startDate, endDate],
+            },
+            businessId: businessToUse,
+        },
+    });
+
+    // partitions the time interval into nPoints
+    const interval = moment(endDate).diff(moment(startDate), 'milliseconds');
+    const intervalPerPoint = interval / nPoints;
+
+    // for each point, it counts the number of cards created
+    // returns an array of numbers of length nPoints
+    const points = [];
+    for (let i = 0; i < nPoints; i++) {
+        const pointStart = moment(startDate).add(i * intervalPerPoint, 'milliseconds');
+        const pointEnd = moment(startDate).add((i + 1) * intervalPerPoint, 'milliseconds');
+
+        const activitiesInPoint = activities.filter((activity) => {
+            return moment(activity.createdAt).isBetween(pointStart, pointEnd);
+        });
+
+        points.push(activitiesInPoint.length);
+    }
+
+    return points;
 };
