@@ -3,7 +3,8 @@ import authReducer from "./authSlice";
 import templateReducer from "./TemplateSlice";
 import modeReducer from "./modeSlice";
 import businessesReducer from "./businessSlice";
-import cardsReducer from "./CardSlice";
+import cardsReducer from "./cardSlice";
+import statsReducer from "./statsSlice";
 export default configureStore({
   reducer: {
     auth: authReducer,
@@ -11,5 +12,6 @@ export default configureStore({
     templates: templateReducer,
     businesses: businessesReducer,
     cards: cardsReducer,
+    stats:statsReducer,
   },
 });

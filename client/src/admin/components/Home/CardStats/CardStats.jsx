@@ -1,23 +1,14 @@
-import React from "react";
 import {
   Box,
-  Button,
   Card,
   CardActionArea,
   CardContent,
-  Grid,
-  Paper,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
+import { ArrowUpward, StorefrontOutlined } from "@mui/icons-material";
 
-import {
-  ArrowBack,
-  ArrowUpward,
-  StorefrontOutlined,
-  PaymentOutlined,
-} from "@mui/icons-material";
 function CardStats() {
   const theme = useTheme();
 
@@ -56,7 +47,6 @@ function CardStats() {
             <Box
               display={"flex"}
               justifyContent={"flex-end"}
-
               borderRadius={"50%"}
               p={1}
               sx={{ background: "#c1212130", borderRadius: 3 }}>
