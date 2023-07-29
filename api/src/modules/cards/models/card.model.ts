@@ -20,6 +20,9 @@ export class Card extends Model {
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+
+    // associations
+    public readonly cardTemplate?: CardTemplate;
 }
 
 export const init = (sequelize: Sequelize) =>
