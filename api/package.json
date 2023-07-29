@@ -32,6 +32,7 @@
   "dependencies": {
     "@nestjs/mapped-types": "^1.2.2",
     "@types/cors": "^2.8.13",
+    "apn": "^2.2.0",
     "aws-sdk": "^2.1404.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
@@ -42,6 +43,7 @@
     "express-conditional-middleware": "^2.1.1",
     "express-fileupload": "^1.4.0",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
     "passkit-generator": "^3.1.9",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",

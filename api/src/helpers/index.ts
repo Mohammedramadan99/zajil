@@ -1,4 +1,4 @@
-import { plainToClassFromExist } from 'class-transformer';
+import { plainToClassFromExist, plainToInstance } from 'class-transformer';
 import { ValidationError, validateSync } from 'class-validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
@@ -11,7 +11,7 @@ import { uploadFile } from '../modules/aws/s3';
 
 // validate DTO
 export const validateDto = (DtoClass: any, body: any) => {
-    let createItemDto = plainToClassFromExist(new DtoClass(), body);
+    let createItemDto = plainToInstance(DtoClass, body) as any;
     let errors = validateSync(createItemDto, { whitelist: true });
 
     if (errors.length > 0) {
