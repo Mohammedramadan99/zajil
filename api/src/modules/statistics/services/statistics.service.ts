@@ -1,6 +1,6 @@
 const moment = require('moment');
 import { HttpError } from '../../../common';
-import { Activity } from '../../businesses/models/activity.model';
+import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { Business } from '../../businesses/models/business.model';
 import { CardTemplate } from '../../card-templates/models/card-template.model';
 import { Card } from '../../cards/models/card.model';
@@ -224,7 +224,7 @@ export const getCardsChart = async (
             throw new HttpError(403, 'Forbidden, user does not have access to this business');
 
         businessToUse = [businessId];
-    }else{
+    } else {
         businessToUse = userBusinesses;
     }
 
@@ -270,6 +270,61 @@ export const getCardsChart = async (
         });
 
         points.push(cardsInPoint.length);
+    }
+
+    return points;
+};
+
+export const getCardsRewardsRedeemedChart = async (
+    user: User,
+    startDate: string,
+    endDate: string,
+    nPoints: number,
+    businessId?: number,
+) => {
+    const userBusinesses = user.businesses.map((business) => business.id);
+    let businessToUse: number[] = [];
+
+    if (businessId) {
+        // check if user has access to this business
+        if (!userBusinesses.includes(businessId))
+            throw new HttpError(403, 'Forbidden, user does not have access to this business');
+
+        businessToUse = [businessId];
+    } else {
+        businessToUse = userBusinesses;
+    }
+
+    // find rewards redeemed activity between startDate and endDate
+    // look for messages of this format:  message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
+    const activities = await Activity.findAll({
+        where: {
+            message: {
+                [Op.like]: 'Card % scanned, gift % redeemed',
+            },
+            createdAt: {
+                [Op.between]: [startDate, endDate],
+            },
+            type: ActivityType.SCAN_CARD,
+        },
+    });
+
+    // partitions the time interval into nPoints
+    const interval = moment(endDate).diff(moment(startDate), 'milliseconds');
+    const intervalPerPoint = interval / nPoints;
+
+    // for each point, it counts the number of cards created
+    // returns an array of numbers of length nPoints
+    const points = [];
+    for (let i = 0; i < nPoints; i++) {
+        const pointStart = moment(startDate).add(i * intervalPerPoint, 'milliseconds');
+        const pointEnd = moment(startDate).add((i + 1) * intervalPerPoint, 'milliseconds');
+
+        const activitiesInPoint = activities.filter((activity) => {
+            return moment(activity.createdAt).isBetween(pointStart, pointEnd);
+        });
+
+        points.push(activitiesInPoint.length);
     }
 
     return points;

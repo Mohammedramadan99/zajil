@@ -47,4 +47,18 @@ export const StatisticsController = {
                 next(err);
             });
     },
+
+    getCardsRewardsRedeemedChart: function (req: RequestMod, res: Response, next: NextFunction): void {
+        // get query params
+        const { businessId, startDate, endDate, nPoints } = req.query as any;
+
+        statisticsServices
+            .getCardsRewardsRedeemedChart(req.user, startDate, endDate, nPoints, businessId)
+            .then((o) => {
+                res.json(o);
+            })
+            .catch((err) => {
+                next(err);
+            });
+    }
 };
