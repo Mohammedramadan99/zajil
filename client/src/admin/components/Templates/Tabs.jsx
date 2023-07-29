@@ -3,10 +3,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { getBusinesses } from "../../../store/businessSlice";
 import { getTemplates } from "../../../store/TemplateSlice";
-import { getCards } from "../../../store/CardSlice";
-import BackdropSpinner from '../../../components/Loading/BackdropSpinner'
+import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
 
 export default function BusinessesTabs() {
   const dispatch = useDispatch();
@@ -15,9 +13,7 @@ export default function BusinessesTabs() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  // useEffect(() => {
-  //   dispatch(getBusinesses());
-  // }, []);
+  
 
   //   fetch Here according to the active tab
   const templatesHandler = (id) => {
@@ -32,7 +28,7 @@ export default function BusinessesTabs() {
         scrollButtons="auto"
         aria-label="scrollable auto tabs example">
         {businesses &&
-          businesses.map((item, i) => (
+          businesses?.map((item, i) => (
             <Tab
               key={i}
               label={item.name}
@@ -40,7 +36,7 @@ export default function BusinessesTabs() {
             />
           ))}
       </Tabs>
-      {loading && <BackdropSpinner/>}
+      {loading && <BackdropSpinner />}
     </Box>
   );
 }

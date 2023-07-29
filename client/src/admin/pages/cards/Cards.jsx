@@ -29,7 +29,9 @@ function Cards() {
   const { businesses } = useSelector((state) => state.businesses);
 
   useEffect(() => {
-    dispatch(getCards(businesses[0]?.id));
+    if (businesses) {
+      dispatch(getCards(businesses[0]?.id));
+    }
     dispatch(reset());
   }, [businesses]);
   return (
@@ -133,7 +135,7 @@ function Cards() {
                 pl={5}
                 pt={2}
                 color={theme.palette.grey[500]}>
-                this business don't have cards yet
+                this business doesn't have cards yet
               </Typography>
             </>
           )}

@@ -10,12 +10,10 @@ const loggedIn = () => {
     const now = new Date();
 
     if (now.getTime() > exp.getTime()) {
-      console.log("no");
       return null;
     } else {
       const { iat, exp, ...props } = payloadObj;
       const user = { ...props, token };
-      console.log("yes");
 
       return user;
     }

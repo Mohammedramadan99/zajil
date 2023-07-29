@@ -22,7 +22,6 @@ export const createTemplate = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
@@ -56,11 +55,9 @@ export const getTemplates = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      console.log({ data });
       return data;
     } catch (error) {
       console.error(error);

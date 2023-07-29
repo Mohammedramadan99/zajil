@@ -13,9 +13,7 @@ export default function BusinessesTabs({ activeTab, setActiveTab }) {
   const { businesses } = useSelector((state) => state.businesses);
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log({ value });
   };
-  console.log({ value });
 
   useEffect(() => {
     dispatch(getBusinesses());
@@ -32,8 +30,8 @@ export default function BusinessesTabs({ activeTab, setActiveTab }) {
         onChange={handleChange}
         variant="scrollable"
         scrollButtons="auto"
-        aria-label="scrollable auto tabs example">
-        {businesses.map((item) => (
+        aria-label="scrollable auto tabs">
+        {businesses?.map((item) => (
           <Tab
             key={item.id}
             label={item.name}

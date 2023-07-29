@@ -43,7 +43,7 @@ const OrdersTable = ({ data = [] }) => {
   const theme = useTheme();
 
   const onDelete = (id) => {
-    console.log(id);
+    
   };
   return (
     <Paper sx={{ p: 3, backgroundColor: theme.palette.grey[900] }}>

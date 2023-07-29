@@ -25,24 +25,28 @@ function Home() {
   const theme = useTheme();
   const cards = [
     {
+      id: Math.floor(Math.random() * 100000) + 1,
       title: "users",
       number: 200,
       average: 2.4,
       icon: <StorefrontOutlined />,
     },
     {
+      id: Math.floor(Math.random() * 100000) + 1,
       title: "cards",
       number: 40,
       average: -7.4,
       icon: <PaymentOutlined />,
     },
     {
+      id: Math.floor(Math.random() * 100000) + 1,
       title: "users",
       number: 200,
       average: 2.4,
       icon: <StorefrontOutlined />,
     },
     {
+      id: Math.floor(Math.random() * 100000) + 1,
       title: "cards",
       number: 40,
       average: -7.4,
@@ -72,7 +76,7 @@ function Home() {
 
         <Grid xs={12} item container spacing={2}>
           {cards.map((item, i) => (
-            <Grid xs={6} item key={i}>
+            <Grid xs={6} item key={item.id}>
               <CardStats />
             </Grid>
           ))}

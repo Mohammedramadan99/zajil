@@ -1,5 +1,5 @@
 import { Avatar, Box, Grid, Stack, Typography, useTheme } from "@mui/material";
-import Phone from "../Cards/Card/Phone/Phone";
+import Phone from "./Phone";
 import LockSharpIcon from "@mui/icons-material/LockOpen";
 import dayjs from "dayjs";
 function Mobile({}) {

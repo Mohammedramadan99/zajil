@@ -75,8 +75,6 @@ function MainSidebar() {
     links.find((item) => item.path == location.pathname.slice(0)) ||
     (links[0].slug == location.pathname.slice(1) && links[0]);
 
-  console.log("location", location.pathname);
-  console.log({ activeItem });
   const handleClick = (item) => {
     navigate(item.path);
   };
@@ -126,22 +124,22 @@ function MainSidebar() {
                 scale: "1",
                 color: theme.palette.primary[500],
               },
-              "&:nth-child(1).active ~ .indicator": {
+              "&:nth-of-type(1).active ~ .indicator": {
                 transform: "translateX(calc(80px * 0))",
               },
-              "&:nth-child(2).active ~ .indicator": {
+              "&:nth-of-type(2).active ~ .indicator": {
                 transform: "translateX(calc(80px * 1))",
               },
-              "&:nth-child(3).active ~ .indicator": {
+              "&:nth-of-type(3).active ~ .indicator": {
                 transform: "translateX(calc(80px * 2))",
               },
-              "&:nth-child(4).active ~ .indicator": {
+              "&:nth-of-type(4).active ~ .indicator": {
                 transform: "translateX(calc(80px * 3))",
               },
-              "&:nth-child(5).active ~ .indicator": {
+              "&:nth-of-type(5).active ~ .indicator": {
                 transform: "translateX(calc(80px * 4))",
               },
-              "&:nth-child(6).active ~ .indicator": {
+              "&:nth-of-type(6).active ~ .indicator": {
                 transform: "translateX(calc(80px * 5))",
               },
               zIndex: "999",
@@ -196,7 +194,7 @@ function MainSidebar() {
               backgroundColor: "transparent",
               borderTopRightRadius: " 20px",
               boxShadow: `0 -10px 0 0 #0001`,
-              backdropFilter: activeItem  ? "blur(10px)" : "",
+              backdropFilter: activeItem ? "blur(10px)" : "",
             }}></span>
           <span
             style={{
@@ -209,7 +207,7 @@ function MainSidebar() {
               backgroundColor: "transparent",
               borderTopLeftRadius: "20px",
               boxShadow: `0 -10px 0 0 transparent`,
-              backdropFilter: activeItem  ? "blur(10px)" : "",
+              backdropFilter: activeItem ? "blur(10px)" : "",
             }}></span>
         </div>
       </List>

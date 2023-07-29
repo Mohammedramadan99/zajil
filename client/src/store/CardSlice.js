@@ -23,7 +23,7 @@ export const createCard = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
@@ -55,11 +55,11 @@ export const getCards = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      console.log({ data });
+
       return data;
     } catch (error) {
       console.error(error);
@@ -88,11 +88,11 @@ export const getCardDetails = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      console.log({ data });
+
       return data;
     } catch (error) {
       console.error(error);
@@ -123,7 +123,7 @@ export const AddPointToLoyaltyCard = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
@@ -159,7 +159,7 @@ export const redeemGift = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
@@ -179,7 +179,7 @@ const initialState = {
   card: null,
   loading: false,
   updating: false,
-  cardCreated:false,
+  cardCreated: false,
   errors: null,
   errorMessage: null,
   successMessage: null,
@@ -193,7 +193,7 @@ const cardSlice = createSlice({
       state.errorMessage = null;
       state.successMessage = null;
       state.errors = null;
-      state.cardCreated = null
+      state.cardCreated = null;
     },
   },
   extraReducers: (builder) => {
@@ -205,7 +205,7 @@ const cardSlice = createSlice({
       state.loading = false;
       state.errors = null;
       // state.card = action.payload.data;
-      state.cardCreated = true
+      state.cardCreated = true;
     });
     builder.addCase(createCard.rejected, (state, action) => {
       state.loading = false;
@@ -246,7 +246,6 @@ const cardSlice = createSlice({
       state.errors = null;
     });
     builder.addCase(AddPointToLoyaltyCard.rejected, (state, action) => {
-      console.log("Error:", action.payload);
       state.updating = false;
       state.errors = action.payload?.errors;
       state.errorMessage = action.payload;
@@ -260,7 +259,6 @@ const cardSlice = createSlice({
       state.errors = null;
     });
     builder.addCase(redeemGift.rejected, (state, action) => {
-      console.log("Error:", action.payload);
       state.loading = false;
       state.errors = action.payload?.errors;
       state.errorMessage = action.payload;

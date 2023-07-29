@@ -67,7 +67,6 @@ function MobileSidebar() {
       slug: "location",
     },
   ];
-  console.log({ activeitem });
   return (
     <div
       className={`main_sidebar items-center ${isSidebarOpen ? "show" : ""}`}>

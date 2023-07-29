@@ -49,7 +49,7 @@ function TemplatesList() {
               }),
             }}>
             <ShowCard
-              template={template || null}
+              template={template || {}}
               title={template?.name}
               bg={cardBg_1}
               icon={<Star />}

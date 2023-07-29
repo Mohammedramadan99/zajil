@@ -17,21 +17,13 @@ import Dialog from "../../../components/Templates/Dialog";
 function ShowCard({
   template,
   title,
-  bg,
-  logoImg,
-  setLogoImg,
-  setTextLogo,
-  setStickersNumber,
-  stickersNumber,
   withControl = true,
   textLogo,
   activeImg,
-  activeIcon,
-  name,
   activeScanType,
   setImgColor,
   control,
-  activeSticker, setActiveSticker
+  activeSticker
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -41,7 +33,10 @@ function ShowCard({
     const box = boxRef.current;
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
-  console.log("temp", template);
+  const tempActiveSticker = activeSticker || []
+  const tempnItems = template?.itemsSubscriptionCard?.nItems || 0
+  // console.log("temp", template);
+  // console.log("tempActiveSticker", template?.itemsSubscriptionCard?.nItems, tempActiveSticker?.length);
   return (
     <Box mt={control ? 12 : "unset"}>
       {/* Card */}
@@ -135,14 +130,14 @@ function ShowCard({
                     </div>
                   </div>
                 ))}
-                {activeSticker?.map((item, i) => (
+                {tempActiveSticker && tempActiveSticker?.map((item, i) => (
                   <div className="sticker flex" key={i}>
                     <div className="icon flex">
                       <img src={item?.imageUrl} alt="" width={20} />
                     </div>
                   </div>
                 ))}
-                {[...Array(template.itemsSubscriptionCard?.nItems - activeSticker.length )].map(
+                {[...Array(tempnItems - tempActiveSticker?.length)].map(
                   (item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">

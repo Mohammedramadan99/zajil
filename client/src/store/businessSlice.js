@@ -24,7 +24,7 @@ export const createBusiness = createAsyncThunk(
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log({ errorData });
+
         return rejectWithValue({
           message: errorData?.data.message || "An unknown error occurred.",
         });
@@ -131,6 +131,9 @@ const authSlice = createSlice({
       state.errors = null;
       state.business = null;
     },
+    resetBusiness: (state) => {
+      state.business = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createBusiness.pending, (state, action) => {
@@ -141,7 +144,6 @@ const authSlice = createSlice({
       state.loading = false;
       state.errors = null;
       state.business = action.payload.data;
-      state.successMessage = "user registered";
     });
     builder.addCase(createBusiness.rejected, (state, action) => {
       state.loading = false;
@@ -188,6 +190,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, resetBusiness } = authSlice.actions;
 
 export default authSlice.reducer;

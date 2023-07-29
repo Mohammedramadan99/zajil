@@ -10,8 +10,9 @@ import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { createBusiness } from "../../../store/businessSlice";
+import { createBusiness, resetBusiness } from "../../../store/businessSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 function CreateBusinessForm() {
   const theme = useTheme();
@@ -33,13 +34,18 @@ function CreateBusinessForm() {
       handleSubmit(values);
     },
   });
+  const {setFieldValue,setValues,values,resetForm} = formik
   const handleSubmit = async (values) => {
-    // const result = await createBusiness(values);
     dispatch(createBusiness(values));
-    if (business) {
-      navigate("/admin/branch/new");
-    }
+    resetForm({values:{name:""}})
   };
+  if (business) {
+    navigate("/admin/branch/new");
+  }
+  if (business) {
+    toast.success(`${business.name} created`)
+    dispatch(resetBusiness())
+  }
   return (
     <Box
       maxWidth={500}

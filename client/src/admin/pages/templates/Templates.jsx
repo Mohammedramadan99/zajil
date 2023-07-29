@@ -1,32 +1,21 @@
 import { useTheme } from "@emotion/react";
 import {
-  Backdrop,
   Box,
   Button,
   ButtonGroup,
-  CircularProgress,
   Container,
   Grid,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import Card from "../../components/Cards/Card/Card";
-import cardBg_1 from "../../../assets/images/card_bg_1.jpg";
-import { Star } from "@mui/icons-material";
-import Visa from "../../components/Cards/Card/Visa";
+import React, { useEffect } from "react";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getTemplates,
-  createTemplate,
-  reset,
-} from "../../../store/TemplateSlice";
+import { getTemplates, reset } from "../../../store/TemplateSlice";
 
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import ShowCard from "../../components/Cards/Card/ShowCard";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { getBusinesses } from "../../../store/businessSlice";
 function Cards() {
@@ -36,9 +25,9 @@ function Cards() {
   const { businesses } = useSelector((state) => state.businesses);
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
-  
+
   useEffect(() => {
-      !templates && dispatch(getBusinesses());
+    !templates && dispatch(getBusinesses());
   }, []);
 
   useEffect(() => {

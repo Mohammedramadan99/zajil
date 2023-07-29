@@ -1,21 +1,21 @@
 import { Box, Stack, useTheme } from "@mui/material";
 import React from "react";
-import backgroundImg from "../../../../../assets/images/background.webp";
+import backgroundImg from "../../../assets/images/background.webp";
 function Phone({ children }) {
   const theme = useTheme();
   return (
     <Box
       sx={{
         position: "relative",
-        // border: `5px solid ${theme.palette.grey[800]}`,
-        // outline: `3px solid ${theme.palette.grey[900]}`,
-        border: `7px solid ${theme.palette.grey[900]}`,
-        outline: `3px solid ${theme.palette.grey[600]}`,
+        border: `5px solid ${theme.palette.grey[800]}`,
+        outline: `3px solid ${theme.palette.grey[900]}`,
+        // border: `7px solid ${theme.palette.grey[900]}`,
+        // outline: `3px solid ${theme.palette.grey[600]}`,
         width: "300px",
         minHeight: "550px",
         borderRadius: "20px",
-        background: `${theme.palette.grey[900]}`,
-        // background: `url(${backgroundImg}) center center`,
+        // background: `${theme.palette.grey[900]}`,
+        background: `url(${backgroundImg}) center center`,
       }}>
       
       <Stack
