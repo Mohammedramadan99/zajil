@@ -95,6 +95,7 @@ const getActiveCards = async (user: User, limit: number, businessId?: number): P
                 {
                     model: CardTemplate,
                     as: 'cardTemplate',
+                    required: true,
                     include: [
                         {
                             model: Business,
@@ -125,6 +126,7 @@ const getActiveCards = async (user: User, limit: number, businessId?: number): P
                 {
                     model: CardTemplate,
                     as: 'cardTemplate',
+                    required: true,
                     include: [
                         {
                             model: Business,
@@ -165,6 +167,7 @@ export const getCardsTotal = async (user: User, businessId?: number) => {
                 {
                     model: CardTemplate,
                     as: 'cardTemplate',
+                    required: true,
                     include: [
                         {
                             model: Business,
@@ -184,6 +187,7 @@ export const getCardsTotal = async (user: User, businessId?: number) => {
                 {
                     model: CardTemplate,
                     as: 'cardTemplate',
+                    required: true,
                     include: [
                         {
                             model: Business,
@@ -198,4 +202,75 @@ export const getCardsTotal = async (user: User, businessId?: number) => {
             ],
         });
     }
+};
+
+// finds cards created between startDate and endDate
+// partitions the time interval into nPoints
+// for each point, it counts the number of cards created
+// returns an array of numbers of length nPoints
+export const getCardsChart = async (
+    user: User,
+    startDate: string,
+    endDate: string,
+    nPoints: number,
+    businessId?: number,
+) => {
+    const userBusinesses = user.businesses.map((business) => business.id);
+    let businessToUse: number[] = [];
+
+    if (businessId) {
+        // check if user has access to this business
+        if (!userBusinesses.includes(businessId))
+            throw new HttpError(403, 'Forbidden, user does not have access to this business');
+
+        businessToUse = [businessId];
+    }else{
+        businessToUse = userBusinesses;
+    }
+
+    // find cards created between startDate and endDate
+    const cards = await Card.findAll({
+        include: [
+            {
+                model: CardTemplate,
+                as: 'cardTemplate',
+                include: [
+                    {
+                        model: Business,
+                        as: 'business',
+                        where: {
+                            id: businessToUse,
+                        },
+                        required: true,
+                    },
+                ],
+                required: true,
+            },
+        ],
+        where: {
+            createdAt: {
+                [Op.between]: [startDate, endDate],
+            },
+        },
+    });
+
+    // partitions the time interval into nPoints
+    const interval = moment(endDate).diff(moment(startDate), 'milliseconds');
+    const intervalPerPoint = interval / nPoints;
+
+    // for each point, it counts the number of cards created
+    // returns an array of numbers of length nPoints
+    const points = [];
+    for (let i = 0; i < nPoints; i++) {
+        const pointStart = moment(startDate).add(i * intervalPerPoint, 'milliseconds');
+        const pointEnd = moment(startDate).add((i + 1) * intervalPerPoint, 'milliseconds');
+
+        const cardsInPoint = cards.filter((card) => {
+            return moment(card.createdAt).isBetween(pointStart, pointEnd);
+        });
+
+        points.push(cardsInPoint.length);
+    }
+
+    return points;
 };
