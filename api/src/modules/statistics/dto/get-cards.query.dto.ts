@@ -1,17 +1,17 @@
 import { Type } from "class-transformer";
-import { IsIn, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive } from "class-validator";
 
 export class GetCardsQueryDto {
     @IsOptional()
-    @IsNotEmpty()
     @IsNumber()
+    @IsPositive()
     @Type(() => Number)
-    limit?: number;
+    limit?: number = 10;
 
     @IsOptional()
     @IsNotEmpty()
     @IsIn(["active", "new"])
-    type?: string;
+    type?: string = "new";
 
     @IsOptional()
     @IsNotEmpty()

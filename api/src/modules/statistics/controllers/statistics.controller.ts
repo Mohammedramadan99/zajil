@@ -1,14 +1,15 @@
 import { NextFunction, Response } from 'express';
 import { RequestMod } from '../../../common/interfaces/request.mod';
 import * as statisticsServices from '../services/statistics.service';
+import { GetCardsQueryDto } from '../dto/get-cards.query.dto';
 
 export const StatisticsController = {
     getCardStatistics: function (req: RequestMod, res: Response, next: NextFunction): void {
         // get query params
-        const { limit, type, businessId } = req.query as any;
+        const { limit, type, businessId } = req.query as GetCardsQueryDto
 
         statisticsServices
-            .getCardStatistics(req.user, limit || 10, type || 'new', businessId)
+            .getCardStatistics(req.user, limit, type, businessId)
             .then((o) => {
                 res.json(o);
             })
@@ -16,4 +17,18 @@ export const StatisticsController = {
                 next(err);
             });
     },
+
+    getCardsTotal: function (req: RequestMod, res: Response, next: NextFunction): void {
+        // get query params
+        const { businessId } = req.query as any;
+
+        statisticsServices
+            .getCardsTotal(req.user, businessId)
+            .then((o) => {
+                res.json(o);
+            })
+            .catch((err) => {
+                next(err);
+            });
+    }
 };

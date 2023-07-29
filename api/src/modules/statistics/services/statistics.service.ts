@@ -151,3 +151,8 @@ const getActiveCards = async (user: User, limit: number, businessId?: number): P
         });
     }
 };
+
+export const getCardsTotal = async (user: User, businessId?: number) => {
+    throw new Error('Function not implemented.');
+}
+
