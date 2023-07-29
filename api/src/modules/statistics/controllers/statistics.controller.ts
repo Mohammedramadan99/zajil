@@ -4,6 +4,7 @@ import * as statisticsServices from '../services/statistics.service';
 import { GetCardsQueryDto } from '../dto/get-cards.query.dto';
 import { GetCardsTotalQueryDto } from '../dto/get-cards-total.query.dto';
 import { GetCardsChartQueryDto } from '../dto/get-cards-chart.query.dto';
+import { GetActivitiesQueryDto } from '../dto/get-activities.query.dto';
 
 export const StatisticsController = {
     getCardStatistics: function (req: RequestMod, res: Response, next: NextFunction): void {
@@ -54,6 +55,20 @@ export const StatisticsController = {
 
         statisticsServices
             .getCardsRewardsRedeemedChart(req.user, startDate, endDate, nPoints, businessId)
+            .then((o) => {
+                res.json(o);
+            })
+            .catch((err) => {
+                next(err);
+            });
+    },
+
+    getActivities: function (req: RequestMod, res: Response, next: NextFunction): void {
+        // get query params
+        const { businessId, limit } = req.query as GetActivitiesQueryDto;
+
+        statisticsServices
+            .getActivities(req.user, limit, businessId)
             .then((o) => {
                 res.json(o);
             })

@@ -5,6 +5,7 @@ import { GetCardsQueryDto } from '../modules/statistics/dto/get-cards.query.dto'
 import { GetCardsTotalQueryDto } from '../modules/statistics/dto/get-cards-total.query.dto';
 import { GetCardsChartQueryDto } from '../modules/statistics/dto/get-cards-chart.query.dto';
 import { GetCardsRewardsRedeemedChartQueryDto } from '../modules/statistics/dto/get-cards-rewards-redeemed-chart.query.dto';
+import { GetActivitiesQueryDto } from '../modules/statistics/dto/get-activities.query.dto';
 
 const statisticsRouter = express.Router();
 statisticsRouter.get('/cards', validateMiddleware(GetCardsQueryDto, true), StatisticsController.getCardStatistics);
@@ -23,6 +24,10 @@ statisticsRouter.get(
     validateMiddleware(GetCardsRewardsRedeemedChartQueryDto, true),
     StatisticsController.getCardsRewardsRedeemedChart,
 );
-// statisticsRouter.get('/activities', StatisticsController.);
+statisticsRouter.get(
+    '/activities',
+    validateMiddleware(GetActivitiesQueryDto, true),
+    StatisticsController.getActivities,
+);
 // statisticsRouter.get('/activities/chart', StatisticsController.);
 export default statisticsRouter;

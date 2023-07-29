@@ -55,6 +55,7 @@ const getNewCards = async (user: User, limit: number, businessId?: number): Prom
                     ],
                 },
             ],
+            order: [['id', 'DESC']],
             limit,
         });
     } else {
@@ -75,6 +76,7 @@ const getNewCards = async (user: User, limit: number, businessId?: number): Prom
                     ],
                 },
             ],
+            order: [['id', 'DESC']],
             limit,
         });
     }
@@ -328,4 +330,35 @@ export const getCardsRewardsRedeemedChart = async (
     }
 
     return points;
+};
+
+export const getActivities = async (user: User, limit: number, businessId?: number) => {
+    const userBusinesses = user.businesses.map((business) => business.id);
+    const businessToUse = businessId ? [businessId] : userBusinesses;
+
+    return await Activity.findAll({
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                        include: [
+                            {
+                                model: Business,
+                                as: 'business',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+        where: {
+            businessId: businessToUse,
+        },
+        order: [['id', 'DESC']],
+        limit,
+    });
 };
