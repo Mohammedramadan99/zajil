@@ -153,6 +153,49 @@ const getActiveCards = async (user: User, limit: number, businessId?: number): P
 };
 
 export const getCardsTotal = async (user: User, businessId?: number) => {
-    throw new Error('Function not implemented.');
-}
+    const userBusinesses = user.businesses.map((business) => business.id);
 
+    if (businessId) {
+        // check if user has access to this business
+        if (!userBusinesses.includes(businessId))
+            throw new HttpError(403, 'Forbidden, user does not have access to this business');
+
+        return await Card.count({
+            include: [
+                {
+                    model: CardTemplate,
+                    as: 'cardTemplate',
+                    include: [
+                        {
+                            model: Business,
+                            as: 'business',
+                            where: {
+                                id: businessId,
+                            },
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        });
+    } else {
+        return await Card.count({
+            include: [
+                {
+                    model: CardTemplate,
+                    as: 'cardTemplate',
+                    include: [
+                        {
+                            model: Business,
+                            as: 'business',
+                            where: {
+                                id: userBusinesses,
+                            },
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        });
+    }
+};
