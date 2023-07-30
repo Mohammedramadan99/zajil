@@ -63,12 +63,13 @@ export const getCardsChart = createAsyncThunk(
   "stats/cardsChart",
   async (actionData, { rejectWithValue, getState }) => {
     try {
+      console.log({actionData})
       const { auth } = getState();
       const { user } = auth;
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/statistics/cards/chart?startDate=${
-          actionData.startDate
-        }&endDate=${actionData.endDate}&nPoints=${
+          actionData.firstDay
+        }&endDate=${actionData.lastDay}&nPoints=${
           actionData.nPoints
         }&businessId=${actionData.businessId}`,
         {
@@ -83,7 +84,7 @@ export const getCardsChart = createAsyncThunk(
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      return data;
+      return {data,last10Days:actionData.last10Days};
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -240,8 +241,13 @@ const statsSlice = createSlice({
       state.loadingCardsChart = true;
     });
     builder.addCase(getCardsChart.fulfilled, (state, action) => {
+      const points = action.payload.data.data
+      const dates = action.payload.last10Days
+      const combinedArray = dates.reduce((acc, date, index) => {
+        return [...acc, { point: points[index], date: date }];
+      }, []);
       state.loadingCardsChart = false;
-      state.cardsChart = action.payload.data;
+      state.cardsChart = combinedArray;
     });
     builder.addCase(getCardsChart.rejected, (state, action) => {
       state.loadingCardsChart = false;

@@ -23,12 +23,12 @@ import BarChartNoPadding from "../../components/Charts/BarChart/BarChartNoPaddin
 import OrdersTable from "../../components/OrdersTable/OrdersTable";
 import { orders } from "../../../utils/mockup/data";
 import { useDispatch, useSelector } from "react-redux";
-import { getCards, getCardsCount } from "../../../store/statsSlice";
-
+import { getCards, getCardsChart, getCardsCount } from "../../../store/statsSlice";
+import dayjs from "dayjs";
 function Home() {
-  const dispatch = useDispatch()
   const theme = useTheme();
-  const {cardsCount} = useSelector(state => state.stats)
+  const dispatch = useDispatch();
+  const { cardsCount,cardsChart } = useSelector((state) => state.stats);
   const cards = [
     {
       id: Math.floor(Math.random() * 100000) + 1,
@@ -59,14 +59,39 @@ function Home() {
       icon: <PaymentOutlined />,
     },
   ];
-  
-  
+
   useEffect(() => {
-    
-      dispatch(getCardsCount())
-    
-  }, [dispatch])
+    dispatch(getCardsChart(Last10Days()));
+  }, [dispatch]);
+
+  function Last10Days() {
+    // Create a new date object for today
+    const today = dayjs();
   
+    // Create an array to store the last 10 days
+    const last10Days = [];
+  
+    // Loop through the past 10 days, including today
+    for (let i = 9; i >= 0; i--) {
+      // Get the date for i days ago
+      const date = today.subtract(i, 'day');
+  
+      // Add the date to the array
+      last10Days.push(date.format("YYYY-MM-DD"));
+    }
+  
+    // Get the first and last day from the array
+    const firstDay = last10Days[0];
+    const lastDay = last10Days[last10Days.length - 1];
+    const businessId = 2;
+    const nPoints = 10;
+  
+    // Return the array and the first and last day variables
+    return { last10Days, firstDay, lastDay, businessId, nPoints };
+  }
+  
+
+
   return (
     <Box
       sx={{
@@ -95,17 +120,22 @@ function Home() {
             </Grid>
           ))}
         </Grid>
-        <Grid xs={12} md={6} item>
-          <LineChart />
+        <Grid xs={12} md={12} item >
+            <Typography variant="body1" sx={{p:2, color:theme.palette.primary[300]}}> Card Charts </Typography>
+          <Card >
+            <CardContent sx={{height:500}}>
+            <LineChart myData={cardsChart} />
+          </CardContent>
+          </Card>
         </Grid>
         <Grid xs={12} md={6} item>
-          <SyncLineChart />
+          {/* <SyncLineChart /> */}
         </Grid>
         <Grid xs={12} md={6} item>
-          <ShapeBarChart />
+          {/* <ShapeBarChart /> */}
         </Grid>
         <Grid xs={12} md={6} item>
-          <BarChartNoPadding />
+          {/* <BarChartNoPadding /> */}
         </Grid>
         <Grid xs={12} md={6} item>
           <OrdersTable data={orders} />
