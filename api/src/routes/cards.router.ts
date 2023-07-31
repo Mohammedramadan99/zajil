@@ -26,6 +26,7 @@ cardsRouter.delete('/:id', canUseBusinessId, CardController.delete);
 
 // loyalty functions
 cardsRouter.patch('/:id/loyalty/add-points', canUseBusinessId, CardController.loyaltyAddPoints);
+cardsRouter.patch('/:id/loyalty/update-points', canUseBusinessId, CardController.loyaltyUpdatePoints);
 
 // redeem loyalty gift
 cardsRouter.patch('/:id/loyalty/redeem-gift', canUseBusinessId, CardController.loyaltyRedeemGift);

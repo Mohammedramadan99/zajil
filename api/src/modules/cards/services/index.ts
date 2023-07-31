@@ -582,3 +582,37 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
     console.log('sendUpdatedPass Success');
     return pkpassBuffer;
 };
+
+export function loyaltyUpdatePoints(cardId: number, points: number, user: User) {
+    if (!Number.isInteger(points)) throw new HttpError(400, 'Points must be an integer');
+    if (points < 0) throw new HttpError(400, 'Points cannot be negative');
+
+    return LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                required: true,
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                        where: {
+                            businessId: user.businesses.map((b) => b.id),
+                        },
+                        required: true,
+                    },
+                ],
+            },
+        ],
+    }).then((loyaltyCard) => {
+        if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+        // update points
+        loyaltyCard.points = points;
+        return loyaltyCard.save();
+    });
+}
