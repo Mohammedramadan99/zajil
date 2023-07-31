@@ -160,7 +160,6 @@ const authSlice = createSlice({
     builder.addCase(getBusinesses.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      state.successMessage = null;
       state.businesses = action.payload;
     });
     builder.addCase(getBusinesses.rejected, (state, action) => {

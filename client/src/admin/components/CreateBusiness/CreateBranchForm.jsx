@@ -12,7 +12,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import useBusiness from "../../../hooks/useBusiness";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -39,9 +39,7 @@ function CreateBranchForm() {
   });
   const [selectedAddress, setSelectedAddress] = useState("");
 
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
+  
 
   const formik = useFormik({
     initialValues: {
@@ -166,4 +164,4 @@ function CreateBranchForm() {
   );
 }
 
-export default CreateBranchForm;
+export default memo(CreateBranchForm);
