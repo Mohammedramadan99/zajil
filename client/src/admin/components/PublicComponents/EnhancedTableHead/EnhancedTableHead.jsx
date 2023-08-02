@@ -1,5 +1,6 @@
 import React from "react";
 import { TableCell, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { useTheme } from "@emotion/react";
 
 const EnhancedTableHead = ({
   headers = [],
@@ -7,13 +8,14 @@ const EnhancedTableHead = ({
   order = "asc",
   onSortClick,
 }) => {
+  const theme = useTheme()
   const createSortHandler = (property) => {
     return (e) => {
       onSortClick(e, property);
     };
   };
   return (
-    <TableHead>
+    <TableHead sx={{background:theme.palette.grey[800]}}>
       <TableRow>
         {headers.map((header) => (
           <TableCell key={header.id}>

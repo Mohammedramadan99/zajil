@@ -63,7 +63,7 @@ export const getCardsChart = createAsyncThunk(
   "stats/cardsChart",
   async (actionData, { rejectWithValue, getState }) => {
     try {
-      console.log({actionData})
+      console.log({ actionData });
       const { auth } = getState();
       const { user } = auth;
       const response = await fetch(
@@ -84,7 +84,7 @@ export const getCardsChart = createAsyncThunk(
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      return {data,last10Days:actionData.last10Days};
+      return { data, last10Days: actionData.last10Days };
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -130,14 +130,14 @@ export const GetCardsRedeemedRewardsChart = createAsyncThunk(
 );
 export const getActivities = createAsyncThunk(
   "stats/getActivities",
-  async (actionData, { rejectWithValue, getState }) => {
+  async (businessId, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const { user } = auth;
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/statistics/activities?businessId=${
-          actionData.businessId
-        }`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/statistics/activities?businessId=${businessId}`,
         {
           method: "GET",
           headers: {
@@ -169,8 +169,8 @@ export const getActivitiesChart = createAsyncThunk(
         `${
           import.meta.env.VITE_API_URL
         }/statistics/activities/chart?startDate=${
-          actionData.startDate
-        }&endDate=${actionData.endDate}&nPoints=${
+          actionData.firstDay
+        }&endDate=${actionData.lastDay}&nPoints=${
           actionData.nPoints
         }&businessId=${actionData.businessId}`,
         {
@@ -185,7 +185,7 @@ export const getActivitiesChart = createAsyncThunk(
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      return data;
+      return { data, last10Days: actionData.last10Days };
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -204,6 +204,7 @@ const initialState = {
   error: null,
   cards: null,
   cardsCount: null,
+  activities: null,
 };
 
 const statsSlice = createSlice({
@@ -241,8 +242,8 @@ const statsSlice = createSlice({
       state.loadingCardsChart = true;
     });
     builder.addCase(getCardsChart.fulfilled, (state, action) => {
-      const points = action.payload.data.data
-      const dates = action.payload.last10Days
+      const points = action.payload.data.data;
+      const dates = action.payload.last10Days;
       const combinedArray = dates.reduce((acc, date, index) => {
         return [...acc, { point: points[index], date: date }];
       }, []);
@@ -268,8 +269,13 @@ const statsSlice = createSlice({
       state.loadingActivitiesChart = true;
     });
     builder.addCase(getActivitiesChart.fulfilled, (state, action) => {
+      const points = action.payload.data.data;
+      const dates = action.payload.last10Days;
+      const combinedArray = dates.reduce((acc, date, index) => {
+        return [...acc, { point: points[index], date: date }];
+      }, []);
       state.loadingActivitiesChart = false;
-      state.activitiesChart = action.payload.data;
+      state.activitiesChart = combinedArray;
     });
     builder.addCase(getActivitiesChart.rejected, (state, action) => {
       state.loadingActivitiesChart = false;
