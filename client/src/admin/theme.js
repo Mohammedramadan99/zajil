@@ -40,6 +40,9 @@ export const tokensDark = {
     800: "#665429",
     900: "#332a14",
   },
+  light: {
+    1: "#874bbb30",
+  },
 };
 
 // function that reverses the color palette
@@ -83,7 +86,11 @@ export const themeSettings = (mode) => {
             background: {
               default: tokensDark.grey[1000],
               alt: tokensDark.grey[800],
-            },
+          },
+          light: {
+            ...tokensDark.light,
+            default:tokensDark.light[1]
+          }
           }
         : {
             // palette values for light mode
@@ -104,7 +111,11 @@ export const themeSettings = (mode) => {
             background: {
               default: tokensDark.grey[100],
               alt: tokensDark.grey[50],
-            },
+          },
+          light: {
+            ...tokensDark.light,
+            default:tokensDark.light[1]
+          }
           }),
     },
     transitions: {

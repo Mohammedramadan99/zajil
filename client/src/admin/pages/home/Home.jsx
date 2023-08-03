@@ -31,15 +31,27 @@ import {
   getCardsCount,
 } from "../../../store/statsSlice";
 import dayjs from "dayjs";
-import ActivitiesChart from "../../components/Charts/ActivitiesChart/ActivitiesChart";
+import ActivitiesChartPoints from "../../components/Charts/ActivitiesChart/ActivitiesChartPoints";
 import ActivitiesTable from "../../components/Home/Activities/ActivitiesTable";
+import BasicSelect from "../../components/Home/BasicSelect";
+import ActivitiesChart from "../../components/Home/Activities/ActivitiesChart";
+import CardsChart from "../../components/Home/CardsChart/CardsChart";
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { cardsCount, cardsChart, activitiesChart,activities } = useSelector(
+  const { businesses } = useSelector((state) => state.businesses);
+  const { activities } = useSelector(
     (state) => state.stats
   );
-  const [businessId, setBusinessId] = useState(2);
+  const [activitiesTableSelect, setActivitiesTableSelect] = useState(
+    businesses[0].id
+  );
+  const [activitiesChartSelect, setActivitiesChartSelect] = useState(
+    businesses[0].id
+  );
+
+  
+  const [businessId, setBusinessId] = useState(businesses[0].id);
   const cards = [
     {
       id: Math.floor(Math.random() * 100000) + 1,
@@ -70,14 +82,7 @@ function Home() {
       icon: <PaymentOutlined />,
     },
   ];
-
-  useEffect(() => {
-    dispatch(getCardsChart(Last10Days()));
-    dispatch(getActivitiesChart(Last10Days()));
-    dispatch(getActivities(businessId));
-  }, [dispatch]);
-
-  function Last10Days() {
+  function LastnDays(n) {
     // Create a new date object for today
     const today = dayjs();
 
@@ -85,7 +90,7 @@ function Home() {
     const last10Days = [];
 
     // Loop through the past 10 days, including today
-    for (let i = 9; i >= 0; i--) {
+    for (let i = n - 1; i >= 0; i--) {
       // Get the date for i days ago
       const date = today.subtract(i, "day");
 
@@ -96,11 +101,24 @@ function Home() {
     // Get the first and last day from the array
     const firstDay = last10Days[0];
     const lastDay = last10Days[last10Days.length - 1];
-    const nPoints = 10;
+    const nPoints = n;
 
     // Return the array and the first and last day variables
     return { last10Days, firstDay, lastDay, businessId, nPoints };
   }
+
+  useEffect(() => {
+    dispatch(getCardsChart(LastnDays(30)));
+  }, [dispatch,businessId]);
+
+  useEffect(() => {
+    const data = { ...LastnDays(10), businessId: activitiesChartSelect };
+    dispatch(getActivitiesChart(data));
+  }, [activitiesChartSelect]);
+
+  useEffect(() => {
+    dispatch(getActivities(activitiesTableSelect));
+  }, [activitiesTableSelect]);
 
   return (
     <Box
@@ -131,33 +149,20 @@ function Home() {
           ))}
         </Grid>
         <Grid xs={12} md={12} item>
-          <Typography
-            variant="body1"
-            sx={{ p: 2, color: theme.palette.primary[300] }}>
-            {" "}
-            Card Charts{" "}
-          </Typography>
-          <Card>
-            <CardContent sx={{ height: 500 }}>
-              <LineChart myData={cardsChart} />
-            </CardContent>
-          </Card>
+          <CardsChart businessId={businessId} setBusinessId={setBusinessId} />
         </Grid>
         <Grid xs={12} md={6} item>
-          <Typography
-            variant="body1"
-            sx={{ p: 2, color: theme.palette.primary[300] }}>
-            {" "}
-            Activities Charts{" "}
-          </Typography>
-          <Card>
-            <CardContent sx={{ height: 500 }}>
-              <ActivitiesChart myData={activitiesChart} />
-            </CardContent>
-          </Card>
+          <ActivitiesChart
+            activitiesChartSelect={activitiesChartSelect}
+            setActivitiesChartSelect={setActivitiesChartSelect}
+          />
         </Grid>
         <Grid xs={12} md={6} item>
-          {activities?.length > 0 && <ActivitiesTable data={activities} />}
+          <ActivitiesTable
+            activitiesTableSelect={activitiesTableSelect}
+            setActivitiesTableSelect={setActivitiesTableSelect}
+            data={activities}
+          />
         </Grid>
         <Grid xs={12} md={6} item>
           {/* <BarChartNoPadding /> */}

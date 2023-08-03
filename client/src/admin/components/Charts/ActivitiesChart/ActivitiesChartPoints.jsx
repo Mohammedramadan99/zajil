@@ -5,7 +5,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
 import { useTheme } from "@mui/material";
 
-const ActivitiesChart = ({ myData }) => {
+const ActivitiesChartPoints = ({ myData }) => {
   // const { themeValues } = useSelector((state) => state.settings);
   const theme = useTheme();
   const themeValues = {
@@ -137,4 +137,4 @@ const ActivitiesChart = ({ myData }) => {
   return <canvas ref={chartContainer} />;
 };
 
-export default React.memo(ActivitiesChart);
+export default React.memo(ActivitiesChartPoints);

@@ -15,7 +15,7 @@ const EnhancedTableHead = ({
     };
   };
   return (
-    <TableHead sx={{background:theme.palette.grey[800]}}>
+    <TableHead sx={{background:theme.palette.grey[800],width:"100%"}}>
       <TableRow>
         {headers.map((header) => (
           <TableCell key={header.id}>
