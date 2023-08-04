@@ -36,9 +36,6 @@ const ChartLine = ({ myData }) => {
       sync: {
         enabled: true,
       },
-      zoom: {
-        enabled: false,
-      },
       line: {
         // color: themeValues.separator,
         width: 1,
@@ -51,7 +48,8 @@ const ChartLine = ({ myData }) => {
     const values = []; // array to hold the values for y-axis
     myData?.forEach((item) => {
       const { point, date } = item;
-      const month = dayjs(date).month();
+      const month = dayjs(date).month() + 1;
+
       const day = dayjs(date).date();
       dates.push(`${day}/${month}`);
       values.push(point);
@@ -62,13 +60,13 @@ const ChartLine = ({ myData }) => {
         {
           label: "Cards",
           data: values,
-          // animations: {
-          //   y: {
-          //     duration: 1000,
-          //     delay: 0,
-          //   },
-          // },
-          fill: false,
+          animations: {
+            y: {
+              duration: 1000,
+              delay: 0,
+            },
+          },
+          fill: true,
           cubicInterpolationMode: "monotone",
           borderColor: themeValues.primary,
           borderWidth: 2,
@@ -85,12 +83,12 @@ const ChartLine = ({ myData }) => {
 
   const config = React.useMemo(() => {
     return {
-      type: "line",
+      type: "bar",
       plugins: [CrosshairPlugin, ChartDataLabels],
       options: {
-        layout: {
-          padding: 0,
-        },
+        // layout: {
+        //   padding: 0,
+        // },
         // animations: {
         //   y: {
         //     easing: "easeInOutElastic",
@@ -105,41 +103,10 @@ const ChartLine = ({ myData }) => {
         //   },
         // },
         showLine: true,
-        plugins: {
-          crosshair: Crosshair,
-          datalabels: false,
-          tooltip: ChartTooltipForCrosshair,
-          legend: false,
-          streaming: false,
-        },
+        
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          y: {
-            type: "linear",
-            grid: {
-              display: true,
-              lineWidth: 1,
-              // color: themeValues.separatorLight,
-              drawBorder: false,
-              drawTicks: true,
-            },
-            ticks: {
-              padding: 8,
-              stepSize: 1,
-              // fontColor: themeValues.alternate,
-            },
-          },
-          x: {
-            type: "category",
-            grid: {
-              display: false,
-              drawTicks: true,
-              drawBorder: true,
-            },
-            // ticks: { fontColor: themeValues.alternate },
-          },
-        },
+        
       },
       data,
     };

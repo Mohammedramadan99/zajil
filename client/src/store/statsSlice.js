@@ -63,7 +63,6 @@ export const getCardsChart = createAsyncThunk(
   "stats/cardsChart",
   async (actionData, { rejectWithValue, getState }) => {
     try {
-      console.log({ actionData });
       const { auth } = getState();
       const { user } = auth;
       const response = await fetch(

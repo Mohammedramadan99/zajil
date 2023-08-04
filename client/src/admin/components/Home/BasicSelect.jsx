@@ -13,7 +13,10 @@ function BasicSelect({ items, value, handleChange }) {
         variant="standard"
         onChange={handleChange}>
         {items?.map((item) => (
-          <MenuItem value={item.id}> {item.name} </MenuItem>
+          <MenuItem key={item.id} value={item.id}>
+            {" "}
+            {item.name}{" "}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

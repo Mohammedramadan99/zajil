@@ -23,7 +23,7 @@ function ShowCard({
   activeScanType,
   setImgColor,
   control,
-  activeSticker
+  activeSticker,stats
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -38,7 +38,7 @@ function ShowCard({
   // console.log("temp", template);
   // console.log("tempActiveSticker", template?.itemsSubscriptionCard?.nItems, tempActiveSticker?.length);
   return (
-    <Box mt={control ? 12 : "unset"}>
+    <Box mt={stats ? 0 : control ? 12 : "unset"}>
       {/* Card */}
       <Phone>
         <Stack

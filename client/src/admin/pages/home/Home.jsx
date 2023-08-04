@@ -36,22 +36,22 @@ import ActivitiesTable from "../../components/Home/Activities/ActivitiesTable";
 import BasicSelect from "../../components/Home/BasicSelect";
 import ActivitiesChart from "../../components/Home/Activities/ActivitiesChart";
 import CardsChart from "../../components/Home/CardsChart/CardsChart";
+import CardsSwiper from "../../components/Home/CardsSwiper/CardsSwiper";
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { businesses } = useSelector((state) => state.businesses);
-  const { activities } = useSelector(
-    (state) => state.stats
-  );
+  const { activities } = useSelector((state) => state.stats);
   const [activitiesTableSelect, setActivitiesTableSelect] = useState(
-    businesses[0].id
+    (businesses && businesses[0]?.id) || 1
   );
   const [activitiesChartSelect, setActivitiesChartSelect] = useState(
-    businesses[0].id
+    (businesses && businesses[0]?.id) || 1
   );
 
-  
-  const [businessId, setBusinessId] = useState(businesses[0].id);
+  const [businessId, setBusinessId] = useState(
+    (businesses && businesses[0]?.id) || 1
+  );
   const cards = [
     {
       id: Math.floor(Math.random() * 100000) + 1,
@@ -109,7 +109,7 @@ function Home() {
 
   useEffect(() => {
     dispatch(getCardsChart(LastnDays(30)));
-  }, [dispatch,businessId]);
+  }, [dispatch, businessId]);
 
   useEffect(() => {
     const data = { ...LastnDays(10), businessId: activitiesChartSelect };
@@ -117,8 +117,13 @@ function Home() {
   }, [activitiesChartSelect]);
 
   useEffect(() => {
-    dispatch(getActivities(activitiesTableSelect));
+      dispatch(getActivities(activitiesTableSelect));
+    
   }, [activitiesTableSelect]);
+  useEffect(() => {
+    dispatch(getCards());
+    
+  }, []);
 
   return (
     <Box
@@ -148,6 +153,9 @@ function Home() {
             </Grid>
           ))}
         </Grid>
+        <Grid xs={12} item>
+          <CardsSwiper />
+        </Grid>
         <Grid xs={12} md={12} item>
           <CardsChart businessId={businessId} setBusinessId={setBusinessId} />
         </Grid>
@@ -161,15 +169,15 @@ function Home() {
           <ActivitiesTable
             activitiesTableSelect={activitiesTableSelect}
             setActivitiesTableSelect={setActivitiesTableSelect}
-            data={activities}
+            data={activities || []}
           />
         </Grid>
         <Grid xs={12} md={6} item>
           {/* <BarChartNoPadding /> */}
         </Grid>
-        <Grid xs={12} md={6} item>
+        {/* <Grid xs={12} md={6} item>
           <OrdersTable data={orders} />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );

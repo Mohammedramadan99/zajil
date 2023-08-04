@@ -66,13 +66,14 @@ const ActivitiesTable = ({
         <Typography
           variant="body1"
           sx={{ p: 2, color: theme.palette.primary[300] }}>
-          Activities
+          Cards Activities
         </Typography>
         <Box sx={{ width: "150px", m: 2 }}>
           <BasicSelect
             handleChange={handleChange}
             value={activitiesTableSelect}
             items={businesses}
+            activitiesTable={true}
           />
         </Box>
       </Stack>
@@ -94,7 +95,7 @@ const ActivitiesTable = ({
               {sortTable(data, order, orderBy)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((item) => (
-                  <TableRow key={item.businessId} sx={{ width: "100px" }}>
+                  <TableRow key={item.id} sx={{ width: "100px" }}>
                     <TableCell
                       align="left"
                       sx={{
@@ -105,7 +106,7 @@ const ActivitiesTable = ({
                       }}>
                       {/* <Link to={`/admin/users/1`}> */}
                       <Stack direction={"row"} alignItems={"center"} gap={2}>
-                        {item.message.replace(
+                        {item?.message?.replace(
                           "ITEMS_SUBSCRIPTION",
                           "SUBSCRIPTION"
                         )}
@@ -126,7 +127,7 @@ const ActivitiesTable = ({
                       </Typography>
                     </TableCell>
                     <TableCell align="left" sx={{ borderColor: "transparent" }}>
-                      <Link to={`/admin/users/1`}>{item.card.clientName}</Link>
+                      <Link to={`/admin/users/1`}>{item?.card?.clientName}</Link>
                     </TableCell>
                     <TableCell align="left" sx={{ borderColor: "transparent" }}>
                       <Link to={`/admin/users/1`}>
