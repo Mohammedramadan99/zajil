@@ -32,6 +32,14 @@ export const createCardTemplate = async (
 
         const { cardType } = createCardTemplateDto;
 
+        // validate Loyalty Card Template Stickers
+        if (cardType === CardType.LOYALTY && createCardTemplateDto.stickers) {
+            // loyalty cards can only have one sticker
+            if (createCardTemplateDto.stickers.length > 1)
+                throw new HttpError(400, 'Loyalty cards can only have one sticker');
+            createCardTemplateDto.stickersCount = 1;
+        }
+
         // Create a base card template
         cardTemplate = await CardTemplate.create({
             name: createCardTemplateDto.name,
@@ -45,6 +53,10 @@ export const createCardTemplate = async (
             footerUrl: createCardTemplateDto.footerUrl || null,
             stripUrl: createCardTemplateDto.stripUrl || null,
             backgroundUrl: createCardTemplateDto.backgroundUrl || null,
+
+            // stickers
+            stickers: createCardTemplateDto.stickers,
+            stickersCount: createCardTemplateDto.stickersCount,
         });
 
         // create a folder in the public folder to store the card template files
@@ -80,8 +92,6 @@ export const createCardTemplate = async (
                     maxDailyUsage: createCardTemplateDto.maxDailyUsage,
                     subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
                     nItems: createCardTemplateDto.nItems,
-                    stickers: createCardTemplateDto.stickers,
-                    stickersCount: createCardTemplateDto.stickersCount,
                 });
                 break;
         }

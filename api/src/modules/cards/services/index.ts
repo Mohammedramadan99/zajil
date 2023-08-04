@@ -296,9 +296,6 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     loyaltyCard.points += template.pointsPerVisit;
     const newCard = await loyaltyCard.save();
 
-    // update the pass
-    await generatePassFromTemplate(cardId, card.templateId);
-
     // log activity
     await Activity.create({
         businessId: card.cardTemplate.businessId,
@@ -307,6 +304,11 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
         cardId: card.id,
         userId: user.id,
     });
+    card.canScan = false;
+    await card.save();
+
+    // update the pass
+    await generatePassFromTemplate(cardId, card.templateId);
 
     return newCard;
 };
@@ -346,6 +348,8 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
         cardId: loyaltyCard.id,
         userId: user.id,
     });
+    loyaltyCard.card.canScan = false;
+    await loyaltyCard.card.save();
 
     return loyaltyCard;
 };
@@ -572,8 +576,24 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
         where: {
             id: props.serialNumber,
         },
+        include: [
+            {
+                model: LoyaltyCard,
+                as: 'loyaltyCard',
+                required: false,
+            },
+        ],
     });
     if (!card) throw new HttpError(404, 'Card not found');
+
+    // if it is a loyalty card, and changed from cann't scan to can scan based on the activities, generate a new pass
+    if (card.loyaltyCanScan) {
+        const oldCanScan = card.canScan;
+        const canScanNow = await card.loyaltyCanScan();
+        if (oldCanScan === false && canScanNow === true) {
+            await generatePassFromTemplate(card.id, card.templateId);
+        }
+    }
 
     // load the pkpass file
     const pkpassBuffer = (await getFile(card.s3Key))?.Body as Buffer;

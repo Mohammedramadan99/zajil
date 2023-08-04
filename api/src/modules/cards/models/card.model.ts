@@ -3,7 +3,7 @@ import { StickerDto } from '../../card-templates/dto/create-card-template';
 import { CardTemplate } from '../../card-templates/models/card-template.model';
 import { LoyaltyCard } from './loyalty-card.model';
 import { ItemsSubscriptionCard } from './items-subscription-card.model';
-import { Activity } from '../../businesses/models/activity.model';
+import { Activity, ActivityType } from '../../businesses/models/activity.model';
 
 export class Card extends Model {
     public declare id: number;
@@ -15,7 +15,7 @@ export class Card extends Model {
     public s3Key: string;
     public s3Location: string;
 
-    // stickers
+    // choosen tickers
     public chosenStickers: StickerDto[];
 
     public readonly createdAt!: Date;
@@ -23,6 +23,43 @@ export class Card extends Model {
 
     // associations
     public readonly cardTemplate?: CardTemplate;
+
+    public canScan: boolean;
+
+    // methods
+    // for loyalty card, it has a 10 minutes cooldown
+    public loyaltyCanScan = async (): Promise<boolean> => {
+        let scannable: boolean = true;
+        const lastActivity = await Activity.findOne({
+            where: {
+                cardId: this.id,
+                type: ActivityType.SCAN_CARD,
+            },
+            order: [['createdAt', 'DESC']],
+        });
+        if (!lastActivity) {
+            scannable = true;
+
+            if (scannable != this.canScan) {
+                this.canScan = scannable;
+                await this.save();
+            }
+
+            return scannable;
+        }
+
+        const now = new Date();
+        const lastActivityDate = new Date(lastActivity.createdAt);
+        const diff = now.getTime() - lastActivityDate.getTime();
+        const diffMinutes = Math.ceil(diff / (1000 * 60));
+
+        if (scannable != this.canScan) {
+            this.canScan = scannable;
+            await this.save();
+        }
+
+        scannable = diffMinutes >= 10;
+    };
 }
 
 export const init = (sequelize: Sequelize) =>
@@ -64,6 +101,11 @@ export const init = (sequelize: Sequelize) =>
             s3Location: {
                 type: DataTypes.STRING,
                 allowNull: true,
+            },
+            canScan: {
+                type: DataTypes.BOOLEAN,
+                allowNull: true,
+                defaultValue: true,
             },
         },
         {

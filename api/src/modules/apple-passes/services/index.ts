@@ -1,12 +1,17 @@
 import { promises as fs, writeFileSync } from 'fs';
 import path from 'path';
 import { PKPass } from 'passkit-generator';
-import { generateStickersIfPossible, getCertificates, populateVariables } from '../utils';
+import {
+    getCertificates,
+    itemsSubGenerateStickersIfPossible,
+    loyaltyGenerateStickersIfPossible,
+    populateVariables,
+} from '../utils';
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
 import { getFile, s3LocationToKey } from '../../aws/s3';
-import { CardTemplate } from '../../card-templates/models/card-template.model';
+import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
 
 export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
     const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId);
@@ -94,13 +99,23 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
 
     // add strip image
     if (strip) {
+        let success = false;
+
         // generate stickers if possible
-        const success = await generateStickersIfPossible(
-            pass,
-            props.cardTemplateId,
-            Number(props.cardId),
-            strip.Body as Buffer,
-        );
+        if (cardTemplate.cardType === CardType.ITEMS_SUBSCRIPTION)
+            success = await itemsSubGenerateStickersIfPossible(
+                pass,
+                props.cardTemplateId,
+                Number(props.cardId),
+                strip.Body as Buffer,
+            );
+        else if (cardTemplate.cardType === CardType.LOYALTY)
+            success = await loyaltyGenerateStickersIfPossible(
+                pass,
+                props.cardTemplateId,
+                Number(props.cardId),
+                strip.Body as Buffer,
+            );
 
         if (!success) {
             pass.addBuffer('strip.png', strip.Body as Buffer);
