@@ -4,6 +4,7 @@ import { CardTemplate } from '../../card-templates/models/card-template.model';
 import { LoyaltyCard } from './loyalty-card.model';
 import { ItemsSubscriptionCard } from './items-subscription-card.model';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
+import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 
 export enum Gender {
     MALE = 'male',
@@ -46,12 +47,12 @@ export class Card extends Model {
         });
         if (!lastActivity) {
             scannable = true;
-        }else{
+        } else {
             const now = new Date();
             const lastActivityDate = new Date(lastActivity.createdAt);
             const diff = now.getTime() - lastActivityDate.getTime();
             const diffMinutes = Math.ceil(diff / (1000 * 60));
-            scannable = diffMinutes >= 10
+            scannable = diffMinutes >= 10;
         }
 
         if (scannable != this.canScan) {
@@ -59,7 +60,7 @@ export class Card extends Model {
             await this.save();
         }
 
-        return scannable
+        return scannable;
     };
 }
 

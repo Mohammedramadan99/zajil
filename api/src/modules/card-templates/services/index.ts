@@ -66,7 +66,7 @@ export const createCardTemplate = async (
                 await LoyaltyGift.bulkCreate(
                     createCardTemplateDto.gifts.map((gift) => ({
                         ...gift,
-                        templateId: cardTemplate.id,
+                        loyaltyCardTemplateId: cardTemplate.id,
                     })),
                 );
                 ``;
@@ -328,7 +328,7 @@ export const addGiftToLoyaltyCardTemplate = async (cardTemplateId: number, body:
     // create the gift
     const gift = await LoyaltyGift.create({
         ...body,
-        templateId: loyaltyCardTemplate.id,
+        loyaltyCardTemplateId: loyaltyCardTemplate.id,
     });
 
     return gift;
@@ -350,7 +350,7 @@ export const updateGiftInLoyaltyCardTemplate = async (
     const gift = await LoyaltyGift.findOne({
         where: {
             id: giftId,
-            templateId: loyaltyCardTemplate.id,
+            loyaltyCardTemplateId: loyaltyCardTemplate.id,
         },
     });
     if (!gift) throw new HttpError(404, 'Gift not found');
@@ -373,7 +373,7 @@ export const deleteGiftFromLoyaltyCardTemplate = async (cardTemplateId: number, 
     const gift = await LoyaltyGift.findOne({
         where: {
             id: giftId,
-            templateId: loyaltyCardTemplate.id,
+            loyaltyCardTemplateId: loyaltyCardTemplate.id,
         },
     });
     if (!gift) throw new HttpError(404, 'Gift not found');

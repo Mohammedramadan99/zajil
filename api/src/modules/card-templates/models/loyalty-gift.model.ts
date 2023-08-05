@@ -8,7 +8,6 @@ export class LoyaltyGift extends Model {
     public loyaltyCardTemplateId: number;
     public limitedAmount?: number;
     public priceNPoints: number;
-    public templateId: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -33,7 +32,7 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            templateId: {
+            loyaltyCardTemplateId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -47,7 +46,7 @@ export const init = (sequelize: Sequelize) =>
 export const associate = () => {
     // Loyal Card Template | Loyalty Gift
     LoyaltyGift.belongsTo(LoyaltyCardTemplate, {
-        foreignKey: 'templateId',
+        foreignKey: 'loyaltyCardTemplateId',
         as: 'loyaltyCardTemplate',
     });
 

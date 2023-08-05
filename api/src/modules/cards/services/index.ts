@@ -141,6 +141,8 @@ export const findAllCards = async ({
 };
 
 export const findOneCardById = async (cardId: number, req: RequestMod): Promise<any> => {
+    const userBusinessIds = req.user.businesses.map((b) => b.id);
+    const bussinessesUserWorksFor = req.user.employedAt.map((e) => e.businessId);
     return Card.findOne({
         where: {
             id: cardId,
@@ -150,12 +152,22 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                 model: CardTemplate,
                 as: 'cardTemplate',
                 required: true,
-
                 include: [
                     {
                         model: ItemsSubscriptionCardTemplate,
                         as: 'itemsSubscriptionCardTemplate',
                         required: false,
+                    },
+                    {
+                        model: LoyaltyCardTemplate,
+                        as: 'loyaltyCardTemplate',
+                        required: false,
+                        include: [
+                            {
+                                model: LoyaltyGift,
+                                as: 'loyaltyGifts',
+                            },
+                        ],
                     },
                 ],
             },
@@ -181,8 +193,6 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
         if (!row) throw new HttpError(404, 'Card not found');
 
         // check if the card business belongs to the user
-        const userBusinessIds = req.user.businesses.map((b) => b.id);
-        const bussinessesUserWorksFor = req.user.employedAt.map((e) => e.businessId);
         if (
             ![...userBusinessIds, ...bussinessesUserWorksFor].includes(
                 (row as Card & { cardTemplate: CardTemplate }).cardTemplate.businessId,
@@ -302,7 +312,7 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     await Activity.create({
         businessId: card.cardTemplate.businessId,
         message: `Card ${card.id} scanned, ${template.pointsPerVisit} points added`,
-        type: [ActivityType.SCAN_CARD],
+        types: [ActivityType.SCAN_CARD],
         relatedId: card.id,
         relatedType: 'card',
         userId: user.id,
@@ -468,7 +478,6 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     });
     if (!gift) throw new HttpError(404, 'Gift not found');
     const isGiftLimited = gift.limitedAmount !== null;
-    console.log(isGiftLimited);
 
     // check if the gift in stock
     if (isGiftLimited && gift.limitedAmount <= 0) throw new HttpError(400, 'Gift out of stock');
@@ -478,6 +487,15 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
 
     // subtract points
     loyaltyCard.points -= gift.priceNPoints;
+
+    loyaltyCard.redeemedLoyaltyGifts = [
+        ...loyaltyCard.redeemedLoyaltyGifts || [],
+        {
+            id: gift.id,
+            name: gift.name,
+            redeemedAt: new Date(),
+        },
+    ];
 
     // subtract gift from stock if limited
     if (isGiftLimited) {
@@ -489,7 +507,7 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     await Activity.create({
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
-        type: [ActivityType.SCAN_CARD, ActivityType.LOYALTY_GIFT_REDEEM],
+        types: [ActivityType.SCAN_CARD, ActivityType.LOYALTY_GIFT_REDEEM],
         relatedId: loyaltyCard.id,
         relatedType: 'card',
         userId: user.id,
