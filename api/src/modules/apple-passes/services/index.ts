@@ -15,9 +15,9 @@ import { CardTemplate, CardType } from '../../card-templates/models/card-templat
 
 export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
     const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId);
-    const folderPath = `card-templates/${props.cardTemplateId}`;
 
-    const [appleJSON, certificates] = await Promise.all([getFile(`${folderPath}/applePass.json`), getCertificates()]);
+    const appleJSON = cardTemplate.design;
+    const [certificates] = await Promise.all([getCertificates()]);
 
     // get images from the card template folder
     const [icon, logo, thumbnail, footer, strip, background] = await Promise.all([
@@ -30,7 +30,7 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
     ]);
 
     const appleJSONObj: IAppleCardProps = JSON.parse(
-        await populateVariables(appleJSON.Body.toString(), Number(props.cardId)),
+        await populateVariables(JSON.stringify(appleJSON), Number(props.cardId)),
     );
 
     const pass = new PKPass(

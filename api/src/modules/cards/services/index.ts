@@ -34,9 +34,8 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
 
     // Create a base card
     const card = await Card.create({
-        clientName: createCardDto.clientName,
-        clientPhone: createCardDto.clientPhone,
-        templateId: createCardDto.templateId,
+        ...createCardDto,
+        templateId: cardTemplate.id,
     });
 
     // Create a sub card based on the card type
@@ -77,6 +76,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
         type: ActivityType.CREATE_CARD,
         cardId: card.id,
     });
+    console.log(card);
 
     // combine the base card with the sub card in a single object
     return {
@@ -102,6 +102,7 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) 
             name: cardPath.split('/').pop(),
             data: passBuffer,
             contentType: 'application/vnd.apple.pkpass',
+            ContentDisposition: `attachment; filename=${cardPath.split('/').pop()}`,
         },
         cardPath.split('/').slice(0, -1).join('/'),
     );
@@ -266,15 +267,7 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     if (!card) throw new HttpError(404, 'Card not found');
 
     // Has to be a minimum of 10 minutes between scans
-    const lastScan = await Activity.findOne({
-        where: {
-            cardId: cardId,
-            type: ActivityType.SCAN_CARD,
-        },
-        order: [['createdAt', 'DESC']],
-    });
-    const now = new Date();
-    if (lastScan && now.getTime() - lastScan.createdAt.getTime() < 600000)
+    if (!(await card.loyaltyCanScan()))
         throw new HttpError(400, 'You can only add points to a card once every 10 minutes');
 
     const template = await LoyaltyCardTemplate.findOne({

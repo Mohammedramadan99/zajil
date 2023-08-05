@@ -21,12 +21,11 @@ export const createCardTemplate = async (
     // define variables to be used in the try catch block
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
     let cardTemplate: CardTemplate;
-    let cardTemplateFolderPath: string;
     let applePassDesign;
 
     try {
         /*
-         * create a  base card template
+         * create a base card template
          * then a sub card template based on the card type
          */
 
@@ -42,25 +41,12 @@ export const createCardTemplate = async (
 
         // Create a base card template
         cardTemplate = await CardTemplate.create({
-            name: createCardTemplateDto.name,
-            cardType: createCardTemplateDto.cardType,
+            ...createCardTemplateDto,
             businessId,
-
-            // images
-            logoUrl: createCardTemplateDto.logoUrl || null,
-            iconUrl: createCardTemplateDto.iconUrl || null,
-            thumbnailUrl: createCardTemplateDto.thumbnailUrl || null,
-            footerUrl: createCardTemplateDto.footerUrl || null,
-            stripUrl: createCardTemplateDto.stripUrl || null,
-            backgroundUrl: createCardTemplateDto.backgroundUrl || null,
-
-            // stickers
-            stickers: createCardTemplateDto.stickers,
-            stickersCount: createCardTemplateDto.stickersCount,
         });
 
         // create a folder in the public folder to store the card template files
-        [cardTemplateFolderPath, applePassDesign] = await createCardTemplateFolder({
+        [applePassDesign] = await generateDesignJson({
             cardTemplateId: cardTemplate.id,
             ...createCardTemplateDto,
         });
@@ -109,37 +95,20 @@ export const createCardTemplate = async (
         if (subCardTemplate) await subCardTemplate.destroy();
         // delete the base card template
         if (cardTemplate) await cardTemplate.destroy();
-        // delete the folder
-        if (cardTemplateFolderPath) await deleteFolder(cardTemplateFolderPath);
 
         // continue throwing the error
         throw error;
     }
 };
 
-const createCardTemplateFolder = async (
+const generateDesignJson = async (
     cardTemplateProps: CreateCardTemplateDto & { cardTemplateId: number },
-): Promise<[string, any]> => {
-    const {
-        cardTemplateId,
-        designType,
-        logoUrl,
-        iconUrl,
-        thumbnailUrl,
-        footerUrl,
-        stripUrl,
-        backgroundUrl,
-        qrCodeFormat,
-        ...rest
-    } = cardTemplateProps;
-    rest.stickers = rest.stickers || [];
-
-    // create a folder in the public folder to store the card template files
-    const cardTemplateFolderPath = `card-templates/${cardTemplateId}`;
+): Promise<[any]> => {
+    const { cardProps, designType, qrCodeFormat } = cardTemplateProps;
 
     // create JSON files for apple and google passes
     const applePassDesign = {
-        ...rest.cardProps,
+        ...cardProps,
         ...APPLE_PASS_PLACEHOLDER({
             serialNumber: 'SERIAL_NUMBER',
             description: 'Test Apple Wallet Card',
@@ -149,57 +118,8 @@ const createCardTemplateFolder = async (
             qrCodeFormat,
         }),
     };
-    const googlePassJsonPath = `${cardTemplateFolderPath}/googlePass.json`;
 
-    // create the apple pass json file
-    await uploadFile(
-        {
-            name: 'applePass.json',
-            data: Buffer.from(JSON.stringify(applePassDesign, null, 4)),
-            contentType: 'application/json',
-        },
-        cardTemplateFolderPath,
-    );
-
-    // create the google pass json file
-    await uploadFile(
-        {
-            name: 'googlePass.json',
-            data: Buffer.from('{}'),
-            contentType: 'application/json',
-        },
-        cardTemplateFolderPath,
-    );
-
-    // download the logo and icon images
-    const imagesToDownload = [
-        { url: logoUrl, path: 'logo.png' },
-        { url: iconUrl, path: 'icon.png' },
-        { url: thumbnailUrl, path: 'thumbnail.png' },
-        { url: footerUrl, path: 'footer.png' },
-        { url: stripUrl, path: 'strip.png' },
-        { url: backgroundUrl, path: 'background.png' },
-
-        // stickers
-        ...rest.stickers.map((stickerProps) => {
-            let fileName = `${stickerProps.title}.${stickerProps.imageType}`;
-
-            // if the url from s3, get the path from the url
-            if (stickerProps.imageUrl.includes(`https://${BUCKET_NAME}.s3`)) {
-                fileName = stickerProps.imageUrl.split('/').pop();
-            }
-
-            return {
-                url: stickerProps.imageUrl,
-                path: `stickers/${fileName}`,
-            };
-        }),
-    ]
-        .filter(({ url }) => url)
-        .map((image) => downloadImageToFolder(image.url, `${cardTemplateFolderPath}/${image.path}`));
-    await Promise.all(imagesToDownload);
-
-    return [cardTemplateFolderPath, applePassDesign];
+    return [applePassDesign];
 };
 
 export const findAllCardTemplates = async ({
@@ -253,7 +173,6 @@ export const updateCardTemplateById = async (
     // define variables to be used in the try catch block
     let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
     let cardTemplate: CardTemplate;
-    let cardTemplateFolderPath: string;
     let applePassDesign: any;
 
     /*
@@ -291,8 +210,8 @@ export const updateCardTemplateById = async (
         },
     });
 
-    // create a folder in the public folder to store the card template files
-    [cardTemplateFolderPath, applePassDesign] = await createCardTemplateFolder({
+    // generate the design JSON
+    [applePassDesign] = await generateDesignJson({
         cardTemplateId: cardTemplate.id,
         ...updateCardTemplateDto,
     });

@@ -42,6 +42,12 @@ export async function getCertificates(): Promise<Exclude<Cache['certificates'], 
     return cache.certificates;
 }
 
+/**
+ * Variables
+ * ---------
+ * {{name}} - client name
+ * {{points}} - loyalty points
+ **/
 export const populateVariables = async (str: string, cardId: number) => {
     // get card
     const card = (await Card.findOne({
@@ -56,6 +62,7 @@ export const populateVariables = async (str: string, cardId: number) => {
 
     const cardType = card.cardTemplate.cardType;
 
+    str = str.replace(/{{name}}/g, card.clientName);
     switch (cardType) {
         case CardType.LOYALTY:
             const loyaltyCard = await LoyaltyCard.findOne({
@@ -118,7 +125,7 @@ export const loyaltyGenerateStickersIfPossible = async (
     const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
     const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
 
-    let stickerToUse: Buffer = await card.loyaltyCanScan() ? highlightedSticker : bwSticker;
+    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? highlightedSticker : bwSticker;
 
     // composite stickers on the strip
     const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
