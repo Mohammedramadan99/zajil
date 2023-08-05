@@ -155,14 +155,14 @@ export class CreateCardTemplateDto {
     nItems: number;
 
     // stickers | on items subscription card type if there is a stripe image and there is noStickers
-    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl && o.stickersCount)
+    @ValidateIf((o) => [CardType.ITEMS_SUBSCRIPTION, CardType.LOYALTY].includes(o.cardType) && o.stripUrl && o.stickersCount)
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => StickerDto)
     stickers: StickerDto[];
 
     // noStickers | on items subscription card type if there is a stripe image
-    @ValidateIf((o) => o.cardType === CardType.ITEMS_SUBSCRIPTION && o.stripUrl)
+    @ValidateIf((o) => [CardType.ITEMS_SUBSCRIPTION].includes(o.cardType) && o.stripUrl)
     @IsOptional()
     @IsNumber()
     @Min(1)

@@ -8,6 +8,7 @@ import { UpdateCardDto } from '../dto/update-card';
 
 export const CardController: ICRUDController & {
     loyaltyAddPoints: (req: RequestMod, res: Response, next: NextFunction) => void;
+    loyaltyUpdatePoints: (req: RequestMod, res: Response, next: NextFunction) => void;
     loyaltyRedeemGift: (req: RequestMod, res: Response, next: NextFunction) => void;
     itemSubscriptionUse: (req: RequestMod, res: Response, next: NextFunction) => void;
     registerDevice: (req: RequestMod, res: Response, next: NextFunction) => void;
@@ -88,6 +89,20 @@ export const CardController: ICRUDController & {
 
         cardServices
             .loyaltyAddPoints(cardId, req.user)
+            .then((card) => res.json(card))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    loyaltyUpdatePoints: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+        const points = Number(req.body.points);
+
+        cardServices
+            .loyaltyUpdatePoints(cardId, points, req.user)
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
