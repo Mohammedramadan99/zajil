@@ -168,6 +168,13 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                 as: 'itemsSubscriptionCard',
                 required: false,
             },
+            {
+                model: Activity,
+                as: 'activities',
+                required: false,
+                limit: 10,
+                order: [['id', 'DESC']],
+            }
         ],
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
