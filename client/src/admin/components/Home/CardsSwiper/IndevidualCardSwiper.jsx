@@ -2,12 +2,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
 // import "swiper/css/effect-fade";
-// import "swiper/css/effect-flip";
+import "swiper/css/effect-flip";
 // import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import {
   Autoplay,
+  EffectCards,
+  EffectCoverflow,
+  EffectCreative,
+  EffectCube,
+  EffectFade,
+  EffectFlip,
   Navigation,
   Pagination,
 } from "swiper";
@@ -15,7 +21,7 @@ import { useSelector } from "react-redux";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import ShowCard from "../../Cards/Card/ShowCard";
 
-function CardsSwiper() {
+function IndevidualCardSwiper() {
   const theme = useTheme();
   const { cards } = useSelector((state) => state.stats);
   const params = {
@@ -29,12 +35,12 @@ function CardsSwiper() {
     breakpoints: {
       // when window width is >= 640px
       400: {
-        slidesPerView: 3,
+        slidesPerView: 1,
         spaceBetween: 5,
       },
       // when window width is >= 768px
       768: {
-        slidesPerView: 3,
+        slidesPerView: 1,
         spaceBetween: 20,
       },
     },
@@ -56,7 +62,7 @@ function CardsSwiper() {
       </Stack>
       <Swiper
         {...params}
-        modules={[Autoplay, Pagination, Navigation]}
+        modules={[Autoplay, EffectFlip, Pagination, Navigation]}
         navigation={true}
         effect="flip">
         {cards?.map((item, i) => (
@@ -88,4 +94,4 @@ function CardsSwiper() {
   );
 }
 
-export default CardsSwiper;
+export default IndevidualCardSwiper;

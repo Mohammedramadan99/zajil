@@ -23,7 +23,8 @@ function ShowCard({
   activeScanType,
   setImgColor,
   control,
-  activeSticker,stats
+  activeSticker,
+  stats,
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -33,8 +34,8 @@ function ShowCard({
     const box = boxRef.current;
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
-  const tempActiveSticker = activeSticker || []
-  const tempnItems = template?.itemsSubscriptionCard?.nItems || 0
+  const tempActiveSticker = activeSticker || [];
+  const tempnItems = template?.itemsSubscriptionCard?.nItems || 0;
   // console.log("temp", template);
   // console.log("tempActiveSticker", template?.itemsSubscriptionCard?.nItems, tempActiveSticker?.length);
   return (
@@ -49,13 +50,13 @@ function ShowCard({
           }}>
           <Box
             sx={{
-              width: "100%",
+              // width: "100%",
               minHeight: "90px",
               height: "100%",
               // background: `url(${template.stripUrl}) no-repeat`,
               backgroundSize: "cover",
               backgroundPosition: "cover",
-              paddingInline: "10px",
+              // paddingInline: "10px",
             }}>
             <Stack
               direction={"row"}
@@ -99,7 +100,7 @@ function ShowCard({
               {activeImg?.color && (
                 <img src={template.cardTemplate?.stripUrl} alt="" />
               )}
-              
+
               <div
                 className="stickers"
                 style={
@@ -130,13 +131,14 @@ function ShowCard({
                     </div>
                   </div>
                 ))}
-                {tempActiveSticker && tempActiveSticker?.map((item, i) => (
-                  <div className="sticker flex" key={i}>
-                    <div className="icon flex">
-                      <img src={item?.imageUrl} alt="" width={20} />
+                {tempActiveSticker &&
+                  tempActiveSticker?.map((item, i) => (
+                    <div className="sticker flex" key={i}>
+                      <div className="icon flex">
+                        <img src={item?.imageUrl} alt="" width={20} />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 {[...Array(tempnItems - tempActiveSticker?.length)].map(
                   (item, i) => (
                     <div className="sticker flex" key={i}>

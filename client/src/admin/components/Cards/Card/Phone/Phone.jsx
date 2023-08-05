@@ -9,12 +9,16 @@ function Phone({ children }) {
         position: "relative",
         // border: `5px solid ${theme.palette.grey[800]}`,
         // outline: `3px solid ${theme.palette.grey[900]}`,
-        border: `7px solid ${theme.palette.grey[900]}`,
+        border: `7px solid #000`,
         outline: `3px double ${theme.palette.grey[600]}`,
-        width: "300px",
+        maxWidth: "300px",
+        width:"100%",
+        marginLeft: "10px",
         minHeight: "550px",
         borderRadius: "20px",
-        background: `${theme.palette.grey[900]}`,
+        background: `#000`,
+        // for home page
+        margin:"auto",
         // background: `url(${backgroundImg}) center center`,
       }}>
       

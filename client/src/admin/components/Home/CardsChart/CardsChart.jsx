@@ -35,8 +35,8 @@ function CardsChart({ businessId, setBusinessId }) {
           />
         </Box>
       </Stack>
-      <Card>
-        <CardContent sx={{ height: 500 }}>
+      <Card >
+        <CardContent sx={{ height: "580px" }}>
           <LineChart myData={cardsChart} />
         </CardContent>
       </Card>

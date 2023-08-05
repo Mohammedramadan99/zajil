@@ -37,6 +37,7 @@ import BasicSelect from "../../components/Home/BasicSelect";
 import ActivitiesChart from "../../components/Home/Activities/ActivitiesChart";
 import CardsChart from "../../components/Home/CardsChart/CardsChart";
 import CardsSwiper from "../../components/Home/CardsSwiper/CardsSwiper";
+import IndevidualCardSwiper from "../../components/Home/CardsSwiper/IndevidualCardSwiper";
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -156,8 +157,11 @@ function Home() {
         <Grid xs={12} item>
           <CardsSwiper />
         </Grid>
-        <Grid xs={12} md={12} item>
+        <Grid xs={12} md={8} item>
           <CardsChart businessId={businessId} setBusinessId={setBusinessId} />
+        </Grid>
+        <Grid xs={12} md={4} item>
+          <IndevidualCardSwiper />
         </Grid>
         <Grid xs={12} md={6} item>
           <ActivitiesChart
