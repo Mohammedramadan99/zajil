@@ -1,5 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { LoyaltyCardTemplate } from './loyalty-card-template.model';
+import { Activity } from '../../businesses/models/activity.model';
 
 export class LoyaltyGift extends Model {
     public declare id: number;
@@ -48,5 +49,15 @@ export const associate = () => {
     LoyaltyGift.belongsTo(LoyaltyCardTemplate, {
         foreignKey: 'templateId',
         as: 'loyaltyCardTemplate',
+    });
+
+    // Loyalty Gift | Activity
+    LoyaltyGift.hasMany(Activity, {
+        foreignKey: 'relatedId',
+        as: 'activities',
+        constraints: false,
+        scope: {
+            relatedType: 'loyaltyGift',
+        },
     });
 };

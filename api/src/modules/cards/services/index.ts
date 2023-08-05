@@ -74,9 +74,9 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
         type: ActivityType.CREATE_CARD,
-        cardId: card.id,
+        relatedId: card.id,
+        relatedType: 'card',
     });
-    console.log(card);
 
     // combine the base card with the sub card in a single object
     return {
@@ -174,7 +174,7 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                 required: false,
                 limit: 10,
                 order: [['id', 'DESC']],
-            }
+            },
         ],
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
@@ -243,7 +243,8 @@ export const updateCardById = async (
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} updated`,
         type: ActivityType.UPDATE_CARD,
-        cardId: card.id,
+        relatedId: card.id,
+        relatedType: 'card',
     });
 
     return findOneCardById(cardId, req);
@@ -301,7 +302,8 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
         businessId: card.cardTemplate.businessId,
         message: `Card ${card.id} scanned, ${template.pointsPerVisit} points added`,
         type: ActivityType.SCAN_CARD,
-        cardId: card.id,
+        relatedId: card.id,
+        relatedType: 'card',
         userId: user.id,
     });
     card.canScan = false;
@@ -345,7 +347,8 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, ${value} points subtracted`,
         type: ActivityType.SCAN_CARD,
-        cardId: loyaltyCard.id,
+        relatedId: loyaltyCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
     loyaltyCard.card.canScan = false;
@@ -398,7 +401,8 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
         businessId: itemsSubscriptionCard.card.cardTemplate.businessId,
         message: `Card ${itemsSubscriptionCard.id} scanned, ${body.value} items used`,
         type: ActivityType.SCAN_CARD,
-        cardId: itemsSubscriptionCard.id,
+        relatedId: itemsSubscriptionCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
 
@@ -485,7 +489,8 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
         type: ActivityType.SCAN_CARD,
-        cardId: loyaltyCard.id,
+        relatedId: loyaltyCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
 

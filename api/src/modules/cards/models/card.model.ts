@@ -38,7 +38,8 @@ export class Card extends Model {
         let scannable: boolean = true;
         const lastActivity = await Activity.findOne({
             where: {
-                cardId: this.id,
+                relatedId: this.id,
+                relatedType: 'card',
                 type: ActivityType.SCAN_CARD,
             },
             order: [['createdAt', 'DESC']],
@@ -144,7 +145,12 @@ export const associate = () => {
 
     // Card | Activity
     Card.hasMany(Activity, {
-        foreignKey: 'cardId',
+        foreignKey: 'relatedId',
         as: 'activities',
+        onDelete: 'CASCADE',
+        constraints: false,
+        scope: {
+            relatedType: 'card',
+        },
     });
 };
