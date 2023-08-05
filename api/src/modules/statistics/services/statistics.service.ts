@@ -301,13 +301,12 @@ export const getCardsRewardsRedeemedChart = async (
     // look for messages of this format:  message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
     const activities = await Activity.findAll({
         where: {
-            message: {
-                [Op.like]: 'Card % scanned, gift % redeemed',
-            },
             createdAt: {
                 [Op.between]: [startDate, endDate],
             },
-            type: ActivityType.SCAN_CARD,
+            type: {
+                [Op.contains]: [ActivityType.SCAN_CARD, ActivityType.LOYALTY_GIFT_REDEEM],
+            },
         },
     });
 

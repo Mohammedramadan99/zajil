@@ -5,16 +5,29 @@ import { User } from '../../users/models/user.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 
 export enum ActivityType {
-    CREATE_CARD = 'create_card',
-    UPDATE_CARD = 'update_card',
-    SCAN_CARD = 'scan_card',
+    CREATE_CARD = 'CreateCard',
+    UPDATE_CARD = 'UpdateCard',
+    SCAN_CARD = 'ScanCard',
+
+    // Loyalty
+    LOYALTY_ADD_POINTS = 'LoyaltyAddPoints',
+    LOYALTY_UPDATE_POINTS = 'LoyaltyUpdatePoints',
+
+    // Loyalty Gift
+    LOYALTY_GIFT_CREATE = 'LoyaltyGiftCreate',
+    LOYALTY_GIFT_UPDATE = 'LoyaltyGiftUpdate',
+    LOYALTY_GIFT_DELETE = 'LoyaltyGiftDelete',
+    LOYALTY_GIFT_REDEEM = 'LoyaltyGiftRedeem',
+
+    // Items Subscriptions
+    ITEM_SUBSCRIPTION_USE = 'ItemSubscriptionUse',
 }
 
 export class Activity extends Model {
     public declare id: number;
     public businessId!: number;
     public message?: string;
-    public type!: ActivityType;
+    public types!: [ActivityType];
     public userId?: number;
     public relatedId?: number;
     public relatedType?: 'card' | 'loyaltyGift';
@@ -39,8 +52,8 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            type: {
-                type: DataTypes.STRING,
+            types: {
+                type: DataTypes.ARRAY(DataTypes.STRING),
                 allowNull: false,
             },
             userId: {

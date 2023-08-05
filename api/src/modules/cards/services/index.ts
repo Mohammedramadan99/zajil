@@ -18,6 +18,7 @@ import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
 import { Request } from 'express';
 import { getFile, uploadFile } from '../../aws/s3';
+import { Op } from 'sequelize';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -73,7 +74,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     await Activity.create({
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
-        type: ActivityType.CREATE_CARD,
+        types: [ActivityType.CREATE_CARD],
         relatedId: card.id,
         relatedType: 'card',
     });
@@ -242,7 +243,7 @@ export const updateCardById = async (
     await Activity.create({
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} updated`,
-        type: ActivityType.UPDATE_CARD,
+        type: [ActivityType.UPDATE_CARD],
         relatedId: card.id,
         relatedType: 'card',
     });
@@ -301,7 +302,7 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     await Activity.create({
         businessId: card.cardTemplate.businessId,
         message: `Card ${card.id} scanned, ${template.pointsPerVisit} points added`,
-        type: ActivityType.SCAN_CARD,
+        type: [ActivityType.SCAN_CARD],
         relatedId: card.id,
         relatedType: 'card',
         userId: user.id,
@@ -346,7 +347,7 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
     await Activity.create({
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, ${value} points subtracted`,
-        type: ActivityType.SCAN_CARD,
+        type: [ActivityType.SCAN_CARD],
         relatedId: loyaltyCard.id,
         relatedType: 'card',
         userId: user.id,
@@ -400,7 +401,7 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
     await Activity.create({
         businessId: itemsSubscriptionCard.card.cardTemplate.businessId,
         message: `Card ${itemsSubscriptionCard.id} scanned, ${body.value} items used`,
-        type: ActivityType.SCAN_CARD,
+        type: [ActivityType.SCAN_CARD],
         relatedId: itemsSubscriptionCard.id,
         relatedType: 'card',
         userId: user.id,
@@ -488,7 +489,7 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     await Activity.create({
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
-        type: ActivityType.SCAN_CARD,
+        type: [ActivityType.SCAN_CARD, ActivityType.LOYALTY_GIFT_REDEEM],
         relatedId: loyaltyCard.id,
         relatedType: 'card',
         userId: user.id,

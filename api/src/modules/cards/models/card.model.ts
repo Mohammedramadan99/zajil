@@ -40,7 +40,7 @@ export class Card extends Model {
             where: {
                 relatedId: this.id,
                 relatedType: 'card',
-                type: ActivityType.SCAN_CARD,
+                types: [ActivityType.SCAN_CARD],
             },
             order: [['createdAt', 'DESC']],
         });
