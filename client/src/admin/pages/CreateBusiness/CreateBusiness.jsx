@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import CreateBusinessForm from "../../../admin/components/CreateBusiness/CreateBusinessForm";
 import useBusiness from "../../../hooks/useBusiness";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {toast} from 'react-toastify'
@@ -34,4 +34,4 @@ function CreateBusiness() {
   );
 }
 
-export default CreateBusiness;
+export default memo(CreateBusiness);

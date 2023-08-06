@@ -1,5 +1,5 @@
 import { Box, Container, useTheme } from "@mui/material";
-import React from "react";
+import React, { memo } from "react";
 
 import QRscanner from "../../components/Qrcode/QRscanner";
 
@@ -22,4 +22,4 @@ function Scan() {
   );
 }
 
-export default Scan;
+export default memo(Scan);

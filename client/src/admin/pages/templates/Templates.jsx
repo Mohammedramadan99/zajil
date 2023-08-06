@@ -7,7 +7,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { getBusinesses } from "../../../store/businessSlice";
-function Cards() {
+function Templates() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -129,4 +129,4 @@ function Cards() {
   );
 }
 
-export default Cards;
+export default memo(Templates);

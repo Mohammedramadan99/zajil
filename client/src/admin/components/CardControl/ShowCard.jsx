@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
 import Phone from "./Phone/Phone";
 import qrcode from "../../../assets/images/qrcode.png";
 
@@ -243,4 +243,4 @@ function ShowCard({
   );
 }
 
-export default ShowCard;
+export default memo(ShowCard);

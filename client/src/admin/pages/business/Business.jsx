@@ -1,5 +1,5 @@
 import { Box, Container, Grid, useTheme } from "@mui/material";
-import React from "react";
+import React, { memo } from "react";
 import BusinessSide from "../../components/Business/BusinessSide/BusinessSide";
 import BranchSide from "../../components/Business/BranchSide/BranchSide";
 
@@ -26,4 +26,4 @@ function Business() {
   );
 }
 
-export default Business;
+export default memo(Business);

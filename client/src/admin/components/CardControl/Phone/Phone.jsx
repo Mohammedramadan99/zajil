@@ -1,5 +1,5 @@
 import { Box, Stack, useTheme } from "@mui/material";
-import React from "react";
+import {memo} from "react";
 import backgroundImg from "../../../../assets/images/background.webp";
 function Phone({ children }) {
   const theme = useTheme();
@@ -49,4 +49,4 @@ function Phone({ children }) {
   );
 }
 
-export default Phone;
+export default memo(Phone);

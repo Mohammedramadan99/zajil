@@ -2,8 +2,9 @@ import { Box, Button, Dialog, DialogTitle, Typography } from "@mui/material";
 import QrCodeGenerator from "../Qrcode/QrcodeGenerator";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { memo } from "react";
 
-export default function SimpleDialog(props) {
+export function SimpleDialog(props) {
   const { setOpen, open, url } = props;
   const navigate = useNavigate();
   const handleClose = () => {
@@ -21,3 +22,4 @@ export default function SimpleDialog(props) {
     </Dialog>
   );
 }
+export default memo(SimpleDialog);

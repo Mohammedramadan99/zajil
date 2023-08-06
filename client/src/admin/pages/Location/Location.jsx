@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react";
 import { Box, Container, Grid, Stack } from "@mui/material";
 import LocationForm from "../../components/Location/LocationForm";
 import Card from "../../components/Cards/Card/Card";
+import { memo } from "react";
 
 function Location() {
   const theme = useTheme();
@@ -36,4 +37,4 @@ function Location() {
   );
 }
 
-export default Location;
+export default memo(Location);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -187,4 +187,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default memo(Home);

@@ -19,7 +19,7 @@ import {
 } from "swiper";
 import { useSelector } from "react-redux";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
-import ShowCard from "../../Cards/Card/ShowCard";
+import ShowCard from "../../CardControl/ShowCard";
 
 function IndevidualCardSwiper() {
   const theme = useTheme();

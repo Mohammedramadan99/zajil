@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import React from "react";
+import React, { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActivitiesChartPoints from "../../Charts/ActivitiesChart/ActivitiesChartPoints";
 import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
@@ -44,4 +44,4 @@ function ActivitiesChart({ activitiesChartSelect, setActivitiesChartSelect }) {
   );
 }
 
-export default ActivitiesChart;
+export default memo(ActivitiesChart);

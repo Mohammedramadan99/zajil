@@ -13,7 +13,8 @@ import {
 } from "swiper";
 import { useSelector } from "react-redux";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
-import ShowCard from "../../Cards/Card/ShowCard";
+import ShowCard from "../../CardControl/ShowCard";
+import { memo } from "react";
 
 function CardsSwiper() {
   const theme = useTheme();
@@ -88,4 +89,4 @@ function CardsSwiper() {
   );
 }
 
-export default CardsSwiper;
+export default memo(CardsSwiper);

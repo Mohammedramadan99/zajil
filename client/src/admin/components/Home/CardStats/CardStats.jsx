@@ -8,6 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { ArrowUpward, StorefrontOutlined } from "@mui/icons-material";
+import { memo } from "react";
 
 function CardStats() {
   const theme = useTheme();
@@ -59,4 +60,4 @@ function CardStats() {
   );
 }
 
-export default CardStats;
+export default memo(CardStats);
