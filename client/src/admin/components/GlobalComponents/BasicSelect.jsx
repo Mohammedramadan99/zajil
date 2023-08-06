@@ -7,7 +7,7 @@ import Select from "@mui/material/Select";
 export default function BasicSelect({ options, onChange, value }) {
   return (
     <div>
-      <FormControl sx={{  minWidth: 80,width:"100%" }}>
+      <FormControl sx={{ minWidth: 80, width: "100%" }}>
         <InputLabel id="demo-simple-select-autowidth-label">Gender</InputLabel>
         <Select
           labelId="demo-simple-select-autowidth-label"
@@ -15,14 +15,15 @@ export default function BasicSelect({ options, onChange, value }) {
           name="gender"
           value={value}
           onChange={onChange}
-                  autoWidth={false}
+          autoWidth={false}
           label="Gender">
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
+
           {options?.map((option, i) => (
-            <MenuItem key={i} value={option}>
-              {option}
+            <MenuItem
+              key={i}
+              value={option}
+              sx={{ textTransform: "capitalize" }}>
+              <span style={{textTransform:"capitalize"}}>{option}</span>
             </MenuItem>
           ))}
         </Select>

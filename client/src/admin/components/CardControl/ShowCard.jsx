@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import Phone from "./Phone/Phone";
-import cardBg_1 from "../../../../assets/images/card_bg_1.jpg";
-import qrcode from "../../../../assets/images/qrcode.png";
+import qrcode from "../../../assets/images/qrcode.png";
 
 import {
   Box,
@@ -12,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import Dialog from "../../../components/Templates/Dialog";
+import Dialog from "../Templates/Dialog";
 
 function ShowCard({
   template,
@@ -44,7 +43,7 @@ function ShowCard({
       <Phone>
         <Stack
           sx={{
-            background: template?.design?.backgroundColor,
+            background: template.cardTemplate?.design?.backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
           }}>
@@ -64,9 +63,9 @@ function ShowCard({
               alignItems={"center"}
               justifyContent={"space-between"}>
               <Box>
-                {template.logoUrl && (
+                {template.cardTemplate?.logoUrl && (
                   <img
-                    src={template?.logoUrl}
+                    src={template?.cardTemplate?.logoUrl}
                     id="photo"
                     width={30}
                     height={30}
@@ -86,10 +85,10 @@ function ShowCard({
               mt={2}
               flexWrap={"wrap"}
               sx={
-                template.stripUrl
+                template.cardTemplate?.stripUrl
                   ? {
                       position: "relative",
-                      backgroundImage: `url(${template.stripUrl})`,
+                      backgroundImage: `url(${template.cardTemplate?.stripUrl})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                     }
@@ -98,7 +97,7 @@ function ShowCard({
                     }
               }>
               {activeImg?.color && (
-                <img src={template.stripUrl} alt="" />
+                <img src={template.cardTemplate?.stripUrl} alt="" />
               )}
 
               <div
@@ -145,7 +144,7 @@ function ShowCard({
                       <div className="icon flex">
                         {/* <img
                         src={
-                          template.itemsSubscriptionstickers[i]
+                          template.itemsSubscriptionCardTemplate?.stickers[i]
                             .imageUrl
                         }
                         alt=""
@@ -168,21 +167,21 @@ function ShowCard({
               <Typography
                 variant={"body2"}
                 fontWeight={600}
-                color={template.design.labelColor}>
+                color={template.cardTempalate?.design.labelColor}>
                 {" "}
                 Name{" "}
               </Typography>
               <Typography
                 variant={"body2"}
-                color={template.design.labelColor}>
-                {template?.name}
+                color={template.cardTemplate?.design.labelColor}>
+                {template?.cardTemplate?.name}
               </Typography>
             </Box>
           </Box>
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            color={template.design.labelColor}
+            color={template.cardTemplate?.design.labelColor}
             px={2}
             mb={2}
             gap={2}>

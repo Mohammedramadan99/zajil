@@ -151,10 +151,9 @@ const authSlice = createSlice({
     });
     builder.addCase(loginAction.rejected, (state, action) => {
       state.loading = false;
-      state.errors = action.payload?.errors;
       state.user = null;
       state.errorMessage =
-        action.payload.message ||
+        action.payload ||
         "An unknown error occurred. Please try again later.";
     });
     builder.addCase(logoutAction.pending, (state, action) => {

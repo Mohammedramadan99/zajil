@@ -210,6 +210,7 @@ const cardSlice = createSlice({
     builder.addCase(createCard.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
+      state.errorMessage = action.payload
     });
     builder.addCase(getCards.pending, (state, action) => {
       state.loading = true;

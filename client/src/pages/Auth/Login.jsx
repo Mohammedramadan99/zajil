@@ -60,7 +60,7 @@ function Login() {
         <form onSubmit={formik.handleSubmit}>
           {errors && (
             <Alert severity="error" sx={{ marginBottom: 4 }}>
-              {errors.map((error) => {
+              {errors?.map((error) => {
                 return Object.keys(error).map((key) => {
                   return error[key].map((errorerrorMessage, index) => (
                     <div className="error" key={`${key}-${index}`}>

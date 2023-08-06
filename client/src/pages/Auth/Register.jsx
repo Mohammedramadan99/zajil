@@ -41,11 +41,10 @@ function Register() {
       dispatch(registerAction(data));
     },
   });
-  useEffect(() => {
-    dispatch(reset());
-  }, []);
+
   if (successMessage) {
     navigate("/auth/login");
+    dispatch(reset());
   }
   return (
     <div className="auth_page">

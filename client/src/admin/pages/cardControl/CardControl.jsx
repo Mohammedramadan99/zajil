@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getCardDetails } from "../../../store/CardSlice";
 import { useParams } from "react-router-dom";
-import ShowCard from "../../components/Cards/Card/ShowCard";
+import ShowCard from "../../components/CardControl/ShowCard";
 import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
 
 function CardControl() {
