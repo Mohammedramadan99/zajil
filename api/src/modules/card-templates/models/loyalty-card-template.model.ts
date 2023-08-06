@@ -36,7 +36,7 @@ export const associate = () => {
 
     // Loyalty Card Template | Loyalty Gift
     LoyaltyCardTemplate.hasMany(LoyaltyGift, {
-        foreignKey: 'templateId',
+        foreignKey: 'loyaltyCardTemplateId',
         as: 'loyaltyGifts',
         onDelete: 'CASCADE',
     });

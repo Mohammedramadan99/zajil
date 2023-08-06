@@ -42,6 +42,12 @@ export async function getCertificates(): Promise<Exclude<Cache['certificates'], 
     return cache.certificates;
 }
 
+/**
+ * Variables
+ * ---------
+ * {{name}} - client name
+ * {{points}} - loyalty points
+ **/
 export const populateVariables = async (str: string, cardId: number) => {
     // get card
     const card = (await Card.findOne({
@@ -56,6 +62,7 @@ export const populateVariables = async (str: string, cardId: number) => {
 
     const cardType = card.cardTemplate.cardType;
 
+    str = str.replace(/{{name}}/g, card.clientName);
     switch (cardType) {
         case CardType.LOYALTY:
             const loyaltyCard = await LoyaltyCard.findOne({
@@ -69,7 +76,79 @@ export const populateVariables = async (str: string, cardId: number) => {
     return str;
 };
 
-export const generateStickersIfPossible = async (
+export const loyaltyGenerateStickersIfPossible = async (
+    pass: PKPass,
+    cardTemplateId: number,
+    cardId: number,
+    stripBuffer: Buffer,
+) => {
+    // get card template
+    const cardTemplate = await CardTemplate.findOne({
+        where: { id: cardTemplateId },
+    });
+    // return if not an items subscription card template
+    if (cardTemplate.cardType !== CardType.LOYALTY) return;
+
+    // check for stickers and stickersCount
+    if (!cardTemplate.stickers) return;
+
+    // get card
+    const card = await Card.findOne({
+        where: { id: cardId },
+    });
+    if (!card) throw new Error('Card not found');
+
+    const stripWidth = 1125;
+    const stripHeight = 432;
+    const margin = 0.1;
+    const innerStripWidth = stripWidth * (1 - margin * 2);
+    const innerStripHeight = stripHeight * (1 - margin * 2);
+
+    const stickersPerRow = 1;
+    const numberOfRows = 1;
+
+    const stickerSize = Math.min(innerStripWidth / stickersPerRow, innerStripHeight / numberOfRows);
+    const stickerCellWidth = innerStripWidth / stickersPerRow;
+    const stickerVerticalMargin = 5;
+
+    // get sticker buffer
+    const stickerBuffer = await getFile(
+        cardTemplate.stickers[0].imageUrl.includes(`https://${BUCKET_NAME}.s3`)
+            ? s3LocationToKey(cardTemplate.stickers[0].imageUrl)
+            : `card-templates/${cardTemplateId}/stickers/${cardTemplate.stickers[0].title}.${cardTemplate.stickers[0].imageType}`,
+    )
+        .then((out) => out.Body)
+        .catch((err) => {
+            console.error(err);
+        });
+
+    const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
+    const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
+
+    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? highlightedSticker : bwSticker;
+
+    // composite stickers on the strip
+    const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
+        numberOfRows,
+        stickersPerRow,
+        1,
+        [stickerToUse],
+        stickerToUse,
+        stripHeight,
+        stickerSize,
+        stickerVerticalMargin,
+        margin,
+        stickerCellWidth,
+        stripWidth,
+    );
+
+    // render stickers on the strip
+    await rednerSticckersOnStrip(pass, stripBuffer, stripWidth, stripHeight, compositeOperations);
+
+    return true;
+};
+
+export const itemsSubGenerateStickersIfPossible = async (
     pass: PKPass,
     cardTemplateId: number,
     cardId: number,
@@ -82,13 +161,8 @@ export const generateStickersIfPossible = async (
     // return if not an items subscription card template
     if (cardTemplate.cardType !== CardType.ITEMS_SUBSCRIPTION) return;
 
-    // get the items subscription card template
-    const itemsSubscriptionCardTemplate = await ItemsSubscriptionCardTemplate.findOne({
-        where: { id: cardTemplateId },
-    });
-
     // check for stickers and stickersCount
-    if (!itemsSubscriptionCardTemplate.stickers || !itemsSubscriptionCardTemplate.stickersCount) return;
+    if (!cardTemplate.stickers || !cardTemplate.stickersCount) return;
 
     // get card
     const card = await Card.findOne({
@@ -98,8 +172,7 @@ export const generateStickersIfPossible = async (
 
     const chosenStickers = card.chosenStickers || [];
 
-    const stickers = itemsSubscriptionCardTemplate.stickers;
-    const stickersCount = itemsSubscriptionCardTemplate.stickersCount;
+    const stickersCount = cardTemplate.stickersCount;
 
     const stripWidth = 1125;
     const stripHeight = 432;
@@ -117,6 +190,7 @@ export const generateStickersIfPossible = async (
     const stickerCellWidth = innerStripWidth / stickersPerRow;
     const stickerVerticalMargin = 5;
 
+    // find choosen stickers
     const choosenStickerBuffers = await Promise.all(
         chosenStickers.map(
             async (sticker) =>
@@ -137,6 +211,7 @@ export const generateStickersIfPossible = async (
         ),
     );
 
+    // generate placeholder sticker
     const stickerPlaceholderBuffer = await handleStickerSharpToBuffer(
         sharp({
             create: {
@@ -149,8 +224,42 @@ export const generateStickersIfPossible = async (
         stickerSize,
     );
 
-    const compositeOperations: OverlayOptions[] = [];
+    // composite stickers on the strip
+    const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
+        numberOfRows,
+        stickersPerRow,
+        stickersCount,
+        choosenStickerBuffers,
+        stickerPlaceholderBuffer,
+        stripHeight,
+        stickerSize,
+        stickerVerticalMargin,
+        margin,
+        stickerCellWidth,
+        stripWidth,
+    );
 
+    // render stickers on the strip
+    await rednerSticckersOnStrip(pass, stripBuffer, stripWidth, stripHeight, compositeOperations);
+
+    return true;
+};
+
+export const compositeStickersOnStrip = async (
+    numberOfRows: number,
+    stickersPerRow: number,
+    stickersCount: number,
+    choosenStickerBuffers: Buffer[],
+    stickerPlaceholderBuffer: Buffer,
+    stripHeight: number,
+    stickerSize: number,
+    stickerVerticalMargin: number,
+    margin: number,
+    stickerCellWidth: number,
+    stripWidth: number,
+) => {
+    // composite stickers on the strip
+    const compositeOperations: OverlayOptions[] = [];
     for (let row = 0; row < numberOfRows; row++) {
         for (let column = 0; column < stickersPerRow; column++) {
             const index = row * stickersPerRow + column;
@@ -174,8 +283,18 @@ export const generateStickersIfPossible = async (
         }
     }
 
+    return compositeOperations;
+};
+
+const rednerSticckersOnStrip = (
+    pass: PKPass,
+    stripBuffer: Buffer,
+    stripWidth: number,
+    stripHeight: number,
+    compositeOperations: OverlayOptions[],
+) => {
     // render stickers on the strip
-    await sharp(stripBuffer)
+    return sharp(stripBuffer)
         .resize(Math.round(stripWidth), Math.round(stripHeight))
         .composite(compositeOperations)
         .toBuffer()
@@ -183,15 +302,13 @@ export const generateStickersIfPossible = async (
             pass.addBuffer('strip.png', buffer);
             pass.addBuffer('strip@2x.png', buffer);
 
-            // remove at the end
-            writeFileSync('test.png', buffer);
+            // write to file
+            // writeFileSync('strip.png', buffer);
         })
         .catch((err) => {
             console.error(err);
             throw err;
         });
-
-    return true;
 };
 
 const handleStickerSharpToBuffer = async (x: Sharp, stickerSize: number) => {

@@ -18,6 +18,7 @@ import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { User } from '../../users/models/user.model';
 import { Request } from 'express';
 import { getFile, uploadFile } from '../../aws/s3';
+import { Op } from 'sequelize';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -34,9 +35,8 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
 
     // Create a base card
     const card = await Card.create({
-        clientName: createCardDto.clientName,
-        clientPhone: createCardDto.clientPhone,
-        templateId: createCardDto.templateId,
+        ...createCardDto,
+        templateId: cardTemplate.id,
     });
 
     // Create a sub card based on the card type
@@ -74,8 +74,9 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     await Activity.create({
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} created of type ${cardTemplate.cardType}`,
-        type: ActivityType.CREATE_CARD,
-        cardId: card.id,
+        types: [ActivityType.CREATE_CARD],
+        relatedId: card.id,
+        relatedType: 'card',
     });
 
     // combine the base card with the sub card in a single object
@@ -102,6 +103,7 @@ const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) 
             name: cardPath.split('/').pop(),
             data: passBuffer,
             contentType: 'application/vnd.apple.pkpass',
+            ContentDisposition: `attachment; filename=${cardPath.split('/').pop()}`,
         },
         cardPath.split('/').slice(0, -1).join('/'),
     );
@@ -139,6 +141,8 @@ export const findAllCards = async ({
 };
 
 export const findOneCardById = async (cardId: number, req: RequestMod): Promise<any> => {
+    const userBusinessIds = req.user.businesses.map((b) => b.id);
+    const bussinessesUserWorksFor = req.user.employedAt.map((e) => e.businessId);
     return Card.findOne({
         where: {
             id: cardId,
@@ -148,12 +152,22 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                 model: CardTemplate,
                 as: 'cardTemplate',
                 required: true,
-
                 include: [
                     {
                         model: ItemsSubscriptionCardTemplate,
                         as: 'itemsSubscriptionCardTemplate',
                         required: false,
+                    },
+                    {
+                        model: LoyaltyCardTemplate,
+                        as: 'loyaltyCardTemplate',
+                        required: false,
+                        include: [
+                            {
+                                model: LoyaltyGift,
+                                as: 'loyaltyGifts',
+                            },
+                        ],
                     },
                 ],
             },
@@ -167,13 +181,18 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                 as: 'itemsSubscriptionCard',
                 required: false,
             },
+            {
+                model: Activity,
+                as: 'activities',
+                required: false,
+                limit: 10,
+                order: [['id', 'DESC']],
+            },
         ],
     }).then((row) => {
         if (!row) throw new HttpError(404, 'Card not found');
 
         // check if the card business belongs to the user
-        const userBusinessIds = req.user.businesses.map((b) => b.id);
-        const bussinessesUserWorksFor = req.user.employedAt.map((e) => e.businessId);
         if (
             ![...userBusinessIds, ...bussinessesUserWorksFor].includes(
                 (row as Card & { cardTemplate: CardTemplate }).cardTemplate.businessId,
@@ -234,8 +253,9 @@ export const updateCardById = async (
     await Activity.create({
         businessId: cardTemplate.businessId,
         message: `Card ${card.id} updated`,
-        type: ActivityType.UPDATE_CARD,
-        cardId: card.id,
+        type: [ActivityType.UPDATE_CARD],
+        relatedId: card.id,
+        relatedType: 'card',
     });
 
     return findOneCardById(cardId, req);
@@ -266,15 +286,7 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     if (!card) throw new HttpError(404, 'Card not found');
 
     // Has to be a minimum of 10 minutes between scans
-    const lastScan = await Activity.findOne({
-        where: {
-            cardId: cardId,
-            type: ActivityType.SCAN_CARD,
-        },
-        order: [['createdAt', 'DESC']],
-    });
-    const now = new Date();
-    if (lastScan && now.getTime() - lastScan.createdAt.getTime() < 600000)
+    if (!(await card.loyaltyCanScan()))
         throw new HttpError(400, 'You can only add points to a card once every 10 minutes');
 
     const template = await LoyaltyCardTemplate.findOne({
@@ -296,17 +308,20 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     loyaltyCard.points += template.pointsPerVisit;
     const newCard = await loyaltyCard.save();
 
-    // update the pass
-    await generatePassFromTemplate(cardId, card.templateId);
-
     // log activity
     await Activity.create({
         businessId: card.cardTemplate.businessId,
         message: `Card ${card.id} scanned, ${template.pointsPerVisit} points added`,
-        type: ActivityType.SCAN_CARD,
-        cardId: card.id,
+        types: [ActivityType.SCAN_CARD],
+        relatedId: card.id,
+        relatedType: 'card',
         userId: user.id,
     });
+    card.canScan = false;
+    await card.save();
+
+    // update the pass
+    await generatePassFromTemplate(cardId, card.templateId);
 
     return newCard;
 };
@@ -342,10 +357,13 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
     await Activity.create({
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, ${value} points subtracted`,
-        type: ActivityType.SCAN_CARD,
-        cardId: loyaltyCard.id,
+        type: [ActivityType.SCAN_CARD],
+        relatedId: loyaltyCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
+    loyaltyCard.card.canScan = false;
+    await loyaltyCard.card.save();
 
     return loyaltyCard;
 };
@@ -393,8 +411,9 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
     await Activity.create({
         businessId: itemsSubscriptionCard.card.cardTemplate.businessId,
         message: `Card ${itemsSubscriptionCard.id} scanned, ${body.value} items used`,
-        type: ActivityType.SCAN_CARD,
-        cardId: itemsSubscriptionCard.id,
+        type: [ActivityType.SCAN_CARD],
+        relatedId: itemsSubscriptionCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
 
@@ -459,7 +478,6 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     });
     if (!gift) throw new HttpError(404, 'Gift not found');
     const isGiftLimited = gift.limitedAmount !== null;
-    console.log(isGiftLimited);
 
     // check if the gift in stock
     if (isGiftLimited && gift.limitedAmount <= 0) throw new HttpError(400, 'Gift out of stock');
@@ -469,6 +487,15 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
 
     // subtract points
     loyaltyCard.points -= gift.priceNPoints;
+
+    loyaltyCard.redeemedLoyaltyGifts = [
+        ...loyaltyCard.redeemedLoyaltyGifts || [],
+        {
+            id: gift.id,
+            name: gift.name,
+            redeemedAt: new Date(),
+        },
+    ];
 
     // subtract gift from stock if limited
     if (isGiftLimited) {
@@ -480,8 +507,9 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     await Activity.create({
         businessId: loyaltyCard.card.cardTemplate.businessId,
         message: `Card ${loyaltyCard.id} scanned, gift ${gift.name} redeemed`,
-        type: ActivityType.SCAN_CARD,
-        cardId: loyaltyCard.id,
+        types: [ActivityType.SCAN_CARD, ActivityType.LOYALTY_GIFT_REDEEM],
+        relatedId: loyaltyCard.id,
+        relatedType: 'card',
         userId: user.id,
     });
 
@@ -572,8 +600,24 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
         where: {
             id: props.serialNumber,
         },
+        include: [
+            {
+                model: LoyaltyCard,
+                as: 'loyaltyCard',
+                required: false,
+            },
+        ],
     });
     if (!card) throw new HttpError(404, 'Card not found');
+
+    // if it is a loyalty card, and changed from cann't scan to can scan based on the activities, generate a new pass
+    if (card.loyaltyCanScan) {
+        const oldCanScan = card.canScan;
+        const canScanNow = await card.loyaltyCanScan();
+        if (oldCanScan === false && canScanNow === true) {
+            await generatePassFromTemplate(card.id, card.templateId);
+        }
+    }
 
     // load the pkpass file
     const pkpassBuffer = (await getFile(card.s3Key))?.Body as Buffer;
@@ -582,3 +626,37 @@ export const sendUpdatedPass = async (props: { passTypeIdentifier: string; seria
     console.log('sendUpdatedPass Success');
     return pkpassBuffer;
 };
+
+export function loyaltyUpdatePoints(cardId: number, points: number, user: User) {
+    if (!Number.isInteger(points)) throw new HttpError(400, 'Points must be an integer');
+    if (points < 0) throw new HttpError(400, 'Points cannot be negative');
+
+    return LoyaltyCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: Card,
+                as: 'card',
+                required: true,
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                        where: {
+                            businessId: user.businesses.map((b) => b.id),
+                        },
+                        required: true,
+                    },
+                ],
+            },
+        ],
+    }).then((loyaltyCard) => {
+        if (!loyaltyCard) throw new HttpError(404, 'Card not found');
+
+        // update points
+        loyaltyCard.points = points;
+        return loyaltyCard.save();
+    });
+}

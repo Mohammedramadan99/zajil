@@ -8,10 +8,6 @@ export class ItemsSubscriptionCardTemplate extends Model {
     public subscriptionDurationDays!: number;
     public nItems!: number;
 
-    // stickers
-    public stickers: StickerDto[];
-    public stickersCount: number;
-
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -43,14 +39,6 @@ export const init = (sequelize: Sequelize) =>
                 validate: {
                     min: 1,
                 },
-            },
-            stickers: {
-                type: DataTypes.JSON,
-                allowNull: true,
-            },
-            stickersCount: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
             },
         },
         {

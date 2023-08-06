@@ -3,6 +3,7 @@ import { Business } from '../../businesses/models/business.model';
 import { LoyaltyCardTemplate } from './loyalty-card-template.model';
 import { ItemsSubscriptionCardTemplate } from './items-subscription-card-template.model';
 import { Card } from '../../cards/models/card.model';
+import { StickerDto } from '../dto/create-card-template';
 
 export enum CardType {
     LOYALTY = 'LOYALTY',
@@ -29,6 +30,10 @@ export class CardTemplate extends Model {
 
     // associations
     public readonly business?: Business;
+
+    // stickers
+    public stickers: StickerDto[];
+    public stickersCount: number;
 }
 
 export const init = (sequelize: Sequelize) =>
@@ -80,6 +85,14 @@ export const init = (sequelize: Sequelize) =>
             },
             design: {
                 type: DataTypes.JSON,
+                allowNull: true,
+            },
+            stickers: {
+                type: DataTypes.JSON,
+                allowNull: true,
+            },
+            stickersCount: {
+                type: DataTypes.INTEGER,
                 allowNull: true,
             },
         },
