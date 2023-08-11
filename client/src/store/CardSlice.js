@@ -137,24 +137,24 @@ export const AddPointToLoyaltyCard = createAsyncThunk(
     }
   }
 );
-export const redeemGift = createAsyncThunk(
-  "card/redeemGift",
-  async (body, { rejectWithValue, getState, dispatch }) => {
+export const ReducePoints = createAsyncThunk(
+  "card/reducePoints",
+  async (actionData, { rejectWithValue, getState, dispatch }) => {
     try {
       const { auth } = getState();
       const { user } = auth;
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/businesses/${
-          body.params.businessId
-        }/cards/${body.params.cardId}/loyalty/redeem-gift`,
+          actionData.params.businessId
+        }/cards/${actionData.params.cardId}/loyalty/update-points`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.token}`,
           },
-          body: body.giftId,
+          body: JSON.stringify({points:actionData.points})
         }
       );
       if (!response.ok) {
@@ -163,8 +163,44 @@ export const redeemGift = createAsyncThunk(
         return rejectWithValue(errorData.data.message);
       }
       const data = await response.json();
-      dispatch(getCardDetails({ cardId: params.cardId }));
-      return;
+      // dispatch(getCardDetails({ cardId: params.cardId }));
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again laterrr.",
+      });
+    }
+  }
+);
+export const redeemGift = createAsyncThunk(
+  "card/redeemGift",
+  async (actionData, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/businesses/${
+          actionData.params.businessId
+        }/cards/${actionData.params.cardId}/loyalty/redeem-gift`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({giftId:actionData.giftId}),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        return rejectWithValue(errorData.data.message);
+      }
+      const data = await response.json();
+      // dispatch(getCardDetails({ cardId: actionData.params.cardId }));
+      return data;
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -204,7 +240,7 @@ const cardSlice = createSlice({
     builder.addCase(createCard.fulfilled, (state, action) => {
       state.loading = false;
       state.errors = null;
-      // state.card = action.payload.data;
+      state.card = action.payload.data;
       state.cardCreated = true;
     });
     builder.addCase(createCard.rejected, (state, action) => {
@@ -256,10 +292,27 @@ const cardSlice = createSlice({
       state.errors = null;
     });
     builder.addCase(redeemGift.fulfilled, (state, action) => {
+      console.log(action.payload.data)
       state.loading = false;
       state.errors = null;
+      state.card.loyaltyCard.points = action.payload?.data?.points
     });
     builder.addCase(redeemGift.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(ReducePoints.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(ReducePoints.fulfilled, (state, action) => {
+      console.log(action.payload.data)
+      state.loading = false;
+      state.errors = null;
+      state.card.loyaltyCard.points = action.payload?.data?.points
+    });
+    builder.addCase(ReducePoints.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
       state.errorMessage = action.payload;

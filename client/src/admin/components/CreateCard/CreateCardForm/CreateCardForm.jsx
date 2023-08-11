@@ -137,7 +137,7 @@ function CreateCardForm() {
         <Stack direction={"row"} spacing={2} justifyContent={"center"}>
           <Link
             className="flex"
-            to={`https://walletpass.io?u=${card.s3Location}`}
+            to={`https://walletpass.io?u=${card?.s3Location}`}
             target="_blank"
             download>
             <img

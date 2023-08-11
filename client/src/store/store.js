@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import templateReducer from "./TemplateSlice";
+import templateReducer from "./templateSlice";
 import modeReducer from "./modeSlice";
 import businessesReducer from "./businessSlice";
 import statsReducer from "./statsSlice";
 import cardsReducer from "./cardSlice";
+
 export default configureStore({
   reducer: {
     auth: authReducer,

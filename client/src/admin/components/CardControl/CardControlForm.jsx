@@ -10,21 +10,21 @@ import {
 } from "@mui/material";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutline";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AddPointToLoyaltyCard,
   redeemGift,
   getCardDetails,
   reset,
-} from "../../../store/CardSlice";
+  ReducePoints,
+} from "../../../store/cardSlice";
 import { toast } from "react-toastify";
-function CardControlForm({activeSticker, setActiveSticker}) {
+function CardControlForm({ activeSticker, setActiveSticker }) {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { card, loading, errorMessage } = useSelector((state) => state.cards);
-  
+
   const addPointsHandler = () => {
     dispatch(
       AddPointToLoyaltyCard({
@@ -33,16 +33,36 @@ function CardControlForm({activeSticker, setActiveSticker}) {
       })
     );
   };
+  const reducePointsHandler = () => {
+    const points =
+      card?.loyaltyCard?.points -
+      card?.cardTemplate?.loyaltyCardTemplate?.pointsPerVisit;
+    const actionData = {
+      params: {
+        businessId: card.cardTemplate.businessId,
+        cardId: card.id,
+      },
+      points: points > 0 ? points : 0,
+    };
+    dispatch(ReducePoints(actionData));
+  };
   const redeemHandler = () => {
-    dispatch(redeemGift());
+    const actionData = {
+      params: {
+        businessId: card.cardTemplate.businessId,
+        cardId: card.id,
+      },
+      giftId: card?.cardTemplate?.loyaltyCardTemplate?.loyaltyGifts[0]?.id,
+    };
+    dispatch(redeemGift(actionData));
   };
   const addStickerHandler = (item) => {
     if (card.cardTemplate.cardType === "LOYALTY") {
       const stickerIndex = activeSticker.id === item.id;
-      console.log({stickerIndex})
+      console.log({ stickerIndex });
 
       if (stickerIndex !== -1) {
-        return false
+        return false;
       } else {
         setActiveSticker(
           activeSticker.concat({
@@ -54,8 +74,10 @@ function CardControlForm({activeSticker, setActiveSticker}) {
         );
       }
     } else {
-      const stickerIndex = activeSticker?.find(sticker => sticker.imageUrl === item.imageUrl);
-      console.log({ item })
+      const stickerIndex = activeSticker?.find(
+        (sticker) => sticker.imageUrl === item.imageUrl
+      );
+      console.log({ item });
       if (activeSticker.length < card?.itemsSubscriptionCard?.nItems) {
         setActiveSticker(
           activeSticker.concat({
@@ -151,7 +173,8 @@ function CardControlForm({activeSticker, setActiveSticker}) {
               startIcon={<RemoveCircleOutlinedIcon />}
               size="small"
               sx={{ fontSize: "9px" }}
-              color="error">
+              color="error"
+            onClick={reducePointsHandler}>
               decrease
             </Button>
             <Chip
@@ -169,26 +192,29 @@ function CardControlForm({activeSticker, setActiveSticker}) {
               increase
             </Button>
           </Stack>
+
           <Typography variant="body2" py={2} color="primary">
             {" "}
             Redeem Rewards
           </Typography>
           <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-            <Button
-              variant="outlined"
-              startIcon={<RemoveCircleOutlinedIcon />}
-              sx={{ fontSize: "9px" }}
-              color="error">
-              decrease
-            </Button>
-            <Chip label="0" color="warning" variant="outlined" />
+            {card?.cardTemplate?.loyaltyCardTemplate?.loyaltyGifts?.map(
+              (gift) => (
+                <>
+                  <Typography fontWeight={700}>{gift.name}</Typography>
+                  <Typography color="red" pl={2}>
+                    -{gift.priceNPoints}
+                  </Typography>
+                </>
+              )
+            )}
             <Button
               variant="outlined"
               endIcon={<AddCircleOutlinedIcon />}
               sx={{ fontSize: "9px" }}
               color="success"
               onClick={redeemHandler}>
-              increase
+              Redeem
             </Button>
           </Stack>
         </Box>
