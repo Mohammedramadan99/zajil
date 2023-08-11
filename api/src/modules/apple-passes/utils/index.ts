@@ -90,7 +90,7 @@ export const loyaltyGenerateStickersIfPossible = async (
     if (cardTemplate.cardType !== CardType.LOYALTY) return;
 
     // check for stickers and stickersCount
-    if (!cardTemplate.stickers) return;
+    if (!cardTemplate.stickers || cardTemplate.stickers?.length === 0) return;
 
     // get card
     const card = await Card.findOne({
