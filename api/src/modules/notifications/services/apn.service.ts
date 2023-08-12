@@ -1,8 +1,11 @@
 import { Notification, Provider, ProviderOptions } from 'apn';
 
 var options: ProviderOptions = {
-    cert: `${__dirname}/../../../certs/signerCert.pem`,
-    key: `${__dirname}/../../../certs/signerKey.key`,
+    token: {
+        key: `${__dirname}/../../../certs/AuthKey_53N9LG5H5V.p8`,
+        keyId: '53N9LG5H5V',
+        teamId: 'ARG99W9YF6',
+    },
     production: true,
 };
 

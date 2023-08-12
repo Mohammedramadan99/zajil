@@ -43,7 +43,7 @@ export const sendCardNotification = async (CreateCardNotificationDto: CreateCard
         {
             topic: CreateCardNotificationDto.topic,
         },
-        card.deviceLibraryIdentifier,
+        card.pushToken,
     ).catch((err) => {
         console.error(err);
         throw new HttpError(500, err);
