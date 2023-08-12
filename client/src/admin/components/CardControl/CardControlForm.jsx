@@ -101,17 +101,16 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       //     })
       //   );
       // }
-      setActiveSticker([{
-        id: Math.floor(Math.random() * 100000) + 1,
-        imageUrl: item.imageUrl,
-        title: "test",
-        imageType: "png",
-      }]);
+      setActiveSticker([
+        {
+          id: Math.floor(Math.random() * 100000) + 1,
+          imageUrl: item.imageUrl,
+          title: "test",
+          imageType: "png",
+        },
+      ]);
     }
-    console.log({ activeSticker });
-
   };
-  console.log({ activeSticker });
 
   const useHandler = () => {
     const actionData = {
@@ -124,8 +123,7 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         stickers: activeSticker,
       },
     };
-    dispatch(useItems(actionData))
-    console.log({ actionData });
+    dispatch(useItems(actionData));
   };
 
   return (

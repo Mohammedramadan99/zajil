@@ -48,7 +48,7 @@ function CardControl() {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3} margin={"auto"}>
-            {card?.cardTemplate && (
+            {card && (
               <ShowCard
                 control={true}
                 template={card}

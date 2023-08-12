@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Dialog from "../Templates/Dialog";
+import { useSelector } from "react-redux";
 
 function ShowCard({
   template,
@@ -27,16 +28,20 @@ function ShowCard({
 }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-
+  const { card, updating, loading, errorMessage } = useSelector(
+    (state) => state.cards
+  );
   const boxRef = useRef(null);
   useEffect(() => {
     const box = boxRef.current;
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
   const tempActiveSticker = activeSticker || [];
-  const tempnItems = template?.itemsSubscriptionCard?.nItems || 0;
-  // console.log("temp", template);
-  // console.log("tempActiveSticker", template?.itemsSubscriptionCard?.nItems, tempActiveSticker?.length);
+  const tempnItems = card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems - card?.chosenStickers?.length || 20;
+
+  console.log("nitems", +tempnItems);
+  console.log("card", card);
+  console.log("tempActiveSticker", card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems, card?.chosenStickers?.length);
   return (
     <Box mt={stats ? 0 : control ? 12 : "unset"}>
       {/* Card */}
@@ -123,7 +128,7 @@ function ShowCard({
                       }
                     : {}
                 }>
-                {template?.chosenStickers?.map((item, i) => (
+                {card?.chosenStickers?.map((item, i) => (
                   <div className="sticker flex" key={i}>
                     <div className="icon flex">
                       <img src={item?.imageUrl} alt="" width={20} />
@@ -138,7 +143,7 @@ function ShowCard({
                       </div>
                     </div>
                   ))} */}
-                {[...Array(tempnItems - template?.chosenStickers?.length)].map(
+                {[...Array(tempnItems)].map(
                   (item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">

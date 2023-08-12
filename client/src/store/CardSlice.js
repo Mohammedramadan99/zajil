@@ -353,6 +353,20 @@ const cardSlice = createSlice({
       state.errors = action.payload?.errors;
       state.errorMessage = action.payload;
     });
+    builder.addCase(useItems.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(useItems.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.card.chosenStickers = action.payload?.data?.card?.chosenStickers;
+    });
+    builder.addCase(useItems.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.errorMessage = action.payload;
+    });
   },
 });
 
