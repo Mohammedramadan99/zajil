@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutline";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AddPointToLoyaltyCard,
@@ -18,6 +18,7 @@ import {
   getCardDetails,
   reset,
   ReducePoints,
+  useItems,
 } from "../../../store/cardSlice";
 import { toast } from "react-toastify";
 function CardControlForm({ activeSticker, setActiveSticker }) {
@@ -74,20 +75,20 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         );
       }
     } else {
-      const stickerIndex = activeSticker?.find(
-        (sticker) => sticker.imageUrl === item.imageUrl
-      );
-      console.log({ item });
-      if (activeSticker.length < card?.itemsSubscriptionCard?.nItems) {
-        setActiveSticker(
-          activeSticker.concat({
-            id: Math.floor(Math.random() * 100000) + 1,
-            imageUrl: item.imageUrl,
-            title: "test",
-            imageType: "png",
-          })
-        );
-      }
+      // const stickerIndex = activeSticker?.find(
+      //   (sticker) => sticker.imageUrl === item.imageUrl
+      // );
+      // console.log({ stickerIndex });
+      // if (activeSticker.length < card?.itemsSubscriptionCard?.nItems) {
+      //   setActiveSticker(
+      //     activeSticker.concat({
+      //       id: Math.floor(Math.random() * 100000) + 1,
+      //       imageUrl: item.imageUrl,
+      //       title: "test",
+      //       imageType: "png",
+      //     })
+      //   );
+      // }
       // if (stickerIndex) {
       //   setActiveSticker(activeSticker?.filter(sticker => sticker.imageUrl !== stickerIndex.imageUrl))
       // } else {
@@ -100,15 +101,32 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       //     })
       //   );
       // }
+      setActiveSticker([{
+        id: Math.floor(Math.random() * 100000) + 1,
+        imageUrl: item.imageUrl,
+        title: "test",
+        imageType: "png",
+      }]);
     }
+    console.log({ activeSticker });
+
   };
   console.log({ activeSticker });
-  useEffect(() => {
-    if (errorMessage) {
-      toast.error(errorMessage);
-    }
-    dispatch(reset());
-  }, [errorMessage]);
+
+  const useHandler = () => {
+    const actionData = {
+      params: {
+        businessId: card.cardTemplate.businessId,
+        cardId: card.id,
+      },
+      body: {
+        value: 1,
+        stickers: activeSticker,
+      },
+    };
+    dispatch(useItems(actionData))
+    console.log({ actionData });
+  };
 
   return (
     <Box
@@ -174,7 +192,7 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
               size="small"
               sx={{ fontSize: "9px" }}
               color="error"
-            onClick={reducePointsHandler}>
+              onClick={reducePointsHandler}>
               decrease
             </Button>
             <Chip
@@ -225,24 +243,26 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         mt={2}
         justifyContent={"space-between"}>
         <div className="stickers-icons">
-          {card?.cardTemplate?.itemsSubscriptionCardTemplate?.stickers?.map(
-            (item) => {
-              const isActive = activeSticker.id === item.id;
-              return (
-                <div
-                  className={isActive ? "icon active" : "icon"}
-                  style={{ padding: "10px" }}
-                  onClick={() => addStickerHandler(item)}
-                  key={item.id}>
-                  <img src={item.imageUrl} alt="" width={20} />
-                </div>
-              );
-            }
-          )}
+          {card?.cardTemplate?.stickers?.map((item) => {
+            const isActive = activeSticker.id === item.id;
+            return (
+              <div
+                className={isActive ? "icon active" : "icon"}
+                style={{ padding: "10px" }}
+                onClick={() => addStickerHandler(item)}
+                key={item.id}>
+                <img src={item.imageUrl} alt="sticker" width={20} />
+              </div>
+            );
+          })}
         </div>
+        <Button variant="outlined" onClick={useHandler}>
+          {" "}
+          use{" "}
+        </Button>
       </Stack>
     </Box>
   );
 }
 
-export default CardControlForm;
+export default memo(CardControlForm);

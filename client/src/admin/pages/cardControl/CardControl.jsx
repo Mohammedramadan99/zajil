@@ -1,12 +1,13 @@
 import { Box, Container, Grid, useTheme } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getCardDetails } from "../../../store/CardSlice";
+import { getCardDetails,reset } from "../../../store/cardSlice";
 import { useParams } from "react-router-dom";
 import ShowCard from "../../components/CardControl/ShowCard";
 import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
+import { toast } from "react-toastify";
 
 function CardControl() {
   const theme = useTheme();
@@ -21,6 +22,13 @@ function CardControl() {
       dispatch(getCardDetails({ cardId }));
     }
   }, [cardId]);
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(reset());
+    }
+  }, [errorMessage]);
+  
   return loading ? (
     <>loading</>
   ) : (
@@ -55,4 +63,4 @@ function CardControl() {
   );
 }
 
-export default CardControl;
+export default memo(CardControl);

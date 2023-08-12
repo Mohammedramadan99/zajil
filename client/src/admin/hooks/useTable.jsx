@@ -1,6 +1,6 @@
 import react, { memo, useState } from "react";
 
- const useTable = memo((props) => {
+const useTable = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(props ? +props.rows : 5);
   const [page, setPage] = useState(0);
   const [orderBy, setOrderBy] = useState("_id");
@@ -22,6 +22,6 @@ import react, { memo, useState } from "react";
     setPage,
     onSortClick,
   };
-});
+};
 
-export {useTable}
+export { useTable };

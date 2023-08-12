@@ -27,6 +27,7 @@ function CreateCard() {
         paddingBlock: 4,
         // flexGrow: 1,
         minHeight: "100vh",
+        pb:10
       }}>
       <Container>
         <Grid container spacing={6}>

@@ -130,15 +130,15 @@ function ShowCard({
                     </div>
                   </div>
                 ))}
-                {tempActiveSticker &&
+                {/* {tempActiveSticker &&
                   tempActiveSticker?.map((item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">
                         <img src={item?.imageUrl} alt="" width={20} />
                       </div>
                     </div>
-                  ))}
-                {[...Array(tempnItems - tempActiveSticker?.length)].map(
+                  ))} */}
+                {[...Array(tempnItems - template?.chosenStickers?.length)].map(
                   (item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">

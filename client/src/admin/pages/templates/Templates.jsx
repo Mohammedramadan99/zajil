@@ -34,6 +34,7 @@ function Templates() {
     businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
     dispatch(reset());
   }, [businesses]);
+
   return (
     <Box
       sx={{
