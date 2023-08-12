@@ -59,21 +59,22 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
   };
   const addStickerHandler = (item) => {
     if (card.cardTemplate.cardType === "LOYALTY") {
-      const stickerIndex = activeSticker.id === item.id;
-      console.log({ stickerIndex });
+      // const stickerIndex = activeSticker.imageUrl === item.imageUrl;
+      // console.log({ stickerIndex });
 
-      if (stickerIndex !== -1) {
-        return false;
-      } else {
-        setActiveSticker(
-          activeSticker.concat({
-            id: item.id,
-            imageUrl: item.imageUrl,
-            title: "test",
-            imageType: "png",
-          })
-        );
-      }
+      // if (stickerIndex !== -1) {
+      //   return false;
+      // } else {
+      //   setActiveSticker(
+      //     activeSticker.concat({
+      //       id: item.id,
+      //       imageUrl: item.imageUrl,
+      //       title: "test",
+      //       imageType: "png",
+      //     })
+      //   );
+      // }
+      return false
     } else {
       // const stickerIndex = activeSticker?.find(
       //   (sticker) => sticker.imageUrl === item.imageUrl
@@ -141,13 +142,17 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         },
       }}
       borderRadius={5}>
+      <Chip
+          label={card?.cardTemplate?.cardType}
+          color="primary"
+          variant="filled" sx={{ width:"fit-content" }} />
       <Typography
         variant="h1"
         textTransform={"capitalize"}
         fontWeight={600}
         mb={4}
         mt={2}>
-        Card{" "}
+        Card
         <span
           style={{
             display: "inline-block",
@@ -180,7 +185,6 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       {card?.cardTemplate?.cardType === "LOYALTY" && (
         <Box>
           <Typography variant="body2" py={2} color="primary">
-            {" "}
             Add Points
           </Typography>
           <Stack direction="row" spacing={2} justifyContent={"space-between"}>
@@ -210,7 +214,6 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
           </Stack>
 
           <Typography variant="body2" py={2} color="primary">
-            {" "}
             Redeem Rewards
           </Typography>
           <Stack direction="row" spacing={2} justifyContent={"space-between"}>
@@ -242,22 +245,25 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         justifyContent={"space-between"}>
         <div className="stickers-icons">
           {card?.cardTemplate?.stickers?.map((item) => {
-            const isActive = activeSticker.id === item.id;
+            const isActive = activeSticker[0].imageUrl === item.imageUrl;
+            console.log({ isActive });
+            console.log(activeSticker[0].imageUrl,"     ", item.imageUrl);
             return (
               <div
                 className={isActive ? "icon active" : "icon"}
                 style={{ padding: "10px" }}
                 onClick={() => addStickerHandler(item)}
-                key={item.id}>
+                key={item.imageUrl}>
                 <img src={item.imageUrl} alt="sticker" width={20} />
               </div>
             );
           })}
         </div>
-        <Button variant="outlined" onClick={useHandler}>
-          {" "}
-          use{" "}
-        </Button>
+        {card?.cardTemplate?.cardType == "ITEMS_SUBSCRIPTION" && (
+          <Button variant="outlined" onClick={useHandler}>
+            use
+          </Button>
+        )}
       </Stack>
     </Box>
   );

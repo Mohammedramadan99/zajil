@@ -37,11 +37,13 @@ function ShowCard({
     setImgColor && setImgColor(box);
   }, [activeImg?.color]);
   const tempActiveSticker = activeSticker || [];
-  const tempnItems = card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems - card?.chosenStickers?.length || 20;
+  const tempnItems =
+    card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems -
+    card?.chosenStickers?.length || 0;
 
-  console.log("nitems", +tempnItems);
-  console.log("card", card);
-  console.log("tempActiveSticker", card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems, card?.chosenStickers?.length);
+  // console.log("nitems", +tempnItems);
+  // console.log("card", card);
+  // console.log("tempActiveSticker", card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems, card?.chosenStickers?.length);
   return (
     <Box mt={stats ? 0 : control ? 12 : "unset"}>
       {/* Card */}
@@ -52,6 +54,7 @@ function ShowCard({
             borderRadius: "10px",
             paddingBlock: "10px",
           }}>
+          {/* ###### Header & Stickers ###### */}
           <Box
             sx={{
               // width: "100%",
@@ -62,6 +65,7 @@ function ShowCard({
               backgroundPosition: "cover",
               // paddingInline: "10px",
             }}>
+            {/* ## Header ## */}
             <Stack
               direction={"row"}
               spacing={2}
@@ -84,6 +88,7 @@ function ShowCard({
                 <Typography variant="body2">mohammed</Typography>
               </Box> */}
             </Stack>
+            {/* ## Stickers ## */}
             <Stack
               direction={"row"}
               gap={1}
@@ -96,13 +101,14 @@ function ShowCard({
                       backgroundImage: `url(${template.cardTemplate?.stripUrl})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
+                      height: "190px",
                     }
                   : {
                       position: "relative",
                     }
               }>
               {activeImg?.color && (
-                <img src={template.cardTemplate?.stripUrl} alt="" />
+                <img src={template.cardTemplate?.stripUrl} alt="stipUrl" />
               )}
 
               <div
@@ -143,11 +149,10 @@ function ShowCard({
                       </div>
                     </div>
                   ))} */}
-                {[...Array(tempnItems)].map(
-                  (item, i) => (
-                    <div className="sticker flex" key={i}>
-                      <div className="icon flex">
-                        {/* <img
+                {[...Array(tempnItems)].map((item, i) => (
+                  <div className="sticker flex" key={i}>
+                    <div className="icon flex">
+                      {/* <img
                         src={
                           template.itemsSubscriptionCardTemplate?.stickers[i]
                             .imageUrl
@@ -155,13 +160,13 @@ function ShowCard({
                         alt=""
                         width={20}
                       /> */}
-                      </div>
                     </div>
-                  )
-                )}
+                  </div>
+                ))}
               </div>
             </Stack>
           </Box>
+          {/* ###### Name ###### */}
           <Box
             display={"flex"}
             justifyContent={"space-between"}
@@ -201,12 +206,6 @@ function ShowCard({
           </Box>
           <Box className="flex">
             <div>
-              {/* <img
-                src={qrcode}
-                alt=""
-                width={activeScanType?.type === "barCode" ? 200 : 80}
-                height={80}
-              /> */}
               <img
                 src={qrcode}
                 alt=""
