@@ -411,7 +411,7 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
     await Activity.create({
         businessId: itemsSubscriptionCard.card.cardTemplate.businessId,
         message: `Card ${itemsSubscriptionCard.id} scanned, ${body.value} items used`,
-        type: [ActivityType.SCAN_CARD],
+        types: [ActivityType.SCAN_CARD],
         relatedId: itemsSubscriptionCard.id,
         relatedType: 'card',
         userId: user.id,
