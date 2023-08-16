@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import { useMemo, useState } from "react";
-import { themeSettings } from "../../theme";
+import  { themeSettings } from "../../theme";
 import Navbar from "./Navbar";
 import "./Layout.scss";
 import MobileSidebar from "./MobileSidebar/MobileSidebar";

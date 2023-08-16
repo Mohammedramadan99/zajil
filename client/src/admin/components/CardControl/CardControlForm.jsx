@@ -59,7 +59,7 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
   };
   const addStickerHandler = (item) => {
     if (card.cardTemplate.cardType === "LOYALTY") {
-      // const stickerIndex = activeSticker.imageUrl === item.imageUrl;
+      // const stickerIndex = activeSticker?.imageUrl === item?.imageUrl;
       // console.log({ stickerIndex });
 
       // if (stickerIndex !== -1) {
@@ -68,35 +68,35 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       //   setActiveSticker(
       //     activeSticker.concat({
       //       id: item.id,
-      //       imageUrl: item.imageUrl,
+      //       imageUrl: item?.imageUrl,
       //       title: "test",
       //       imageType: "png",
       //     })
       //   );
       // }
-      return false
+      return false;
     } else {
       // const stickerIndex = activeSticker?.find(
-      //   (sticker) => sticker.imageUrl === item.imageUrl
+      //   (sticker) => sticker?.imageUrl === item?.imageUrl
       // );
       // console.log({ stickerIndex });
       // if (activeSticker.length < card?.itemsSubscriptionCard?.nItems) {
       //   setActiveSticker(
       //     activeSticker.concat({
       //       id: Math.floor(Math.random() * 100000) + 1,
-      //       imageUrl: item.imageUrl,
+      //       imageUrl: item?.imageUrl,
       //       title: "test",
       //       imageType: "png",
       //     })
       //   );
       // }
       // if (stickerIndex) {
-      //   setActiveSticker(activeSticker?.filter(sticker => sticker.imageUrl !== stickerIndex.imageUrl))
+      //   setActiveSticker(activeSticker?.filter(sticker => sticker?.imageUrl !== stickerIndex?.imageUrl))
       // } else {
       //   setActiveSticker(
       //     activeSticker.concat({
       //       id: Math.floor(Math.random() * 100000) + 1,
-      //       imageUrl: item.imageUrl,
+      //       imageUrl: item?.imageUrl,
       //       title: "test",
       //       imageType: "png",
       //     })
@@ -105,7 +105,7 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       setActiveSticker([
         {
           id: Math.floor(Math.random() * 100000) + 1,
-          imageUrl: item.imageUrl,
+          imageUrl: item?.imageUrl,
           title: "test",
           imageType: "png",
         },
@@ -143,9 +143,11 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
       }}
       borderRadius={5}>
       <Chip
-          label={card?.cardTemplate?.cardType}
-          color="primary"
-          variant="filled" sx={{ width:"fit-content" }} />
+        label={card?.cardTemplate?.cardType}
+        color="primary"
+        variant="filled"
+        sx={{ width: "fit-content" }}
+      />
       <Typography
         variant="h1"
         textTransform={"capitalize"}
@@ -245,22 +247,20 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
         justifyContent={"space-between"}>
         <div className="stickers-icons">
           {card?.cardTemplate?.stickers?.map((item) => {
-            const isActive = activeSticker[0].imageUrl === item.imageUrl;
-            console.log({ isActive });
-            console.log(activeSticker[0].imageUrl,"     ", item.imageUrl);
+            const isActive = activeSticker[0]?.imageUrl === item?.imageUrl;
             return (
               <div
                 className={isActive ? "icon active" : "icon"}
                 style={{ padding: "10px" }}
                 onClick={() => addStickerHandler(item)}
-                key={item.imageUrl}>
-                <img src={item.imageUrl} alt="sticker" width={20} />
+                key={item?.imageUrl}>
+                <img src={item?.imageUrl} alt="sticker" width={20} />
               </div>
             );
           })}
         </div>
         {card?.cardTemplate?.cardType == "ITEMS_SUBSCRIPTION" && (
-          <Button variant="outlined" onClick={useHandler}>
+          <Button variant="outlined" onClick={useHandler} disabled={activeSticker.length <= 0}>
             use
           </Button>
         )}

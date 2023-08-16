@@ -1,3 +1,6 @@
+import { createTheme } from "@mui/material";
+import { deepmerge } from '@mui/utils';
+
 // color design tokens export
 export const tokensDark = {
   grey: {
@@ -62,7 +65,6 @@ function reverseTokens(tokensDark) {
 }
 export const tokensLight = reverseTokens(tokensDark);
 
-// mui theme settings
 export const themeSettings = (mode) => {
   return {
     palette: {
@@ -86,11 +88,11 @@ export const themeSettings = (mode) => {
             background: {
               default: tokensDark.grey[1000],
               alt: tokensDark.grey[800],
-          },
-          light: {
-            ...tokensDark.light,
-            default:tokensDark.light[1]
-          }
+            },
+            light: {
+              ...tokensDark.light,
+              default: tokensDark.light[1],
+            },
           }
         : {
             // palette values for light mode
@@ -109,13 +111,13 @@ export const themeSettings = (mode) => {
               main: tokensDark.grey[500],
             },
             background: {
-              default: tokensDark.grey[100],
-              alt: tokensDark.grey[50],
-          },
-          light: {
-            ...tokensDark.light,
-            default:tokensDark.light[1]
-          }
+              default: tokensDark.grey[200],
+              alt: tokensDark.grey[0],
+            },
+            light: {
+              ...tokensDark.light,
+              default: tokensDark.light[1],
+            },
           }),
     },
     transitions: {
@@ -163,5 +165,16 @@ export const themeSettings = (mode) => {
         fontSize: 14,
       },
     },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            boxShadow: mode === "dark" ? "rgba(0, 0, 0, 0.2) 0px 0px 2px 0px, rgba(0, 0, 0, 0.12) 0px 12px 24px -4px" : "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
+          },
+        },
+      },
+    },
   };
 };
+
+// boxShadow: "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",

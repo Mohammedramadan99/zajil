@@ -14,12 +14,16 @@ import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import PrintIcon from "@mui/icons-material/Print";
 import ShareIcon from "@mui/icons-material/Share";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, useTheme, IconButton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import { logoutAction } from "../../../store/authSlice";
 import { useNavigate } from "react-router-dom";
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import { setMode } from "../../../store/modeSlice";
+
 // const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
 //   position: "fixed",
 //   "&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft": {
@@ -36,12 +40,9 @@ const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
   //   top: theme.spacing(2),
   //   right: theme.spacing(2),
 }));
-const actions = [
-  { id: 1, icon: <LogoutIcon />, name: "Log Out" },
-  { id: 2, icon: <QrCodeScannerIcon />, name: "Scan" },
-];
 
 export default function PlaygroundSpeedDial() {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [direction, setDirection] = React.useState("left");
@@ -54,7 +55,25 @@ export default function PlaygroundSpeedDial() {
     if (action.id === 2) {
       navigate("/admin/scan");
     }
+    if (action.id === 3) {
+      dispatch(setMode());
+    }
   };
+  const actions = [
+    { id: 1, icon: <LogoutIcon />, name: "Log Out" },
+    { id: 2, icon: <QrCodeScannerIcon />, name: "Scan" },
+    {
+      id: 3,
+      icon:
+        theme.palette.mode === "light" ? (
+          <DarkModeOutlinedIcon />
+        ) : (
+          <LightModeOutlinedIcon />
+        ),
+        name: theme.palette.mode === "light" ? "dark" : "light"
+    },
+    // { id: 4, icon: , name: "Scan" },
+  ];
   return (
     <StyledSpeedDial
       ariaLabel="SpeedDial playground example"
