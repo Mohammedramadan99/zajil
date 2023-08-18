@@ -76,7 +76,7 @@ export const createBranch = createAsyncThunk(
 );
 export const getBusinesses = createAsyncThunk(
   "business/all",
-  async (_, { rejectWithValue, getState }) => {
+  async (data, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const { user } = auth;
@@ -85,18 +85,18 @@ export const getBusinesses = createAsyncThunk(
       //   form.append(key, values[key]);
       // });
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/businesses`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // const response = await fetch(
+      //   `${import.meta.env.VITE_API_URL}/businesses`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       Authorization: `Bearer ${user.token}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
 
-      const { data } = await response.json();
+      // const { data } = await response.json();
       return data.rows;
     } catch (error) {
       console.error(error);
