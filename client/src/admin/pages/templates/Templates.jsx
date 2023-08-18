@@ -32,7 +32,7 @@ function Templates() {
 
   useEffect(() => {
     businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
-    dispatch(reset());
+    // dispatch(reset());
   }, [businesses]);
 
   return (

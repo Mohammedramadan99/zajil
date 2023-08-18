@@ -80,10 +80,10 @@ export default function PlaygroundSpeedDial() {
     <StyledSpeedDial
       ariaLabel="SpeedDial playground example"
       hidden={hidden}
-      icon={<Avatar sx={{color:theme.palette.grey[900]}}></Avatar>}
+      icon={<Avatar sx={{ color: theme.palette.grey[900] }}></Avatar>}
       direction={direction}
       sx={{
-        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-1930fky-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab":
+        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-1930fky-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-tbbtms-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab":
           {
             background: "transparent",
           },

@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  Paper,
   TextField,
   Typography,
   useTheme,
@@ -34,28 +35,32 @@ function CreateBusinessForm() {
       handleSubmit(values);
     },
   });
-  const {setFieldValue,setValues,values,resetForm} = formik
+  const { setFieldValue, setValues, values, resetForm } = formik;
   const handleSubmit = async (values) => {
     dispatch(createBusiness(values));
-    resetForm({values:{name:""}})
+    resetForm({ values: { name: "" } });
   };
   if (business) {
     navigate("/admin/branch/new");
   }
   if (business) {
-    toast.success(`${business.name} created`)
-    dispatch(resetBusiness())
+    toast.success(`${business.name} created`);
+    dispatch(resetBusiness());
   }
   return (
-    <Box
-      maxWidth={500}
-      width={"100%"}
+    <Paper
       sx={{
-        backgroundColor: theme.palette.grey[900],
+        // maxWidth: 700,
+        // backgroundColor: theme.palette.background.alt,
+        maxWidth: 700,
+        // width: "100%",
+
         m: {
           xs: "30px auto",
           lg: "100px auto auto",
         },
+        backgroundColor: theme.palette.background.alt,
+        p: "10px 40px 30px",
       }}
       p={5}
       borderRadius={5}>
@@ -107,7 +112,7 @@ function CreateBusinessForm() {
           cannot create a branch if you don't have a business.
         </Typography>
       </Box>
-    </Box>
+    </Paper>
   );
 }
 

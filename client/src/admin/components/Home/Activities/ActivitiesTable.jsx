@@ -77,7 +77,7 @@ const ActivitiesTable = ({
           />
         </Box>
       </Stack>
-      <Card sx={{ backgroundColor: theme.palette.grey[900] }}>
+      <Card sx={{ backgroundColor: theme.palette.background.alt }}>
         {/* {activities?.length > 0 && ( */}
         <TableContainer>
           <Table
@@ -100,18 +100,16 @@ const ActivitiesTable = ({
                       align="left"
                       sx={{
                         borderColor: "transparent",
-                        color: theme.palette.secondary[500],
+                        color: theme.palette.secondary[300],
                         maxWidth: item.message ? "200px" : "100px",
                         width: "100%",
                       }}>
-                      {/* <Link to={`/admin/users/1`}> */}
                       <Stack direction={"row"} alignItems={"center"} gap={2}>
                         {item?.message?.replace(
                           "ITEMS_SUBSCRIPTION",
                           "SUBSCRIPTION"
                         )}
                       </Stack>
-                      {/* </Link> */}
                     </TableCell>
                     <TableCell align="left" sx={{ borderColor: "transparent" }}>
                       <Typography
@@ -123,7 +121,7 @@ const ActivitiesTable = ({
                           borderRadius: 2,
                           textAlign: "center",
                         }}>
-                        {item.type}
+                        {item.types[0]}
                       </Typography>
                     </TableCell>
                     <TableCell align="left" sx={{ borderColor: "transparent" }}>

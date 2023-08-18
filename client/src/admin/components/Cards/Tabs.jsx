@@ -7,17 +7,13 @@ import { getBusinesses } from "../../../store/businessSlice";
 import { getTemplates } from "../../../store/TemplateSlice";
 import { getCards } from "../../../store/cardSlice";
 
-export default function BusinessesTabs({ activeTab, setActiveTab }) {
+export default function BusinessesTabs() {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const { businesses } = useSelector((state) => state.businesses);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
 
   //   fetch Here according to the active tab
   const templatesHandler = (id) => {

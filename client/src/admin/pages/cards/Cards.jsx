@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCards, reset } from "../../../store/cardSlice";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import { getBusinesses } from "../../../store/businessSlice";
 
 function Cards() {
   const theme = useTheme();
@@ -29,10 +30,12 @@ function Cards() {
   const { businesses } = useSelector((state) => state.businesses);
 
   useEffect(() => {
-    if (businesses) {
+    !cards && dispatch(getBusinesses());
+  }, []);
+  useEffect(() => {
+    if (businesses?.length >= 0) {
       dispatch(getCards(businesses[0]?.id));
     }
-    dispatch(reset());
   }, [businesses]);
   return (
     <Box
@@ -47,6 +50,13 @@ function Cards() {
           <Grid item xs={12} mb={5}>
             <BusinessesTabs />
           </Grid>
+          {loading && (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={loading}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          )}
           {cards &&
             cards?.rows?.map((item) => (
               <Grid lg={3} md={4} sm={6} xs={12} item key={item?.id}>
@@ -138,13 +148,6 @@ function Cards() {
                 this business doesn't have cards yet
               </Typography>
             </>
-          )}
-          {loading && (
-            <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={loading}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
           )}
         </Grid>
       </Container>

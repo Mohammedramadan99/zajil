@@ -5,6 +5,7 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Paper,
   Stack,
   TextField,
   Typography,
@@ -20,6 +21,7 @@ function CardDetails() {
   const { card, loading } = useSelector((state) => state.cards);
   const { businessId, cardId } = useParams();
   const dispatch = useDispatch();
+
   useEffect(() => {
     const params = { businessId, cardId };
     dispatch(getCardDetails(params));
@@ -32,14 +34,15 @@ function CardDetails() {
         backgroundColor: theme.palette.background.alt,
         minHeight: "100vh",
       }}>
-      <Box
-        maxWidth={500}
+      <Paper
         sx={{
-          backgroundColor: theme.palette.grey[900],
+          backgroundColor: theme.palette.background.alt,
+          maxWidth: 500,
           m: {
             xs: "30px auto",
             lg: "100px auto auto",
           },
+          p: "10px 40px 30px",
         }}
         p={5}
         borderRadius={5}>
@@ -59,7 +62,7 @@ function CardDetails() {
               color: theme.palette.primary[500],
               marginRight: "10px",
             }}>
-            {card?.cardTemplate.name}
+            {card?.cardTemplate?.name}
           </span>
           Card
         </Typography>
@@ -114,7 +117,7 @@ function CardDetails() {
           />
           <Chip label={`Points ${card?.loyaltyCard?.points}`} color="primary" />
         </Stack>
-      </Box>
+      </Paper>
       {!loading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
