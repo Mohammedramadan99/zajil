@@ -14,10 +14,7 @@ export const sendNotification = async (
 ) => {
     try {
         const notification = new Notification();
-        notification.payload = { messageFrom: 'John Appleseed' };
-        // apply notification props
-        Object.assign(notification, notificationProps);
-
+        notification.topic = notificationProps.topic;
         const result = await apnProvider.send(notification, recipients);
         console.log(JSON.stringify(result, null, 2));
     } catch (error) {
