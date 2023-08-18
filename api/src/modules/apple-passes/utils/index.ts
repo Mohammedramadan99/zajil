@@ -125,7 +125,7 @@ export const loyaltyGenerateStickersIfPossible = async (
     const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
     const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
 
-    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? highlightedSticker : bwSticker;
+    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? bwSticker: highlightedSticker;
 
     // composite stickers on the strip
     const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
