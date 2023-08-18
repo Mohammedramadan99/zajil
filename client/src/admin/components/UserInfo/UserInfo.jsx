@@ -16,7 +16,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import ShareIcon from "@mui/icons-material/Share";
 import { Avatar, useTheme, IconButton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutAction } from "../../../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
@@ -70,16 +70,27 @@ export default function PlaygroundSpeedDial() {
         ) : (
           <LightModeOutlinedIcon />
         ),
-        name: theme.palette.mode === "light" ? "dark" : "light"
+      name: theme.palette.mode === "light" ? "dark" : "light",
     },
     // { id: 4, icon: , name: "Scan" },
   ];
+  const { mode } = useSelector((state) => state.mode);
+
   return (
     <StyledSpeedDial
       ariaLabel="SpeedDial playground example"
       hidden={hidden}
-      icon={<Avatar></Avatar>}
-      direction={direction}>
+      icon={<Avatar sx={{color:theme.palette.grey[900]}}></Avatar>}
+      direction={direction}
+      sx={{
+        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-1930fky-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab":
+          {
+            background: "transparent",
+          },
+        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab:hover": {
+          background: "transparent",
+        },
+      }}>
       {actions.map((action) => (
         <SpeedDialAction
           key={action.name}
