@@ -2,7 +2,7 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { Card } from './card.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 import { EventTicketTemplate } from '../../card-templates/models/event-ticket-template.model';
-import { Event } from '../../card-templates/models/event.model';
+import { Event } from '../../events/models/event.model';
 
 export class EventCard extends Model {
     public declare id: number;

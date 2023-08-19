@@ -3,7 +3,7 @@ import { Business } from './business.model';
 import { Card } from '../../cards/models/card.model';
 import { User } from '../../users/models/user.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
-import { Event } from '../../card-templates/models/event.model';
+import { Event } from '../../events/models/event.model';
 
 export enum ActivityType {
     CREATE_CARD = 'CreateCard',

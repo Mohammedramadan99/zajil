@@ -21,7 +21,7 @@ import {
 import { CardType } from '../models/card-template.model';
 import { CreateLoyaltyGiftDto } from './create-loyalty-gift.dto';
 import { Type } from 'class-transformer';
-import { SeatType } from '../models/event.model';
+import { SeatType } from '../../events/models/event.model';
 import { EventTicketType } from '../models/event-ticket-template.model';
 
 export enum CardDesignType {
@@ -208,30 +208,4 @@ export class CreateCardTemplateDto {
     @IsEnum(EventTicketType)
     eventTicketType: EventTicketType;
 
-    // // startDate
-    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
-    // @IsNotEmpty()
-    // @IsDateString()
-    // startDate: string;
-
-    // // endDate
-    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
-    // @IsNotEmpty()
-    // @IsDateString()
-    // endDate: string;
-
-    // // limitedAmount
-    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
-    // @IsOptional()
-    // @IsNumber()
-    // @Min(1)
-    // limitedAmount?: number;
-
-    // // room
-    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
-    // @IsArray()
-    // @ArrayNotEmpty()
-    // @ArrayMinSize(1) // Set the minimum array size according to your requirements
-    // @IsIn([[SeatType.NONE, SeatType.THEATER, SeatType.AVAILABILE_SEAT]], { each: true }) // Validate each element of the array against the SeatType enum
-    // room: SeatType[][];
 }

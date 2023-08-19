@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { Event } from './event.model';
+import { Event } from '../../events/models/event.model';
 
 export enum EventTicketType {
     SEAT = 'seat',

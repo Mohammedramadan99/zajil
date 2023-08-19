@@ -1,8 +1,8 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { LoyaltyCardTemplate } from './loyalty-card-template.model';
+import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
 import { Activity } from '../../businesses/models/activity.model';
 import { Business } from '../../businesses/models/business.model';
-import { EventTicketTemplate } from './event-ticket-template.model';
+import { EventTicketTemplate } from '../../card-templates/models/event-ticket-template.model';
 
 export enum SeatType {
     NONE = 0,
