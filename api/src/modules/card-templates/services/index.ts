@@ -12,6 +12,7 @@ import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
+import { EventTicketTemplate } from '../models/event-ticket-template.model';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -19,7 +20,7 @@ export const createCardTemplate = async (
     req: RequestMod,
 ): Promise<any> => {
     // define variables to be used in the try catch block
-    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate;
     let cardTemplate: CardTemplate;
     let applePassDesign;
 
@@ -78,6 +79,14 @@ export const createCardTemplate = async (
                     maxDailyUsage: createCardTemplateDto.maxDailyUsage,
                     subscriptionDurationDays: createCardTemplateDto.subscriptionDurationDays,
                     nItems: createCardTemplateDto.nItems,
+                });
+                break;
+
+            case CardType.EVENT_TICKET:
+                subCardTemplate = await EventTicketTemplate.create({
+                    id: cardTemplate.id,
+                    eventId: createCardTemplateDto.eventId,
+                    type: createCardTemplateDto.eventTicketType,
                 });
                 break;
         }
@@ -171,7 +180,7 @@ export const updateCardTemplateById = async (
     updateCardTemplateDto: CreateCardTemplateDto,
 ): Promise<any> => {
     // define variables to be used in the try catch block
-    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate;
     let cardTemplate: CardTemplate;
     let applePassDesign: any;
 
@@ -256,6 +265,26 @@ export const updateCardTemplateById = async (
                 },
             );
             subCardTemplate = await ItemsSubscriptionCardTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+            });
+            break;
+
+        case CardType.EVENT_TICKET:
+            // update the existing sub card template
+            await EventTicketTemplate.update(
+                {
+                    eventId: updateCardTemplateDto.eventId,
+                    type: updateCardTemplateDto.eventTicketType,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await EventTicketTemplate.findOne({
                 where: {
                     id: cardTemplate.id,
                 },

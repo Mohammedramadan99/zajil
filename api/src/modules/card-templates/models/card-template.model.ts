@@ -8,6 +8,7 @@ import { StickerDto } from '../dto/create-card-template';
 export enum CardType {
     LOYALTY = 'LOYALTY',
     ITEMS_SUBSCRIPTION = 'ITEMS_SUBSCRIPTION',
+    EVENT_TICKET = 'EVENT_TICKET',
 }
 
 export class CardTemplate extends Model {

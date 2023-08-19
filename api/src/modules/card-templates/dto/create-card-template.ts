@@ -1,6 +1,8 @@
 import {
     ArrayMinSize,
+    ArrayNotEmpty,
     IsArray,
+    IsDateString,
     IsEnum,
     IsIn,
     IsNotEmpty,
@@ -19,6 +21,8 @@ import {
 import { CardType } from '../models/card-template.model';
 import { CreateLoyaltyGiftDto } from './create-loyalty-gift.dto';
 import { Type } from 'class-transformer';
+import { SeatType } from '../models/event.model';
+import { EventTicketType } from '../models/event-ticket-template.model';
 
 export enum CardDesignType {
     BoardingPass = 'boardingPass',
@@ -155,7 +159,9 @@ export class CreateCardTemplateDto {
     nItems: number;
 
     // stickers | on items subscription card type if there is a stripe image and there is noStickers
-    @ValidateIf((o) => [CardType.ITEMS_SUBSCRIPTION, CardType.LOYALTY].includes(o.cardType) && o.stripUrl && o.stickersCount)
+    @ValidateIf(
+        (o) => [CardType.ITEMS_SUBSCRIPTION, CardType.LOYALTY].includes(o.cardType) && o.stripUrl && o.stickersCount,
+    )
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => StickerDto)
@@ -186,4 +192,46 @@ export class CreateCardTemplateDto {
     @ValidateNested({ each: true })
     @Type(() => CreateLoyaltyGiftDto)
     gifts: CreateLoyaltyGiftDto[];
+
+    /* Event Ticket Card Template Validation */
+
+    // event id
+    @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    @IsNotEmpty()
+    @IsNumber()
+    eventId: number;
+
+    // event ticket type
+    @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    @IsNotEmpty()
+    @IsString()
+    @IsEnum(EventTicketType)
+    eventTicketType: EventTicketType;
+
+    // // startDate
+    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    // @IsNotEmpty()
+    // @IsDateString()
+    // startDate: string;
+
+    // // endDate
+    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    // @IsNotEmpty()
+    // @IsDateString()
+    // endDate: string;
+
+    // // limitedAmount
+    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    // @IsOptional()
+    // @IsNumber()
+    // @Min(1)
+    // limitedAmount?: number;
+
+    // // room
+    // @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    // @IsArray()
+    // @ArrayNotEmpty()
+    // @ArrayMinSize(1) // Set the minimum array size according to your requirements
+    // @IsIn([[SeatType.NONE, SeatType.THEATER, SeatType.AVAILABILE_SEAT]], { each: true }) // Validate each element of the array against the SeatType enum
+    // room: SeatType[][];
 }
