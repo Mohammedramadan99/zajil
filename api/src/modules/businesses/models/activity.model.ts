@@ -3,6 +3,7 @@ import { Business } from './business.model';
 import { Card } from '../../cards/models/card.model';
 import { User } from '../../users/models/user.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
+import { Event } from '../../card-templates/models/event.model';
 
 export enum ActivityType {
     CREATE_CARD = 'CreateCard',
@@ -30,7 +31,7 @@ export class Activity extends Model {
     public types!: [ActivityType];
     public userId?: number;
     public relatedId?: number;
-    public relatedType?: 'card' | 'loyaltyGift';
+    public relatedType?: 'card' | 'loyaltyGift' | 'event';
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -97,5 +98,11 @@ export const associate = () => {
         foreignKey: 'relatedId',
         constraints: false,
         as: 'loyaltyGift',
+    });
+    
+    Activity.belongsTo(Event, {
+        foreignKey: 'relatedId',
+        constraints: false,
+        as: 'event',
     });
 };
