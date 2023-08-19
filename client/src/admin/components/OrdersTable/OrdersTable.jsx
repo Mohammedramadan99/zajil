@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 
 // import EnhancedTableHead from "../../components/EnhancedTableHead/EnhancedTableHead";
 import EnhancedTableHead from "../../components/PublicComponents/EnhancedTableHead/EnhancedTableHead";
-import { useTable } from "../../hooks/useTable";
+import { useTable } from "../../utils/useTable";
 import { sortTable } from "../../utils/sortTable";
 
 const headers = [

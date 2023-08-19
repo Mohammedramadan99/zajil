@@ -21,7 +21,7 @@ import relativeTime from "dayjs/plugin/relativeTime"; // Import the relativeTime
 dayjs.extend(relativeTime); // Extend dayjs with the relativeTime plugin
 
 import EnhancedTableHead from "../../../components/PublicComponents/EnhancedTableHead/EnhancedTableHead";
-import { useTable } from "../../../hooks/useTable";
+import { useTable } from "../../../utils/useTable";
 import { sortTable } from "../../../utils/sortTable";
 import BasicSelect from "../BasicSelect";
 import { useDispatch, useSelector } from "react-redux";
@@ -53,9 +53,6 @@ const ActivitiesTable = ({
   const handleChange = (e) => {
     setActivitiesTableSelect(e.target.value);
   };
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
 
   return (
     <>

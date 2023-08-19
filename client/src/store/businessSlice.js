@@ -97,7 +97,7 @@ export const getBusinesses = createAsyncThunk(
       // );
 
       // const { data } = await response.json();
-      return data.rows;
+      return data?.rows;
     } catch (error) {
       console.error(error);
       return rejectWithValue({
@@ -134,6 +134,9 @@ const authSlice = createSlice({
     resetBusiness: (state) => {
       state.business = null;
     },
+    setBusinesses: (state,{payload}) => {
+      state.businesses = payload.rows
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(createBusiness.pending, (state, action) => {
@@ -189,6 +192,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset, resetBusiness } = authSlice.actions;
+export const { reset, resetBusiness,setBusinesses } = authSlice.actions;
 
 export default authSlice.reducer;

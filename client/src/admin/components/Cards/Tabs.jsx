@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import { getBusinesses } from "../../../store/businessSlice";
 import { getTemplates } from "../../../store/TemplateSlice";
 import { getCards } from "../../../store/cardSlice";
 
-export default function BusinessesTabs() {
+function BusinessesTabs() {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const { businesses } = useSelector((state) => state.businesses);
@@ -38,3 +38,5 @@ export default function BusinessesTabs() {
     </Box>
   );
 }
+
+export default memo(BusinessesTabs);

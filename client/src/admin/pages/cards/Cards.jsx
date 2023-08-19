@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   Backdrop,
   Box,
@@ -20,8 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCards, reset } from "../../../store/cardSlice";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { getBusinesses } from "../../../store/businessSlice";
-import useSWR from 'swr'
+import { getBusinesses } from "../../hooks/Businesses";
 
 function Cards() {
   const theme = useTheme();
@@ -30,24 +30,8 @@ function Cards() {
   const { user } = useSelector((state) => state.auth);
   const { cards, loading } = useSelector((state) => state.cards);
   const { businesses } = useSelector((state) => state.businesses);
-
-  const fetcher = (...args) => fetch(...args).then(res => res.json())
-
-  const { data, error } = useSWR(
-    `${import.meta.env.VITE_API_URL}/businesses`,
-    (url) => fetcher(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-        "Content-Type": "application/json",
-      }
-    })
-  );
-  if (data) {
-    dispatch(getBusinesses(data.data));
-  }
-  // useEffect(() => {
-  // }, []);
+  const { error, isLoading } = getBusinesses();
+  
   useEffect(() => {
     if (businesses?.length >= 0) {
       dispatch(getCards(businesses[0]?.id));

@@ -17,7 +17,9 @@ import { getTemplates, reset } from "../../../store/TemplateSlice";
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
-import { getBusinesses } from "../../../store/businessSlice";
+import { getBusinesses } from "../../hooks/Businesses";
+
+
 function Templates() {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -26,9 +28,8 @@ function Templates() {
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
 
-  useEffect(() => {
-    !templates && dispatch(getBusinesses());
-  }, []);
+  const { error, isLoading } = getBusinesses();
+  
 
   useEffect(() => {
     businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));

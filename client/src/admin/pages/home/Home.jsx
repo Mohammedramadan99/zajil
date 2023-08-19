@@ -38,6 +38,7 @@ import ActivitiesChart from "../../components/Home/Activities/ActivitiesChart";
 import CardsChart from "../../components/Home/CardsChart/CardsChart";
 import CardsSwiper from "../../components/Home/CardsSwiper/CardsSwiper";
 import IndevidualCardSwiper from "../../components/Home/CardsSwiper/IndevidualCardSwiper";
+import {getBusinesses } from '../../hooks/Businesses'
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -84,29 +85,26 @@ function Home() {
     },
   ];
   function LastnDays(n) {
-    // Create a new date object for today
     const today = dayjs();
 
-    // Create an array to store the last 10 days
     const last10Days = [];
 
-    // Loop through the past 10 days, including today
     for (let i = n - 1; i >= 0; i--) {
-      // Get the date for i days ago
       const date = today.subtract(i, "day");
 
-      // Add the date to the array
       last10Days.push(date.format("YYYY-MM-DD"));
     }
 
-    // Get the first and last day from the array
     const firstDay = last10Days[0];
     const lastDay = last10Days[last10Days.length - 1];
     const nPoints = n;
 
-    // Return the array and the first and last day variables
     return { last10Days, firstDay, lastDay, businessId, nPoints };
   }
+
+  // Fetching Data
+  // ---- Get Businesses
+  const { error, isLoading } = getBusinesses();
 
   useEffect(() => {
     dispatch(getCardsChart(LastnDays(30)));
@@ -118,12 +116,10 @@ function Home() {
   }, [activitiesChartSelect]);
 
   useEffect(() => {
-      dispatch(getActivities(activitiesTableSelect));
-    
+    dispatch(getActivities(activitiesTableSelect));
   }, [activitiesTableSelect]);
   useEffect(() => {
     dispatch(getCards());
-    
   }, []);
 
   return (

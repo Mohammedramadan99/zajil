@@ -2,15 +2,14 @@ import { useTheme } from "@emotion/react";
 import { Box, Container, Grid } from "@mui/material";
 import React, { memo, useEffect } from "react";
 import CreateBranchForm from "../../components/CreateBusiness/CreateBranchForm";
-import { getBusinesses } from "../../../store/businessSlice";
 import { useDispatch } from "react-redux";
+import { getBusinesses } from "../../hooks/Businesses";
 
 function CreateBranch() {
   const theme = useTheme();
   const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
+  const { error, isLoading } = getBusinesses();
+  
   return (
     <Box
       padding={2}
