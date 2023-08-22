@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Card from "../../components/Cards/Card/Card";
 import { Box, Container, Grid, useTheme } from "@mui/material";
 import CreateTemplateForm from "../../components/CreateTemplate/CreateTemplateForm";
-
+import {useGetBusinesses} from '../../hooks/Businesses'
 function CreateCard() {
   const theme = useTheme();
   const [tempPhoto, setTempPhoto] = useState("");
@@ -20,6 +20,9 @@ function CreateCard() {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [headerFieldValue, setHeaderFieldValue] = useState("");
   const [headerFieldLabel, setHeaderFieldLabel] = useState("");
+  
+  
+  const {error,isLoading} = useGetBusinesses()
   return (
     <Box
       sx={{

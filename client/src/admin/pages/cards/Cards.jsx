@@ -21,17 +21,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCards, reset } from "../../../store/cardSlice";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { getBusinesses } from "../../hooks/Businesses";
+import { useGetBusinesses } from "../../hooks/Businesses";
 
 function Cards() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { user } = useSelector((state) => state.auth);
   const { cards, loading } = useSelector((state) => state.cards);
   const { businesses } = useSelector((state) => state.businesses);
-  const { error, isLoading } = getBusinesses();
-  
+  const { error, isLoading } = useGetBusinesses();
+
   useEffect(() => {
     if (businesses?.length >= 0) {
       dispatch(getCards(businesses[0]?.id));

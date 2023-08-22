@@ -1,15 +1,16 @@
+import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
-import { setBusinesses } from "../../store/businessSlice";
+import { setBusinesses, setCreateBusiness } from "../../store/businessSlice";
 
-export const getBusinesses = () => {
+export const useGetBusinesses = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const fetcher = (url, token) =>
     axios({
       method: "get",
-      url: url,
+      url,
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

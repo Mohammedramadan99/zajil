@@ -24,6 +24,8 @@ function CreateBusinessForm() {
     loading,
     business,
   } = useSelector((state) => state.businesses);
+  const { user } = useSelector((state) => state.auth);
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -36,9 +38,10 @@ function CreateBusinessForm() {
     },
   });
   const { setFieldValue, setValues, values, resetForm } = formik;
-  const handleSubmit = async (values) => {
-    dispatch(createBusiness(values));
-    resetForm({ values: { name: "" } });
+  
+  const handleSubmit = (values) => {
+    dispatch(createBusiness(values))
+    // resetForm({ values: { name: "" } });
   };
   if (business) {
     navigate("/admin/branch/new");

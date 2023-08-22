@@ -17,7 +17,7 @@ import { getTemplates, reset } from "../../../store/TemplateSlice";
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
-import { getBusinesses } from "../../hooks/Businesses";
+import { useGetBusinesses } from "../../hooks/Businesses";
 
 
 function Templates() {
@@ -27,8 +27,9 @@ function Templates() {
   const { businesses } = useSelector((state) => state.businesses);
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
+  const {getBusinesses} = useBusinesses()
 
-  const { error, isLoading } = getBusinesses();
+  const { error, isLoading } = useGetBusinesses();
   
 
   useEffect(() => {

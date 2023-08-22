@@ -37,7 +37,6 @@ import TabPanel from "./LoyaltyTabs";
 import { createTemplate, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getBusinesses } from "../../../store/businessSlice";
 import AddIcon from "@mui/icons-material/Add";
 
 function CreateTemplateForm({
@@ -416,9 +415,6 @@ function CreateTemplateForm({
       }
     }
   };
-  useEffect(() => {
-    dispatch(getBusinesses());
-  }, []);
 
   useEffect(() => {
     if (template) {

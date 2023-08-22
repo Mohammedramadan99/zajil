@@ -3,14 +3,20 @@ import { Box, Container, Grid } from "@mui/material";
 import React, { memo, useEffect } from "react";
 import CreateBranchForm from "../../components/CreateBusiness/CreateBranchForm";
 import { useDispatch } from "react-redux";
-import { getBusinesses } from "../../hooks/Businesses";
+import { useGetBusinesses } from "../../hooks/Businesses";
+import { toast } from "react-toastify";
 
 function CreateBranch() {
   const theme = useTheme();
-  const dispatch = useDispatch()
-  const { error, isLoading } = getBusinesses();
-  
-  return (
+  const dispatch = useDispatch();
+
+  const { isLoading, error } = useGetBusinesses();
+  if (error) {
+    toast.error(error);
+  }
+  return isLoading ? (
+    <>loading...</>
+  ) : (
     <Box
       padding={2}
       sx={{

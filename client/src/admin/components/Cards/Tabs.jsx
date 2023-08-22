@@ -3,8 +3,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { getBusinesses } from "../../../store/businessSlice";
-import { getTemplates } from "../../../store/TemplateSlice";
 import { getCards } from "../../../store/cardSlice";
 
 function BusinessesTabs() {

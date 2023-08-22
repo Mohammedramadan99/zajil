@@ -14,14 +14,12 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
-import useBusiness from "../../../hooks/useBusiness";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import useBranch from "../../../hooks/useBranch";
+// import useBranch from "../../../hooks/useBranch";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getBusinesses,
   createBranch,
   reset,
 } from "../../../store/businessSlice";
@@ -35,12 +33,9 @@ function CreateBranchForm() {
 
   const [success, setSuccess] = useState("");
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyC8mNgASs0OW8OQW8VZd_R1QjIAIVz7YQg",
-    // googleMapsApiKey: "AIzaSyDR-XNouBIpOk0K9t-HmlIM3KnCHifEHhY",
+    googleMapsApiKey: import.meta.env.Google_MAPS_API_KEY, 
   });
   const [selectedAddress, setSelectedAddress] = useState("");
-
-  
 
   const formik = useFormik({
     initialValues: {

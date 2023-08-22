@@ -25,7 +25,6 @@ import { useTable } from "../../../utils/useTable";
 import { sortTable } from "../../../utils/sortTable";
 import BasicSelect from "../BasicSelect";
 import { useDispatch, useSelector } from "react-redux";
-import { getBusinesses } from "../../../../store/businessSlice";
 
 const headers = [
   { id: "message", label: "Message" },

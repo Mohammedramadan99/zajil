@@ -38,7 +38,8 @@ import ActivitiesChart from "../../components/Home/Activities/ActivitiesChart";
 import CardsChart from "../../components/Home/CardsChart/CardsChart";
 import CardsSwiper from "../../components/Home/CardsSwiper/CardsSwiper";
 import IndevidualCardSwiper from "../../components/Home/CardsSwiper/IndevidualCardSwiper";
-import {getBusinesses } from '../../hooks/Businesses'
+import { useGetBusinesses } from '../../hooks/Businesses'
+
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -104,7 +105,7 @@ function Home() {
 
   // Fetching Data
   // ---- Get Businesses
-  const { error, isLoading } = getBusinesses();
+  const { error, isLoading } = useGetBusinesses();
 
   useEffect(() => {
     dispatch(getCardsChart(LastnDays(30)));

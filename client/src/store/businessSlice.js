@@ -74,38 +74,38 @@ export const createBranch = createAsyncThunk(
     }
   }
 );
-export const getBusinesses = createAsyncThunk(
-  "business/all",
-  async (data, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      const { user } = auth;
-      // const form = new FormData();
-      // Object.keys(values).forEach((key) => {
-      //   form.append(key, values[key]);
-      // });
+// export const getBusinesses = createAsyncThunk(
+//   "business/all",
+//   async (data, { rejectWithValue, getState }) => {
+//     try {
+//       const { auth } = getState();
+//       const { user } = auth;
+//       // const form = new FormData();
+//       // Object.keys(values).forEach((key) => {
+//       //   form.append(key, values[key]);
+//       // });
 
-      // const response = await fetch(
-      //   `${import.meta.env.VITE_API_URL}/businesses`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       Authorization: `Bearer ${user.token}`,
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
+//       // const response = await fetch(
+//       //   `${import.meta.env.VITE_API_URL}/businesses`,
+//       //   {
+//       //     method: "GET",
+//       //     headers: {
+//       //       Authorization: `Bearer ${user.token}`,
+//       //       "Content-Type": "application/json",
+//       //     },
+//       //   }
+//       // );
 
-      // const { data } = await response.json();
-      return data?.rows;
-    } catch (error) {
-      console.error(error);
-      return rejectWithValue({
-        message: "An unknown error occurred. Please try again later.",
-      });
-    }
-  }
-);
+//       // const { data } = await response.json();
+//       return data?.rows;
+//     } catch (error) {
+//       console.error(error);
+//       return rejectWithValue({
+//         message: "An unknown error occurred. Please try again later.",
+//       });
+//     }
+//   }
+// );
 
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
@@ -134,8 +134,12 @@ const authSlice = createSlice({
     resetBusiness: (state) => {
       state.business = null;
     },
+    // actions
     setBusinesses: (state,{payload}) => {
       state.businesses = payload.rows
+    },
+    setCreateBusiness: (state, { payload }) => {
+      state.business = payload
     }
   },
   extraReducers: (builder) => {
@@ -156,22 +160,22 @@ const authSlice = createSlice({
         action.payload.message ||
         "An unknown error occurred. Please try again later.";
     });
-    builder.addCase(getBusinesses.pending, (state, action) => {
-      state.loading = true;
-      state.errors = null;
-    });
-    builder.addCase(getBusinesses.fulfilled, (state, action) => {
-      state.loading = false;
-      state.errors = null;
-      state.businesses = action.payload;
-    });
-    builder.addCase(getBusinesses.rejected, (state, action) => {
-      state.loading = false;
-      state.errors = action.payload?.errors;
-      state.user = null;
-      state.errorMessage =
-        action.payload || "An unknown error occurred. Please try again later.";
-    });
+    // builder.addCase(getBusinesses.pending, (state, action) => {
+    //   state.loading = true;
+    //   state.errors = null;
+    // });
+    // builder.addCase(getBusinesses.fulfilled, (state, action) => {
+    //   state.loading = false;
+    //   state.errors = null;
+    //   state.businesses = action.payload;
+    // });
+    // builder.addCase(getBusinesses.rejected, (state, action) => {
+    //   state.loading = false;
+    //   state.errors = action.payload?.errors;
+    //   state.user = null;
+    //   state.errorMessage =
+    //     action.payload || "An unknown error occurred. Please try again later.";
+    // });
     builder.addCase(createBranch.pending, (state, action) => {
       state.loading = true;
       state.errors = null;
@@ -192,6 +196,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset, resetBusiness,setBusinesses } = authSlice.actions;
+export const { reset, resetBusiness,setBusinesses,setCreateBusiness } = authSlice.actions;
 
 export default authSlice.reducer;
