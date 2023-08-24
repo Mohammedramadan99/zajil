@@ -23,6 +23,7 @@ import ShowCard from "../../CardControl/ShowCard";
 
 function IndevidualCardSwiper() {
   const theme = useTheme();
+  const { mode } = useSelector((state) => state.mode);
   const { cards } = useSelector((state) => state.stats);
   const params = {
     // spaceBetween: 30,
@@ -64,7 +65,8 @@ function IndevidualCardSwiper() {
         {...params}
         modules={[Autoplay, EffectFlip, Pagination, Navigation]}
         navigation={true}
-        effect="flip">
+        effect="flip"
+        className={mode === "light" ? "light small" : "dark small"}>
         {cards?.map((item, i) => (
           <SwiperSlide
             key={item._id}

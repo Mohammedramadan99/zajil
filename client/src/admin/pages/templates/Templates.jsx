@@ -27,7 +27,6 @@ function Templates() {
   const { businesses } = useSelector((state) => state.businesses);
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
-  const {getBusinesses} = useBusinesses()
 
   const { error, isLoading } = useGetBusinesses();
   

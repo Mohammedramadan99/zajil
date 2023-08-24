@@ -81,12 +81,12 @@ input {
   align-items: flex-end;
 }
 
-
 .swiper-button-prev,
 .swiper-button-next {
   color: #fff;
   z-index: 999;
   &::after {
+    transition: 0.5s ease;
     font-size: 15px;
     // background-color: rgba($primary_color, 0.2);
     padding: 15px;
@@ -97,14 +97,49 @@ input {
   }
   &:hover {
     &::after {
-      background-color: rgba($primary_color, 0.5);
+      color: #ddd;
     }
   }
 }
-
-.swiper-initialized{
+.swiper-initialized {
   position: relative;
-  &::after,&::before{
+  &.light {
+    .swiper-button-prev,
+    .swiper-button-next {
+      color: #000;
+      &:hover {
+        &::after {
+          color: #666;
+        }
+      }
+    }
+    &::after {
+      right: 0;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgba(#f4f4f4, 0.5),
+        #fff
+      );
+    }
+    &::before {
+      left: 0;
+      background: linear-gradient(
+        to left,
+        transparent,
+        rgba(#f4f4f4, 0.5),
+        #fff
+      );
+    }
+  }
+  &.small {
+    &::after,
+    &::before {
+      background: unset;
+    }
+  }
+  &::after,
+  &::before {
     content: "";
     position: absolute;
     top: 0;
@@ -112,12 +147,22 @@ input {
     height: 100%;
     z-index: 10;
   }
-  &::after{
+  &::after {
     right: 0;
-    background: linear-gradient(to right, transparent,rgba($grey_color,.4),$grey_color);
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba($grey_color, 0.4),
+      $grey_color
+    );
   }
-  &::before{
+  &::before {
     left: 0;
-    background: linear-gradient(to left, transparent,rgba($grey_color,.4),$grey_color);
+    background: linear-gradient(
+      to left,
+      transparent,
+      rgba($grey_color, 0.4),
+      $grey_color
+    );
   }
 }

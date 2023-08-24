@@ -77,7 +77,7 @@ const ActivitiesTable = ({
         {/* {activities?.length > 0 && ( */}
         <TableContainer>
           <Table
-            sx={{ height: "450px" }}
+            sx={{ height: "450px", position: "relative" }}
             xs={{
               "&td": {},
             }}>
@@ -87,50 +87,64 @@ const ActivitiesTable = ({
               orderBy={orderBy}
               onSortClick={onSortClick}
             />
-            <TableBody sx={{ p: 3 }}>
-              {sortTable(data, order, orderBy)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((item) => (
-                  <TableRow key={item.id} sx={{ width: "100px" }}>
-                    <TableCell
-                      align="left"
-                      sx={{
-                        borderColor: "transparent",
-                        color: theme.palette.secondary[300],
-                        maxWidth: item.message ? "200px" : "100px",
-                        width: "100%",
-                      }}>
-                      <Stack direction={"row"} alignItems={"center"} gap={2}>
-                        {item?.message?.replace(
-                          "ITEMS_SUBSCRIPTION",
-                          "SUBSCRIPTION"
-                        )}
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="left" sx={{ borderColor: "transparent" }}>
-                      <Typography
-                        fontSize={12}
+            {data.length > 0 ? (
+              <TableBody sx={{ p: 3 }}>
+                {sortTable(data, order, orderBy)
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.id} sx={{ width: "100px" }}>
+                      <TableCell
+                        align="left"
                         sx={{
-                          backgroundColor: theme.palette.light[1],
-                          color: theme.palette.primary[200],
-                          p: "2px 5px",
-                          borderRadius: 2,
-                          textAlign: "center",
+                          borderColor: "transparent",
+                          color: theme.palette.secondary[300],
+                          maxWidth: item.message ? "200px" : "100px",
+                          width: "100%",
                         }}>
-                        {item.types[0]}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="left" sx={{ borderColor: "transparent" }}>
-                      <Link to={`/admin/users/1`}>{item?.card?.clientName}</Link>
-                    </TableCell>
-                    <TableCell align="left" sx={{ borderColor: "transparent" }}>
-                      <Link to={`/admin/users/1`}>
-                        {dayjs(item.createdAt).fromNow()}
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
+                        <Stack direction={"row"} alignItems={"center"} gap={2}>
+                          {item?.message?.replace(
+                            "ITEMS_SUBSCRIPTION",
+                            "SUBSCRIPTION"
+                          )}
+                        </Stack>
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        sx={{ borderColor: "transparent" }}>
+                        <Typography
+                          fontSize={12}
+                          sx={{
+                            backgroundColor: theme.palette.light[1],
+                            color: theme.palette.primary[200],
+                            p: "2px 5px",
+                            borderRadius: 2,
+                            textAlign: "center",
+                          }}>
+                          {item.types[0]}
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        sx={{ borderColor: "transparent" }}>
+                        <Link to={`/admin/users/1`}>
+                          {item?.card?.clientName}
+                        </Link>
+                      </TableCell>
+                      <TableCell
+                        align="left"
+                        sx={{ borderColor: "transparent" }}>
+                        <Link to={`/admin/users/1`}>
+                          {dayjs(item.createdAt).fromNow()}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            ) : (
+              <Typography fontSize={50} fontWeight={"bold"} color={"#444"} textAlign={"center"} position={"absolute"} top={"50%"} left={"50%"} sx={{transform:"translate(-50%,-50%)"}}>
+                No Activities
+              </Typography>
+            )}
           </Table>
           <TablePagination
             component={"div"}
