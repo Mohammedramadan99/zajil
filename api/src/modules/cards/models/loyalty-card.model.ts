@@ -5,6 +5,7 @@ import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
 export class LoyaltyCard extends Model {
     public declare id: number;
     public points!: number;
+    card: Card;
 
     // redeemed loyalty gifts
     public redeemedLoyaltyGifts: {

@@ -7,6 +7,7 @@ import cardTemplatesRouter from './card-templates.router';
 import { canUseBusinessId } from '../middlewares/methods/canUseBusinessId.middleware';
 import cardsRouter from './cards.router';
 import menuRouter from './menu.router';
+import eventsRouter from './events.router';
 
 const businessesRouter = express.Router();
 businessesRouter.post('/', validateMiddleware(CreateBusinessDto), BusinessController.create);
@@ -14,6 +15,9 @@ businessesRouter.get('/', BusinessController.getAll);
 businessesRouter.get('/' + ':id', BusinessController.getOne);
 businessesRouter.patch('/' + ':id', validateMiddleware(UpdateBusinessDto), BusinessController.update);
 businessesRouter.delete('/' + ':id', BusinessController.delete);
+
+// Events
+businessesRouter.use('/:businessId/events', canUseBusinessId, eventsRouter);
 
 // Card Templates
 businessesRouter.use('/:businessId/card-templates', canUseBusinessId, cardTemplatesRouter);

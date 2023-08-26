@@ -16,6 +16,7 @@ export const CardController: ICRUDController & {
     getSerialNumbers: (req: RequestMod, res: Response, next: NextFunction) => void;
     sendUpdatedPass: (req: RequestMod, res: Response, next: NextFunction) => void;
     log: (req: RequestMod, res: Response, next: NextFunction) => void;
+    scanTicket: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;
@@ -198,6 +199,19 @@ export const CardController: ICRUDController & {
                 });
                 res.end(pkpassBuffer);
             })
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    scanTicket: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+
+        cardServices
+            .scanTicket(cardId, req.user)
+            .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
                 if (err instanceof HttpError) next(err);

@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsDateString, IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, Min } from 'class-validator';
 import { Gender } from '../models/card.model';
 
 export class CreateCardDto {
@@ -28,4 +28,10 @@ export class CreateCardDto {
     @IsNumber()
     @Min(1)
     templateId: number;
+
+    // seat
+    @IsOptional()
+    @IsString()
+    @Matches(/^[A-Z]\d+$/) // ex: 'A1'
+    seat?: string;
 }

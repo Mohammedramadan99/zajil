@@ -19,7 +19,7 @@ import {
   reset,
   ReducePoints,
   useItems,
-} from "../../../store/cardSlice";
+} from "../../../store/CardSlice";
 import { toast } from "react-toastify";
 function CardControlForm({ activeSticker, setActiveSticker }) {
   const dispatch = useDispatch();

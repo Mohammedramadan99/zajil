@@ -1,6 +1,8 @@
 import {
     ArrayMinSize,
+    ArrayNotEmpty,
     IsArray,
+    IsDateString,
     IsEnum,
     IsIn,
     IsNotEmpty,
@@ -11,6 +13,7 @@ import {
     IsString,
     IsUrl,
     Length,
+    Matches,
     Min,
     MinLength,
     ValidateIf,
@@ -19,6 +22,8 @@ import {
 import { CardType } from '../models/card-template.model';
 import { CreateLoyaltyGiftDto } from './create-loyalty-gift.dto';
 import { Type } from 'class-transformer';
+import { SeatType } from '../../events/models/event.model';
+import { EventTicketType } from '../models/event-ticket-template.model';
 
 export enum CardDesignType {
     BoardingPass = 'boardingPass',
@@ -38,6 +43,7 @@ export class StickerDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     imageUrl: string;
 
     // title
@@ -79,12 +85,14 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     logoUrl: string;
 
     // iconUrl | on all card types
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     iconUrl: string;
 
     // thumbnailUrl | on generic and event ticket card types
@@ -92,6 +100,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     @IsOptional()
     thumbnailUrl?: string;
 
@@ -100,6 +109,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     footerUrl: string;
 
     // stripUrl | on coupon, event ticket and store card card types
@@ -109,6 +119,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     stripUrl: string;
 
     // backgroundUrl | on event ticket card type
@@ -116,6 +127,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     backgroundUrl: string;
 
     // cardProps
@@ -155,7 +167,9 @@ export class CreateCardTemplateDto {
     nItems: number;
 
     // stickers | on items subscription card type if there is a stripe image and there is noStickers
-    @ValidateIf((o) => [CardType.ITEMS_SUBSCRIPTION, CardType.LOYALTY].includes(o.cardType) && o.stripUrl && o.stickersCount)
+    @ValidateIf(
+        (o) => [CardType.ITEMS_SUBSCRIPTION, CardType.LOYALTY].includes(o.cardType) && o.stripUrl && o.stickersCount,
+    )
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => StickerDto)
@@ -186,4 +200,20 @@ export class CreateCardTemplateDto {
     @ValidateNested({ each: true })
     @Type(() => CreateLoyaltyGiftDto)
     gifts: CreateLoyaltyGiftDto[];
+
+    /* Event Ticket Card Template Validation */
+
+    // event id
+    @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    @IsNotEmpty()
+    @IsNumber()
+    eventId: number;
+
+    // event ticket type
+    @ValidateIf((o) => o.cardType === CardType.EVENT_TICKET)
+    @IsNotEmpty()
+    @IsString()
+    @IsEnum(EventTicketType)
+    eventTicketType: EventTicketType;
+
 }

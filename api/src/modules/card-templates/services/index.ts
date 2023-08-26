@@ -12,6 +12,8 @@ import { downloadImageToFolder } from '../../../helpers';
 import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
+import { EventTicketTemplate } from '../models/event-ticket-template.model';
+import { Event } from '../../events/models/event.model';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -19,7 +21,7 @@ export const createCardTemplate = async (
     req: RequestMod,
 ): Promise<any> => {
     // define variables to be used in the try catch block
-    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate;
     let cardTemplate: CardTemplate;
     let applePassDesign;
 
@@ -45,7 +47,7 @@ export const createCardTemplate = async (
             businessId,
         });
 
-        // create a folder in the public folder to store the card template files
+        // create a design json
         [applePassDesign] = await generateDesignJson({
             cardTemplateId: cardTemplate.id,
             ...createCardTemplateDto,
@@ -80,6 +82,25 @@ export const createCardTemplate = async (
                     nItems: createCardTemplateDto.nItems,
                 });
                 break;
+
+            case CardType.EVENT_TICKET:
+                // find event
+                const event = await Event.findOne({
+                    where: {
+                        id: createCardTemplateDto.eventId,
+                    },
+                });
+                if (!event) throw new HttpError(404, 'Event not found');
+
+                // check if the event belongs to the business
+                if (event.businessId !== businessId) throw new HttpError(403, 'Event does not belong to the business');
+
+                subCardTemplate = await EventTicketTemplate.create({
+                    id: cardTemplate.id,
+                    eventId: createCardTemplateDto.eventId,
+                    type: createCardTemplateDto.eventTicketType,
+                });
+                break;
         }
 
         // combine the base card template with the sub card template in a single object
@@ -111,8 +132,8 @@ const generateDesignJson = async (
         ...cardProps,
         ...APPLE_PASS_PLACEHOLDER({
             serialNumber: 'SERIAL_NUMBER',
-            description: 'Test Apple Wallet Card',
-            organizationName: `Test Organization`,
+            description: 'Zajil Pass',
+            organizationName: `Oraganization Name`,
             designType,
             qrCodeMessage: 'QR_CODE_MESSAGE',
             qrCodeFormat,
@@ -171,7 +192,7 @@ export const updateCardTemplateById = async (
     updateCardTemplateDto: CreateCardTemplateDto,
 ): Promise<any> => {
     // define variables to be used in the try catch block
-    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate;
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate;
     let cardTemplate: CardTemplate;
     let applePassDesign: any;
 
@@ -261,6 +282,26 @@ export const updateCardTemplateById = async (
                 },
             });
             break;
+
+        case CardType.EVENT_TICKET:
+            // update the existing sub card template
+            await EventTicketTemplate.update(
+                {
+                    eventId: updateCardTemplateDto.eventId,
+                    type: updateCardTemplateDto.eventTicketType,
+                },
+                {
+                    where: {
+                        id: cardTemplate.id,
+                    },
+                },
+            );
+            subCardTemplate = await EventTicketTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+            });
+            break;
     }
 
     // combine the base card template with the sub card template in a single object
@@ -307,6 +348,21 @@ const FIND_INCLUDE_OPTIONS = [
             '$CardTemplate.cardType$': CardType.ITEMS_SUBSCRIPTION,
         },
         required: false,
+    },
+    {
+        model: EventTicketTemplate,
+        as: 'eventTicketTemplate',
+        where: {
+            '$CardTemplate.cardType$': CardType.EVENT_TICKET,
+        },
+        required: false,
+        include: [
+            {
+                model: Event,
+                as: 'event',
+                required: false,
+            },
+        ],
     },
 ];
 

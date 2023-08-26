@@ -19,6 +19,10 @@ import { User } from '../../users/models/user.model';
 import { Request } from 'express';
 import { getFile, uploadFile } from '../../aws/s3';
 import { Op } from 'sequelize';
+import { EventCard } from '../models/event-card.model';
+import { Event, SeatType } from '../../events/models/event.model';
+import { EventTicketTemplate, EventTicketType } from '../../card-templates/models/event-ticket-template.model';
+import { sendUpdatePassNotification } from '../../notifications/services/apn.service';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -40,7 +44,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     });
 
     // Create a sub card based on the card type
-    let subCard: LoyaltyCard | ItemsSubscriptionCard;
+    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard;
     switch (cardTemplate.cardType) {
         case CardType.LOYALTY:
             subCard = await LoyaltyCard.create({
@@ -59,6 +63,47 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 id: card.id,
                 nItems: isct.nItems,
                 expirationDate: new Date(Date.now() + isct.subscriptionDurationDays * 24 * 60 * 60 * 1000),
+            });
+            break;
+
+        case CardType.EVENT_TICKET:
+            // find event ticket template
+            const eventTicketTemplate = await EventTicketTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+                include: [
+                    {
+                        model: Event,
+                        as: 'event',
+                        required: true,
+                    },
+                ],
+            });
+            if (!eventTicketTemplate) throw new HttpError(404, 'Event ticket template not found');
+
+            // check if the event has a limited amount
+            if (eventTicketTemplate.event.limitedAmount) {
+                const nTickets = await EventCard.count({
+                    where: {
+                        eventTicketTemplateId: eventTicketTemplate.id,
+                    },
+                });
+                if (nTickets >= eventTicketTemplate.event.limitedAmount)
+                    throw new HttpError(400, 'Event reached its limited amount');
+            }
+
+            // if it has seats, validate the seats
+            if ((eventTicketTemplate.type = EventTicketType.SEAT)) {
+                if (!createCardDto.seat) throw new HttpError(400, '`seat` is required');
+                await validateAndChooseSeat(eventTicketTemplate.event, createCardDto.seat);
+            }
+
+            // create event card
+            subCard = await EventCard.create({
+                id: card.id,
+                eventTicketTemplateId: eventTicketTemplate.id,
+                seatId: createCardDto.seat,
             });
             break;
     }
@@ -89,7 +134,6 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
 const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) => {
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
-        serialNumber: cardId.toString(),
         cardId: cardId.toString(),
     });
 
@@ -323,6 +367,8 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     // update the pass
     await generatePassFromTemplate(cardId, card.templateId);
 
+    await sendUpdatePassNotification(card.pushToken);
+
     return newCard;
 };
 
@@ -365,6 +411,10 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
     loyaltyCard.card.canScan = false;
     await loyaltyCard.card.save();
 
+    // update the pass
+    await generatePassFromTemplate(cardId, loyaltyCard.card.templateId);
+    await sendUpdatePassNotification(loyaltyCard.card.pushToken);
+
     return loyaltyCard;
 };
 
@@ -406,6 +456,7 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
 
     // update the pass
     await generatePassFromTemplate(cardId, itemsSubscriptionCard.card.templateId);
+    await sendUpdatePassNotification(itemsSubscriptionCard.card.pushToken);
 
     // log activity
     await Activity.create({
@@ -489,7 +540,7 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     loyaltyCard.points -= gift.priceNPoints;
 
     loyaltyCard.redeemedLoyaltyGifts = [
-        ...loyaltyCard.redeemedLoyaltyGifts || [],
+        ...(loyaltyCard.redeemedLoyaltyGifts || []),
         {
             id: gift.id,
             name: gift.name,
@@ -513,7 +564,11 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
         userId: user.id,
     });
 
-    return await loyaltyCard.save();
+    const savedLoayltyCard = await loyaltyCard.save();
+    await generatePassFromTemplate(cardId, savedLoayltyCard.card.templateId);
+    await sendUpdatePassNotification(savedLoayltyCard.card.pushToken);
+
+    return savedLoayltyCard;
 };
 
 export const registerDevice = async ({
@@ -652,11 +707,99 @@ export function loyaltyUpdatePoints(cardId: number, points: number, user: User) 
                 ],
             },
         ],
-    }).then((loyaltyCard) => {
+    }).then(async (loyaltyCard) => {
         if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
         // update points
         loyaltyCard.points = points;
+
+        // update the pass
+        await generatePassFromTemplate(cardId, loyaltyCard.card.templateId);
+        await sendUpdatePassNotification(loyaltyCard.card.pushToken);
+
         return loyaltyCard.save();
     });
+}
+
+async function validateAndChooseSeat(event: Event, seat: string) {
+    // extrct the alhabets from the seat
+    const seatColumn = seat.replace(/\d/g, '').toUpperCase();
+
+    // extract the numbers from the seat
+    const seatRow = parseInt(seat.replace(/\D/g, ''));
+
+    // turn seat column into colum index (A=1) (AA=27)
+    const seatColumnIndex = seatColumn
+        .split('')
+        .map((c, i) => c.charCodeAt(0) - 65 + 26 * i)
+        .reduce((a, b) => a + b, 0);
+
+    // turn seat row into row index
+    const seatRowIndex = seatRow - 1;
+
+    const room = event.room;
+    // check if the seat is in the event
+    if (
+        seatColumnIndex < 0 ||
+        seatColumnIndex >= room[0].length ||
+        seatRowIndex < 0 ||
+        seatRowIndex >= event.room.length
+    )
+        throw new HttpError(400, 'Seat not found');
+
+    // check if the seat is taken
+    if (room[seatRowIndex][seatColumnIndex] !== SeatType.AVAILABILE_SEAT) throw new HttpError(400, 'Seat unavailable');
+
+    // update room
+    room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
+    console.log(room);
+    
+    event.room = room;
+    await Event.update(
+        {
+            room,
+        },
+        {
+            where: {
+                id: event.id,
+            },
+        },
+    );
+
+    return true;
+}
+
+export async function scanTicket(cardId: number, user: User) {
+    // find card
+    const eventTicket = await EventCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: EventTicketTemplate,
+                as: 'eventTicketTemplate',
+                required: true,
+                include: [
+                    {
+                        model: Event,
+                        as: 'event',
+                        required: true,
+                    },
+                ],
+            },
+        ],
+    });
+
+    // check if expired
+    if (await eventTicket.isExpired()) throw new HttpError(400, 'Ticket expired');
+
+    // check if used
+    if (eventTicket.used) throw new HttpError(400, 'Ticket already used');
+
+    // mark as used
+    eventTicket.used = true;
+
+    // return response
+    return eventTicket.save();
 }
