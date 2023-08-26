@@ -4,6 +4,7 @@ import { LoyaltyCardTemplate } from './loyalty-card-template.model';
 import { ItemsSubscriptionCardTemplate } from './items-subscription-card-template.model';
 import { Card } from '../../cards/models/card.model';
 import { StickerDto } from '../dto/create-card-template';
+import { EventTicketTemplate } from './event-ticket-template.model';
 
 export enum CardType {
     LOYALTY = 'LOYALTY',
@@ -121,6 +122,12 @@ export const associate = () => {
     CardTemplate.hasOne(ItemsSubscriptionCardTemplate, {
         foreignKey: 'id',
         as: 'itemsSubscriptionCardTemplate',
+        onDelete: 'CASCADE',
+    });
+
+    CardTemplate.hasOne(EventTicketTemplate, {
+        foreignKey: 'id',
+        as: 'eventTicketTemplate',
         onDelete: 'CASCADE',
     });
 

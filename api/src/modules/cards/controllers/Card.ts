@@ -16,6 +16,7 @@ export const CardController: ICRUDController & {
     getSerialNumbers: (req: RequestMod, res: Response, next: NextFunction) => void;
     sendUpdatedPass: (req: RequestMod, res: Response, next: NextFunction) => void;
     log: (req: RequestMod, res: Response, next: NextFunction) => void;
+    scanTicket: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;

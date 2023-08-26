@@ -731,8 +731,8 @@ async function validateAndChooseSeat(event: Event, seat: string) {
     // turn seat column into colum index (A=1) (AA=27)
     const seatColumnIndex = seatColumn
         .split('')
-        .map((c) => c.charCodeAt(0) - 65)
-        .reduce((acc, cur) => acc * 25 + cur, 0);
+        .map((c, i) => c.charCodeAt(0) - 65 + 26 * i)
+        .reduce((a, b) => a + b, 0);
 
     // turn seat row into row index
     const seatRowIndex = seatRow - 1;
@@ -752,8 +752,19 @@ async function validateAndChooseSeat(event: Event, seat: string) {
 
     // update room
     room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
+    console.log(room);
+    
     event.room = room;
-    await event.save();
+    await Event.update(
+        {
+            room,
+        },
+        {
+            where: {
+                id: event.id,
+            },
+        },
+    );
 
     return true;
 }

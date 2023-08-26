@@ -349,6 +349,21 @@ const FIND_INCLUDE_OPTIONS = [
         },
         required: false,
     },
+    {
+        model: EventTicketTemplate,
+        as: 'eventTicketTemplate',
+        where: {
+            '$CardTemplate.cardType$': CardType.EVENT_TICKET,
+        },
+        required: false,
+        include: [
+            {
+                model: Event,
+                as: 'event',
+                required: false,
+            },
+        ],
+    },
 ];
 
 const removeRowNullFields = (row: CardTemplate) => {

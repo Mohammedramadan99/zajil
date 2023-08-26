@@ -41,7 +41,7 @@ export const sendCardNotification = async (CreateCardNotificationDto: CreateCard
     // send notification
     await sendNotification(
         {
-            topic: CreateCardNotificationDto.topic,
+            alert: CreateCardNotificationDto.alert,
         },
         card.pushToken,
     ).catch((err) => {

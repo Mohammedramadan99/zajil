@@ -6,8 +6,8 @@ export class CreateCardNotificationDto {
     @IsNumber()
     cardId: number;
 
-    // notification topic
+    // alert
     @IsNotEmpty()
     @IsString()
-    topic: string;
+    alert: string;
 }

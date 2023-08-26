@@ -9,12 +9,13 @@ var options: ProviderOptions = {
 export const apnProvider = new Provider(options);
 
 export const sendNotification = async (
-    notificationProps: { topic: string } & Partial<Notification>,
+    notificationProps: { alert: string } & Partial<Notification>,
     recipients: string | string[],
 ) => {
     try {
         const notification = new Notification();
-        notification.topic = notificationProps.topic;
+        notification.alert = notificationProps.alert;
+        notification.topic = 'com.zajil.passes';
         const result = await apnProvider.send(notification, recipients);
         console.log(JSON.stringify(result, null, 2));
     } catch (error) {

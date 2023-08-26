@@ -39,4 +39,7 @@ cardsRouter.patch(
     CardController.itemSubscriptionUse,
 );
 
+// scan ticket
+cardsRouter.patch('/:id/scan-ticket', canUseBusinessId, CardController.scanTicket);
+
 export default cardsRouter;

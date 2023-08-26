@@ -43,7 +43,7 @@ export class StickerDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     imageUrl: string;
 
     // title
@@ -85,14 +85,14 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     logoUrl: string;
 
     // iconUrl | on all card types
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     iconUrl: string;
 
     // thumbnailUrl | on generic and event ticket card types
@@ -100,8 +100,8 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     @IsOptional()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
     thumbnailUrl?: string;
 
     // footerUrl | on boarding pass card type
@@ -109,7 +109,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     footerUrl: string;
 
     // stripUrl | on coupon, event ticket and store card card types
@@ -119,7 +119,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     stripUrl: string;
 
     // backgroundUrl | on event ticket card type
@@ -127,7 +127,7 @@ export class CreateCardTemplateDto {
     @IsNotEmpty()
     @IsString()
     @IsUrl()
-    @Matches(/^https:\/\/s3\.amazonaws\.com\/.+$/)
+    @Matches(/https:\/\/zajil-bucket.s3.me-south-1.amazonaws.com/)
     backgroundUrl: string;
 
     // cardProps

@@ -1,5 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { Event } from '../../events/models/event.model';
+import { CardTemplate } from './card-template.model';
 
 export enum EventTicketType {
     SEAT = 'seat',
@@ -43,5 +44,11 @@ export const associate = () => {
     EventTicketTemplate.belongsTo(Event, {
         foreignKey: 'eventId',
         as: 'event',
+    });
+
+    // Event Ticket Template | Card Template
+    EventTicketTemplate.belongsTo(CardTemplate, {
+        foreignKey: 'id',
+        as: 'cardTemplate',
     });
 };
