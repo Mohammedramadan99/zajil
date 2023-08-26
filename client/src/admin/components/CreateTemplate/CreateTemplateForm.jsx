@@ -37,7 +37,6 @@ import TabPanel from "./LoyaltyTabs";
 import { createTemplate, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 
 function CreateTemplateForm({
   tempPhoto,
@@ -94,24 +93,25 @@ function CreateTemplateForm({
       business: "",
       giftName: "",
       giftPriceNPoints: 0,
-      headerFieldLabel,
-      headerFieldValue,
+      headerFieldLabel:"",
+      headerFieldValue:"",
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
       cardType: yup.string().required(),
       brandName: yup.string().required(),
       nItems: yup.number(),
-      name: yup.string().required(),
+      name: yup.string(),
       stickersNumber: yup.number().min(1).max(30).required(),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
       giftName: yup.string(),
       giftPriceNPoints: yup.number(),
+      headerFieldLabel:yup.string(),
+      headerFieldValue:yup.string(),
     }),
     onSubmit(values) {
       (async () => {
-        console.log({ imgColor, activeImg });
         let imgs = [];
         if (imgColor) {
           const canvas = await html2canvas(imgColor, {
@@ -160,10 +160,6 @@ function CreateTemplateForm({
           return imgUrl.data.url;
         });
         const uploadedImgUrls = await Promise.all(uploadPromises);
-
-        // const { id, ...stickersIcons } = activeStickers;
-
-        // console.log({ stickers });
         const cardData = {
           params: { businessId: values.business },
           data: {
@@ -201,7 +197,7 @@ function CreateTemplateForm({
                 {
                   key: `${Math.floor(Math.random() * 100000000) + 1}`,
                   label: "name",
-                  value: formik.values.name,
+                  value: "{{clientName}}",
                 },
               ],
               auxiliaryFields: [
@@ -268,6 +264,7 @@ function CreateTemplateForm({
       icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-2.png",
     },
   ]);
+
   const scanTypes = [
     {
       icon: ScanIcon1,
@@ -282,6 +279,7 @@ function CreateTemplateForm({
       url: qrcode,
     },
   ];
+
   const cardBgHandler = (bg) => {
     setActiveImg(bg);
   };
@@ -306,8 +304,6 @@ function CreateTemplateForm({
       return false;
     }
     const url = URL.createObjectURL(file);
-
-    setTextLogo(null);
     setLogoImg(url);
     setTempPhoto(file);
   };
@@ -347,16 +343,14 @@ function CreateTemplateForm({
 
   useEffect(() => {
     if (textLogo) {
-      setLogoImg(null);
       setTextLogo(textLogo);
     } else if (logoImg) {
-      setTextLogo(null);
       setLogoImg(logoImg);
     }
     if (stickersNumber) {
       setStickersNumber(stickersNumber);
     }
-  }, [textLogo, logoImg, stickersNumber]);
+  }, [stickersNumber, textLogo, logoImg]);
 
   const fileInputClick = (event) => {
     event.target.value = null;
@@ -364,7 +358,7 @@ function CreateTemplateForm({
 
   const addStickerHandler = (item) => {
     if (formik.values.cardType === "LOYALTY") {
-      if (activeStickers.length >= 2) {
+      if (activeStickers.length >= 1) {
         const stickerIndex = activeStickers.findIndex(
           (sticker) => sticker.id === item.id
         );
@@ -374,11 +368,9 @@ function CreateTemplateForm({
             activeStickers.filter((sticker, index) => index !== stickerIndex)
           );
         } else {
-          console.log("lo");
-          return;
+          return false;
         }
       } else {
-        console.log("not lo");
         const stickerIndex = activeStickers.findIndex(
           (sticker) => sticker.id === item.id
         );
@@ -739,12 +731,15 @@ function CreateTemplateForm({
                     </label>
                   </div>
                 </div>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={2}>
                   <TextField
                     name="brandName"
                     label="Brand Name"
                     value={formik.values.brandName}
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      setTextLogo(e.target.value);
+                      formik.setFieldValue("brandName", e.target.value);
+                    }}
                     error={Boolean(formik.errors.brandName)}
                     helperText={formik.errors.brandName}
                     sx={{
@@ -762,8 +757,6 @@ function CreateTemplateForm({
                         },
                     }}
                   />
-                </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     name="stickersNumber"
                     label="Stickers Number"
@@ -788,6 +781,8 @@ function CreateTemplateForm({
                       sm: { width: "50%" },
                     }}
                   />
+                </Stack>
+                {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     name="Name"
                     label="Name"
@@ -809,7 +804,7 @@ function CreateTemplateForm({
                       sm: { width: "50%" },
                     }}
                   />
-                </Stack>
+                </Stack> */}
                 <Stack direction={{ xs: "column", sm: "row" }}>
                   <Box>
                     <div
@@ -868,17 +863,17 @@ function CreateTemplateForm({
                     </div>
                   </Box>
                 </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={2}>
                   <TextField
                     name="headerFieldLabel"
-                    label="field"
+                    label="Header"
                     value={headerFieldLabel}
                     onChange={(e) => {
                       setHeaderFieldLabel(e.target.value);
                       formik.setFieldValue("headerFieldLabel", e.target.value);
                     }}
-                    error={Boolean(formik.errors.stickersNumber)}
-                    helperText={formik.errors.stickersNumber}
+                    error={Boolean(formik.errors.headerFieldLabel)}
+                    helperText={formik.errors.headerFieldLabel}
                     inputProps={{
                       min: 1,
                       max: 30,
@@ -891,15 +886,15 @@ function CreateTemplateForm({
                   />
                   <TextField
                     name="headerFieldValue"
-                    label="value"
+                    label="Value"
                     type="text"
                     value={headerFieldValue}
                     onChange={(e) => {
                       setHeaderFieldValue(e.target.value);
                       formik.setFieldValue("headerFieldValue", e.target.value);
                     }}
-                    error={Boolean(formik.errors.name)}
-                    helperText={formik.errors.name}
+                    error={Boolean(formik.errors.headerFieldValue)}
+                    helperText={formik.errors.headerFieldValue}
                     inputProps={{
                       min: 1,
                       max: 30,

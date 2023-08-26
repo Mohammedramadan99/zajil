@@ -8,8 +8,8 @@ function CreateCard() {
   const [tempPhoto, setTempPhoto] = useState("");
   const [imgColor, setImgColor] = useState("");
   const [activeImg, setActiveImg] = useState("");
-  const [textLogo, setTextLogo] = useState(null);
   const [stickersNumber, setStickersNumber] = useState();
+  const [textLogo, setTextLogo] = useState(null);
   const [logoImg, setLogoImg] = useState(null);
   const [activeIcon, setActiveIcon] = useState("");
   const [activeScanType, setActiveScanType] = useState("");

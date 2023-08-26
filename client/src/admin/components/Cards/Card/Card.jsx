@@ -47,10 +47,8 @@ function Card({
   useEffect(() => {
     // Whenever the textLogo or logoImg props change, update the logo image
     if (textLogo) {
-      setLogoImg(null);
       setTextLogo(textLogo);
     } else if (logoImg) {
-      setTextLogo(null);
       setLogoImg(logoImg);
     }
     if (stickersNumber) {
@@ -81,7 +79,6 @@ function Card({
               minHeight: "90px",
               height: "100%",
               background: `url(${bg}) no-repeat`,
-
               backgroundSize: "cover",
               backgroundPosition: "cover",
               paddingInline: "10px",
@@ -91,13 +88,15 @@ function Card({
               spacing={2}
               alignItems={"center"}
               justifyContent={"space-between"}>
-              <Box>
+              <Box display={"flex"}
+              gap={2}
+              alignItems={"center"}
+              justifyContent={"space-between"}>
                 {logoImg && (
                   <img src={logoImg} id="photo" width={30} height={30} />
                 )}
-
                 {/* )} */}
-                {textLogo && <span> {textLogo} </span>}
+                {textLogo && <Typography color={labelColor}> {textLogo} </Typography>}
               </Box>
               <Box>
                 <Typography variant="h6" color={labelColor}>
