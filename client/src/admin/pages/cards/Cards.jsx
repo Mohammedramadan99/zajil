@@ -22,6 +22,7 @@ import { getCards, reset } from "../../../store/cardSlice";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { useGetBusinesses } from "../../hooks/Businesses";
+import { useGetCards } from "../../hooks/Cards";
 
 function Cards() {
   const theme = useTheme();
@@ -31,13 +32,16 @@ function Cards() {
   const { user } = useSelector((state) => state.auth);
   const { cards, loading } = useSelector((state) => state.cards);
   const { businesses } = useSelector((state) => state.businesses);
-  const { error, isLoading } = useGetBusinesses();
-
-  useEffect(() => {
-    if (businesses?.length >= 0) {
-      dispatch(getCards(businesses[0]?.id));
-    }
-  }, [businesses]);
+  const { error: businessesError, isLoading: businessesLoading } =
+    useGetBusinesses();
+  const { error: cardsError, isLoading: cardsLoading } = useGetCards(
+    businesses && businesses[0]?.id
+  );
+  // useEffect(() => {
+  //   if (businesses?.length >= 0) {
+  //     // dispatch(getCards(businesses[0]?.id));
+  //   }
+  // }, [businesses]);
   return (
     <Box
       padding={2}
@@ -51,10 +55,10 @@ function Cards() {
           <Grid item xs={12} mb={5}>
             <BusinessesTabs />
           </Grid>
-          {loading && (
+          {businessesLoading && (
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={loading}>
+              open={businessesLoading}>
               <CircularProgress color="inherit" />
             </Backdrop>
           )}

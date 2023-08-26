@@ -15,17 +15,18 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getCardDetails } from "../../../store/CardSlice";
+import { useGetCardDetails } from "../../hooks/CardsDetails";
 
 function CardDetails() {
   const theme = useTheme();
-  const { card, loading } = useSelector((state) => state.cards);
+  const { card } = useSelector((state) => state.cards);
   const { businessId, cardId } = useParams();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const params = { businessId, cardId };
-    dispatch(getCardDetails(params));
-  }, []);
+  const { data, isLoading, error } = useGetCardDetails(cardId);
+  // useEffect(() => {
+  //   const params = { businessId, cardId };
+  //   dispatch(getCardDetails(params));
+  // }, []);
 
   return (
     <Box
@@ -118,10 +119,10 @@ function CardDetails() {
           <Chip label={`Points ${card?.loyaltyCard?.points}`} color="primary" />
         </Stack>
       </Paper>
-      {!loading && (
+      {!isLoading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}>
+          open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
       )}

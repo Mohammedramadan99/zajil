@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
-import { setCards } from "../../store/cardSlice";
+import { setCard } from "../../store/cardSlice";
 
-export const useGetCards = (businessId) => {
+export const useGetCardDetails = (cardId) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   // const { businesses } = useSelector((state) => state.businesses);
@@ -21,11 +21,11 @@ export const useGetCards = (businessId) => {
 
   const { data, error, isLoading } = useSWR(
     [
-      `${import.meta.env.VITE_API_URL}/businesses/${businessId}/cards`,
+      `${import.meta.env.VITE_API_URL}/card-info/${cardId}`,
       user.token,
     ],
-    ([url, token]) => businessId && fetcher(url, token)
+    ([url, token]) => fetcher(url, token)
   );
-  data?.data && dispatch(setCards(data.data));
+  data?.data && dispatch(setCard(data.data));
   return { data, isLoading, error };
 };

@@ -267,6 +267,12 @@ const cardSlice = createSlice({
       state.errors = null;
       state.cardCreated = null;
     },
+    setCards: (state, { payload }) => {
+      state.cards = payload;
+    },
+    setCard: (state, { payload }) => {
+      state.card = payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createCard.pending, (state, action) => {
@@ -370,6 +376,6 @@ const cardSlice = createSlice({
   },
 });
 
-export const { reset } = cardSlice.actions;
+export const { reset, setCards,setCard } = cardSlice.actions;
 
 export default cardSlice.reducer;
