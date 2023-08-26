@@ -39,10 +39,13 @@ import CardsChart from "../../components/Home/CardsChart/CardsChart";
 import CardsSwiper from "../../components/Home/CardsSwiper/CardsSwiper";
 import IndevidualCardSwiper from "../../components/Home/CardsSwiper/IndevidualCardSwiper";
 import { useGetBusinesses } from '../../hooks/Businesses'
+import { useNavigate } from "react-router-dom";
+import {toast} from 'react-toastify'
 
 function Home() {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const { businesses } = useSelector((state) => state.businesses);
   const { activities } = useSelector((state) => state.stats);
   const [activitiesTableSelect, setActivitiesTableSelect] = useState(
@@ -120,9 +123,15 @@ function Home() {
     dispatch(getActivities(activitiesTableSelect));
   }, [activitiesTableSelect]);
   useEffect(() => {
-    dispatch(getCards());
+    dispatch(getCards());  
   }, []);
 
+  // useEffect(() => {
+  //   if (businesses?.length <= 0) {
+  //     navigate("/admin/business/new")
+  //     toast("Please create one business at least.")
+  //   }
+  // }, [businesses]);
   return (
     <Box
       sx={{

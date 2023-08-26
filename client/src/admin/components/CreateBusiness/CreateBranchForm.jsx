@@ -19,10 +19,7 @@ import * as yup from "yup";
 // import useBranch from "../../../hooks/useBranch";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createBranch,
-  reset,
-} from "../../../store/businessSlice";
+import { createBranch, reset } from "../../../store/businessSlice";
 import GoogleMaps from "./GoogleMaps";
 import { useJsApiLoader } from "@react-google-maps/api";
 
@@ -33,8 +30,9 @@ function CreateBranchForm() {
 
   const [success, setSuccess] = useState("");
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.Google_MAPS_API_KEY, 
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
+  console.log("key", import.meta.env);
   const [selectedAddress, setSelectedAddress] = useState("");
 
   const formik = useFormik({

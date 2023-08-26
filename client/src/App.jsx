@@ -33,6 +33,7 @@ function App() {
   const { t, i18n } = useTranslation();
   const { mode } = useSelector((state) => state.mode);
   const { user } = useSelector((state) => state.auth);
+  const { businesses } = useSelector((state) => state.businesses);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -78,7 +79,12 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <DashboardHome />,
+          element:
+            businesses?.length > 0 ? (
+              <DashboardHome />
+            ) : (
+              <Navigate to={"/admin/business/new"} />
+            ),
         },
         {
           path: "templates",

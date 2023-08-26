@@ -12,13 +12,11 @@ import React, { memo, useEffect } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getTemplates, reset } from "../../../store/TemplateSlice";
-
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { useGetBusinesses } from "../../hooks/Businesses";
-import { useGetTempletes } from "../../hooks/Templetes";
+import { useGetTemplates } from "../../hooks/Templates";
 
 function Templates() {
   const theme = useTheme();
@@ -31,12 +29,7 @@ function Templates() {
   const { error: businessesError, isLoading: businessesLoading } =
     useGetBusinesses();
   const { error: templetesError, isLoading: templetesLoading } =
-    useGetTempletes(businesses && businesses[0]?.id);
-
-  // useEffect(() => {
-  //   businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
-  //   // dispatch(reset());
-  // }, [businesses]);
+    useGetTemplates(businesses && businesses[0]?.id);
 
   return (
     <Box

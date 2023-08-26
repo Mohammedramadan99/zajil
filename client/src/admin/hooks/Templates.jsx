@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
 import { setTempletes } from "../../store/templateSlice";
 
-export const useGetTempletes = (businessId) => {
+export const useGetTemplates = (businessId) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const fetcher = (url, token) =>
