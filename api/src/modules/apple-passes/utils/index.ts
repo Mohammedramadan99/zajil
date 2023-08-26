@@ -85,12 +85,12 @@ export const populateVariables = async (str: string, cardId: number) => {
             });
 
             // items used
-            str = str.replace(/{{itemsUsed}}/g, itemsSubscriptionCard.nItems.toString());
+            str = str.replace(/{{itemsUsed}}/g, (itemsSubscriptionCardTemplate.nItems - itemsSubscriptionCard.nItems).toString());
 
             // items left
             str = str.replace(
                 /{{itemsLeft}}/g,
-                (itemsSubscriptionCardTemplate.nItems - itemsSubscriptionCard.nItems).toString(),
+                (itemsSubscriptionCard.nItems).toString(),
             );
             break;
     }
