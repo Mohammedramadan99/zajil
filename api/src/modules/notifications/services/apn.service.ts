@@ -21,3 +21,17 @@ export const sendNotification = async (
         console.log(error);
     }
 };
+
+export const sendUpdatePassNotification = async (deviceToken: string) => {
+    const notification = new Notification();
+    notification.topic = 'com.zajil.passes';
+
+    try {
+        const result = await apnProvider.send(notification, deviceToken).catch((error) => {
+            throw new Error(error);
+        });
+        console.log(JSON.stringify(result || '', null, 2));
+    } catch (error) {
+        console.log(error);
+    }
+};

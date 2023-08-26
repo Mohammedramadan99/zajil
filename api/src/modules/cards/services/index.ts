@@ -22,6 +22,7 @@ import { Op } from 'sequelize';
 import { EventCard } from '../models/event-card.model';
 import { Event, SeatType } from '../../events/models/event.model';
 import { EventTicketTemplate, EventTicketType } from '../../card-templates/models/event-ticket-template.model';
+import { sendUpdatePassNotification } from '../../notifications/services/apn.service';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -367,6 +368,8 @@ export const loyaltyAddPoints = async (cardId: number, user: User) => {
     // update the pass
     await generatePassFromTemplate(cardId, card.templateId);
 
+    await sendUpdatePassNotification(card.pushToken);
+
     return newCard;
 };
 
@@ -409,6 +412,10 @@ export const loyaltySubtractPoints = async (cardId: number, value: number, user:
     loyaltyCard.card.canScan = false;
     await loyaltyCard.card.save();
 
+    // update the pass
+    await generatePassFromTemplate(cardId, loyaltyCard.card.templateId);
+    await sendUpdatePassNotification(loyaltyCard.card.pushToken);
+
     return loyaltyCard;
 };
 
@@ -450,6 +457,7 @@ export const itemsSubscriptionUseItems = async (cardId: number, body: ItemsSubUs
 
     // update the pass
     await generatePassFromTemplate(cardId, itemsSubscriptionCard.card.templateId);
+    await sendUpdatePassNotification(itemsSubscriptionCard.card.pushToken);
 
     // log activity
     await Activity.create({
@@ -557,7 +565,11 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
         userId: user.id,
     });
 
-    return await loyaltyCard.save();
+    const savedLoayltyCard = await loyaltyCard.save();
+    await generatePassFromTemplate(cardId, savedLoayltyCard.card.templateId);
+    await sendUpdatePassNotification(savedLoayltyCard.card.pushToken);
+
+    return savedLoayltyCard;
 };
 
 export const registerDevice = async ({
@@ -696,11 +708,16 @@ export function loyaltyUpdatePoints(cardId: number, points: number, user: User) 
                 ],
             },
         ],
-    }).then((loyaltyCard) => {
+    }).then(async (loyaltyCard) => {
         if (!loyaltyCard) throw new HttpError(404, 'Card not found');
 
         // update points
         loyaltyCard.points = points;
+
+        // update the pass
+        await generatePassFromTemplate(cardId, loyaltyCard.card.templateId);
+        await sendUpdatePassNotification(loyaltyCard.card.pushToken);
+
         return loyaltyCard.save();
     });
 }
