@@ -14,10 +14,20 @@ export const createEvent = (createEventDto: CreateEventDto, businessId: number):
     if (createEventDto.room) {
         const room = createEventDto.room;
 
+        
         // validate that all the rows have the same length
         const rowLength = room[0].length;
         if (!room.every((row) => row.length === rowLength))
-            throw new HttpError(400, 'room must be a matrix with equal row lengths');
+        throw new HttpError(400, 'room must be a matrix with equal row lengths');
+        
+        // validate values
+        const allowedSeatTypes = [
+            SeatType.NONE,
+            SeatType.THEATER,
+            SeatType.AVAILABILE_SEAT,
+        ]
+        if (!room.every((row) => row.every((seat) => allowedSeatTypes.includes(seat))))
+            throw new HttpError(400, `allowed seat types are ${allowedSeatTypes.join(', ')}`); 
 
         // validate number of available seats with the limitedAmount if it exists
         const availableSeats = room.reduce(
@@ -32,7 +42,7 @@ export const createEvent = (createEventDto: CreateEventDto, businessId: number):
         if (!createEventDto.limitedAmount) createEventDto.limitedAmount = availableSeats;
     }
 
-    const event = new Event({ ...createEventDto, ownerId: businessId });
+    const event = new Event({ ...createEventDto, businessId: businessId });
     return event.save();
 };
 

@@ -19,6 +19,9 @@ import { User } from '../../users/models/user.model';
 import { Request } from 'express';
 import { getFile, uploadFile } from '../../aws/s3';
 import { Op } from 'sequelize';
+import { EventCard } from '../models/event-card.model';
+import { Event, SeatType } from '../../events/models/event.model';
+import { EventTicketTemplate, EventTicketType } from '../../card-templates/models/event-ticket-template.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -40,7 +43,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     });
 
     // Create a sub card based on the card type
-    let subCard: LoyaltyCard | ItemsSubscriptionCard;
+    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard;
     switch (cardTemplate.cardType) {
         case CardType.LOYALTY:
             subCard = await LoyaltyCard.create({
@@ -59,6 +62,47 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 id: card.id,
                 nItems: isct.nItems,
                 expirationDate: new Date(Date.now() + isct.subscriptionDurationDays * 24 * 60 * 60 * 1000),
+            });
+            break;
+
+        case CardType.EVENT_TICKET:
+            // find event ticket template
+            const eventTicketTemplate = await EventTicketTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+                include: [
+                    {
+                        model: Event,
+                        as: 'event',
+                        required: true,
+                    },
+                ],
+            });
+            if (!eventTicketTemplate) throw new HttpError(404, 'Event ticket template not found');
+
+            // check if the event has a limited amount
+            if (eventTicketTemplate.event.limitedAmount) {
+                const nTickets = await EventCard.count({
+                    where: {
+                        eventTicketTemplateId: eventTicketTemplate.id,
+                    },
+                });
+                if (nTickets >= eventTicketTemplate.event.limitedAmount)
+                    throw new HttpError(400, 'Event reached its limited amount');
+            }
+
+            // if it has seats, validate the seats
+            if ((eventTicketTemplate.type = EventTicketType.SEAT)) {
+                if (!createCardDto.seat) throw new HttpError(400, '`seat` is required');
+                await validateAndChooseSeat(eventTicketTemplate.event, createCardDto.seat);
+            }
+
+            // create event card
+            subCard = await EventCard.create({
+                id: card.id,
+                eventTicketTemplateId: eventTicketTemplate.id,
+                seatId: createCardDto.seat,
             });
             break;
     }
@@ -489,7 +533,7 @@ export const loyaltyRedeemGift = async (cardId: number, giftId: number, user: Us
     loyaltyCard.points -= gift.priceNPoints;
 
     loyaltyCard.redeemedLoyaltyGifts = [
-        ...loyaltyCard.redeemedLoyaltyGifts || [],
+        ...(loyaltyCard.redeemedLoyaltyGifts || []),
         {
             id: gift.id,
             name: gift.name,
@@ -659,4 +703,42 @@ export function loyaltyUpdatePoints(cardId: number, points: number, user: User) 
         loyaltyCard.points = points;
         return loyaltyCard.save();
     });
+}
+
+async function validateAndChooseSeat(event: Event, seat: string) {
+    // extrct the alhabets from the seat
+    const seatColumn = seat.replace(/\d/g, '').toUpperCase();
+
+    // extract the numbers from the seat
+    const seatRow = parseInt(seat.replace(/\D/g, ''));
+
+    // turn seat column into colum index (A=1) (AA=27)
+    const seatColumnIndex = seatColumn
+        .split('')
+        .map((c) => c.charCodeAt(0) - 65)
+        .reduce((acc, cur) => acc * 25 + cur, 0);
+
+    // turn seat row into row index
+    const seatRowIndex = seatRow - 1;
+
+    const room = event.room
+    // check if the seat is in the event
+    if (
+        seatColumnIndex < 0 ||
+        seatColumnIndex >= room[0].length ||
+        seatRowIndex < 0 ||
+        seatRowIndex >= event.room.length
+    )
+        throw new HttpError(400, 'Seat not found');
+
+    // check if the seat is taken
+    if (room[seatRowIndex][seatColumnIndex] !== SeatType.AVAILABILE_SEAT)
+        throw new HttpError(400, 'Seat unavailable');
+
+    // update room
+    room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
+    event.room = room;
+    await event.save();
+
+    return true;
 }

@@ -1,4 +1,14 @@
-import { IsArray, IsDateString, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+    IsArray,
+    IsDateString,
+    IsIn,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Min,
+    Validate,
+} from 'class-validator';
 import { SeatType } from '../models/event.model';
 
 export class CreateEventDto {
@@ -30,7 +40,6 @@ export class CreateEventDto {
 
     // room
     @IsOptional()
-    @IsArray()
-    @IsIn([[SeatType.NONE, SeatType.THEATER, SeatType.AVAILABILE_SEAT]], { each: true }) // Validate each element of the array against the SeatType enum
+    @IsArray({each: true})
     room?: SeatType[][];
 }

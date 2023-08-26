@@ -13,6 +13,7 @@ import { LoyaltyGift } from '../models/loyalty-gift.model';
 import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
 import { EventTicketTemplate } from '../models/event-ticket-template.model';
+import { Event } from '../../events/models/event.model';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -83,6 +84,17 @@ export const createCardTemplate = async (
                 break;
 
             case CardType.EVENT_TICKET:
+                // find event
+                const event = await Event.findOne({
+                    where: {
+                        id: createCardTemplateDto.eventId,
+                    },
+                });
+                if (!event) throw new HttpError(404, 'Event not found');
+
+                // check if the event belongs to the business
+                if (event.businessId !== businessId) throw new HttpError(403, 'Event does not belong to the business');
+
                 subCardTemplate = await EventTicketTemplate.create({
                     id: cardTemplate.id,
                     eventId: createCardTemplateDto.eventId,
