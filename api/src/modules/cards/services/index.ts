@@ -134,7 +134,6 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
 const generatePassFromTemplate = async (cardId: number, cardTemplateId: number) => {
     const pass: PKPass = await generatePass({
         cardTemplateId: cardTemplateId,
-        serialNumber: cardId.toString(),
         cardId: cardId.toString(),
     });
 
@@ -738,7 +737,7 @@ async function validateAndChooseSeat(event: Event, seat: string) {
     // turn seat row into row index
     const seatRowIndex = seatRow - 1;
 
-    const room = event.room
+    const room = event.room;
     // check if the seat is in the event
     if (
         seatColumnIndex < 0 ||
@@ -749,8 +748,7 @@ async function validateAndChooseSeat(event: Event, seat: string) {
         throw new HttpError(400, 'Seat not found');
 
     // check if the seat is taken
-    if (room[seatRowIndex][seatColumnIndex] !== SeatType.AVAILABILE_SEAT)
-        throw new HttpError(400, 'Seat unavailable');
+    if (room[seatRowIndex][seatColumnIndex] !== SeatType.AVAILABILE_SEAT) throw new HttpError(400, 'Seat unavailable');
 
     // update room
     room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
@@ -758,4 +756,39 @@ async function validateAndChooseSeat(event: Event, seat: string) {
     await event.save();
 
     return true;
+}
+
+export async function scanTicket(cardId: number, user: User) {
+    // find card
+    const eventTicket = await EventCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: EventTicketTemplate,
+                as: 'eventTicketTemplate',
+                required: true,
+                include: [
+                    {
+                        model: Event,
+                        as: 'event',
+                        required: true,
+                    },
+                ],
+            },
+        ],
+    });
+
+    // check if expired
+    if (await eventTicket.isExpired()) throw new HttpError(400, 'Ticket expired');
+
+    // check if used
+    if (eventTicket.used) throw new HttpError(400, 'Ticket already used');
+
+    // mark as used
+    eventTicket.used = true;
+
+    // return response
+    return eventTicket.save();
 }

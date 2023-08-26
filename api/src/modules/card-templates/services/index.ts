@@ -47,7 +47,7 @@ export const createCardTemplate = async (
             businessId,
         });
 
-        // create a folder in the public folder to store the card template files
+        // create a design json
         [applePassDesign] = await generateDesignJson({
             cardTemplateId: cardTemplate.id,
             ...createCardTemplateDto,
@@ -132,8 +132,8 @@ const generateDesignJson = async (
         ...cardProps,
         ...APPLE_PASS_PLACEHOLDER({
             serialNumber: 'SERIAL_NUMBER',
-            description: 'Test Apple Wallet Card',
-            organizationName: `Test Organization`,
+            description: 'Zajil Pass',
+            organizationName: `Oraganization Name`,
             designType,
             qrCodeMessage: 'QR_CODE_MESSAGE',
             qrCodeFormat,

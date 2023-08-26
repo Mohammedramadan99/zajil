@@ -8,6 +8,7 @@ export class EventCard extends Model {
     public declare id: number;
     public eventTicketTemplateId!: number;
     public seatId?: string; // ex: 'A1'
+    public used: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -43,6 +44,10 @@ export const init = (sequelize: Sequelize) =>
             seatId: {
                 type: DataTypes.STRING,
                 allowNull: true,
+            },
+            used: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
             },
         },
         {

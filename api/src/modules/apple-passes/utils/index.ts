@@ -7,6 +7,7 @@ import { PKPass } from 'passkit-generator';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import sharp, { OverlayOptions, Sharp } from 'sharp';
 import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
+import { ItemsSubscriptionCard } from '../../cards/models/items-subscription-card.model';
 
 interface Cache {
     certificates:
@@ -62,7 +63,9 @@ export const populateVariables = async (str: string, cardId: number) => {
 
     const cardType = card.cardTemplate.cardType;
 
-    str = str.replace(/{{name}}/g, card.clientName);
+    // client name
+    str = str.replace(/{{clientName}}/g, card.clientName);
+
     switch (cardType) {
         case CardType.LOYALTY:
             const loyaltyCard = await LoyaltyCard.findOne({
@@ -71,6 +74,25 @@ export const populateVariables = async (str: string, cardId: number) => {
 
             // replace {{points}} with loyalty points
             str = str.replace(/{{points}}/g, loyaltyCard.points.toString());
+            break;
+
+        case CardType.ITEMS_SUBSCRIPTION:
+            const itemsSubscriptionCard = await ItemsSubscriptionCard.findOne({
+                where: { id: cardId },
+            });
+            const itemsSubscriptionCardTemplate = await ItemsSubscriptionCardTemplate.findOne({
+                where: { id: card.cardTemplate.id },
+            });
+
+            // items used
+            str = str.replace(/{{itemsUsed}}/g, itemsSubscriptionCard.nItems.toString());
+
+            // items left
+            str = str.replace(
+                /{{itemsLeft}}/g,
+                (itemsSubscriptionCardTemplate.nItems - itemsSubscriptionCard.nItems).toString(),
+            );
+            break;
     }
 
     return str;
@@ -125,7 +147,7 @@ export const loyaltyGenerateStickersIfPossible = async (
     const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
     const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
 
-    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? bwSticker: highlightedSticker;
+    let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? bwSticker : highlightedSticker;
 
     // composite stickers on the strip
     const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(

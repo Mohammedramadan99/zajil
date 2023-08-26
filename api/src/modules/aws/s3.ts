@@ -32,6 +32,8 @@ export const deleteFile = async (key: string): Promise<void> => {
 };
 
 export const getFile = async (key: string) => {
+    if (!key) return null;
+
     const params = {
         Bucket: BUCKET_NAME,
         Key: key,

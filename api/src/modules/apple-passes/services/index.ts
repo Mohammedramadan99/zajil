@@ -12,9 +12,17 @@ import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
 import { getFile, s3LocationToKey } from '../../aws/s3';
 import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
+import { Business } from '../../businesses/models/business.model';
 
-export async function generatePass(props: { cardTemplateId: number; serialNumber: string; cardId: string }) {
-    const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId);
+export async function generatePass(props: { cardTemplateId: number; cardId: string }) {
+    const cardTemplate = await CardTemplate.findByPk(props.cardTemplateId, {
+        include: [
+            {
+                model: Business,
+                as: 'business',
+            },
+        ],
+    });
 
     const appleJSON = cardTemplate.design;
     const [certificates] = await Promise.all([getCertificates()]);
@@ -42,7 +50,8 @@ export async function generatePass(props: { cardTemplateId: number; serialNumber
         },
         {
             ...appleJSONObj,
-            serialNumber: props.serialNumber,
+            serialNumber: props.cardId,
+            organizationName: cardTemplate.business.name,
             webServiceURL: config.applePasses.webServiceURL,
             authenticationToken: signApplePassAuthTokens({
                 cardId: props.cardId,

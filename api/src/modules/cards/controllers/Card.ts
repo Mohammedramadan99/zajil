@@ -205,6 +205,19 @@ export const CardController: ICRUDController & {
             });
     },
 
+    scanTicket: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+
+        cardServices
+            .scanTicket(cardId, req.user)
+            .then((card) => res.json(card))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
     log: function (req: Request, res: Response, next: NextFunction): void {
         const logs = req.body.logs;
         console.log(logs);

@@ -5,6 +5,7 @@ import { LoyaltyCard } from './loyalty-card.model';
 import { ItemsSubscriptionCard } from './items-subscription-card.model';
 import { Activity, ActivityType } from '../../businesses/models/activity.model';
 import { LoyaltyGift } from '../../card-templates/models/loyalty-gift.model';
+import { EventCard } from './event-card.model';
 
 export enum Gender {
     MALE = 'male',
@@ -141,6 +142,12 @@ export const associate = () => {
     Card.hasOne(ItemsSubscriptionCard, {
         foreignKey: 'id',
         as: 'itemsSubscriptionCard',
+        onDelete: 'CASCADE',
+    });
+
+    Card.hasOne(EventCard, {
+        foreignKey: 'id',
+        as: 'eventCard',
         onDelete: 'CASCADE',
     });
 
