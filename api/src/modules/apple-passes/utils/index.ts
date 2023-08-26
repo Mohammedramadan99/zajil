@@ -46,8 +46,10 @@ export async function getCertificates(): Promise<Exclude<Cache['certificates'], 
 /**
  * Variables
  * ---------
- * {{name}} - client name
+ * {{clientName}} - client name
  * {{points}} - loyalty points
+ * {{itemsUsed}} - items used
+ * {{itemsLeft}} - items left
  **/
 export const populateVariables = async (str: string, cardId: number) => {
     // get card
