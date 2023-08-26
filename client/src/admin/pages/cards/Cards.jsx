@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useState } from "react";
 import BusinessesTabs from "../../components/Cards/Tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { getCards, reset } from "../../../store/cardSlice";
+import { getCards, reset } from "../../../store/CardSlice";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { useGetBusinesses } from "../../hooks/Businesses";

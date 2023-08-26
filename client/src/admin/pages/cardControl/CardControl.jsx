@@ -3,7 +3,7 @@ import React, { memo, useEffect, useState } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getCardDetails,reset } from "../../../store/cardSlice";
+import { getCardDetails,reset } from "../../../store/CardSlice";
 import { useParams } from "react-router-dom";
 import ShowCard from "../../components/CardControl/ShowCard";
 import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
