@@ -71,7 +71,6 @@ function CreateBranchForm() {
       <Paper
         sx={{
           maxWidth: 700,
-          // width: "100%",
           m: "20px auto",
           backgroundColor: theme.palette.background.alt,
           p: "10px 40px 30px",

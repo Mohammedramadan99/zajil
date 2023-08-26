@@ -18,7 +18,7 @@ import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { useGetBusinesses } from "../../hooks/Businesses";
-
+import { useGetTempletes } from "../../hooks/Templetes";
 
 function Templates() {
   const theme = useTheme();
@@ -28,13 +28,15 @@ function Templates() {
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
 
-  const { error, isLoading } = useGetBusinesses();
-  
+  const { error: businessesError, isLoading: businessesLoading } =
+    useGetBusinesses();
+  const { error: templetesError, isLoading: templetesLoading } =
+    useGetTempletes(businesses && businesses[0]?.id);
 
-  useEffect(() => {
-    businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
-    // dispatch(reset());
-  }, [businesses]);
+  // useEffect(() => {
+  //   businesses?.length > 0 && dispatch(getTemplates(businesses[0]?.id));
+  //   // dispatch(reset());
+  // }, [businesses]);
 
   return (
     <Box

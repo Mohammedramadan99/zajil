@@ -2,6 +2,9 @@ import {
   Alert,
   Box,
   Button,
+  Card,
+  CardContent,
+  Paper,
   Stack,
   TextField,
   Typography,
@@ -31,8 +34,8 @@ function CreateCardForm() {
       gender: "",
     },
     validationSchema: yup.object({
-      clientName: yup.string(),
-      clientPhone: yup.string(),
+      clientName: yup.string().required("client name shouldn't be empty"),
+      clientPhone: yup.string().required("client phone shouldn't be empty"),
       gender: yup.string().required("gender is required"),
     }),
     onSubmit(values) {
@@ -70,14 +73,12 @@ function CreateCardForm() {
     }
   }
   return (
-    <Box
-      maxWidth={500}
+    <Paper
       sx={{
-        backgroundColor: theme.palette.grey[900],
-        m: {
-          xs: "30px auto",
-          lg: "100px auto auto",
-        },
+        maxWidth: 700,
+        m: "20px auto",
+        backgroundColor: theme.palette.background.alt,
+        p: "10px 40px 30px",
       }}
       p={5}
       borderRadius={5}>
@@ -149,7 +150,7 @@ function CreateCardForm() {
           </Link>
         </Stack>
       )}
-    </Box>
+    </Paper>
   );
 }
 

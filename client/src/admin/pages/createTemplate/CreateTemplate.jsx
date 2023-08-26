@@ -21,7 +21,6 @@ function CreateCard() {
   const [headerFieldValue, setHeaderFieldValue] = useState("");
   const [headerFieldLabel, setHeaderFieldLabel] = useState("");
   
-  
   const {error,isLoading} = useGetBusinesses()
   return (
     <Box

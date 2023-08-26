@@ -89,6 +89,9 @@ const templateSlice = createSlice({
       state.successMessage = null;
       state.errors = null;
     },
+    setTempletes: (state, { payload }) => {
+      state.templates = payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createTemplate.pending, (state, action) => {
@@ -120,6 +123,6 @@ const templateSlice = createSlice({
   },
 });
 
-export const { reset } = templateSlice.actions;
+export const { reset,setTempletes } = templateSlice.actions;
 
 export default templateSlice.reducer;
