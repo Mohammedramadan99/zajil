@@ -49,7 +49,7 @@ export default function VerticalTabs({ onChange, formik }) {
     <Box
       sx={{
         flexGrow: 1,
-        bgcolor: theme.palette.grey[900],
+        bgcolor: theme.palette.background.alt,
         display: "flex",
         height: 100,
       }}>
@@ -61,7 +61,7 @@ export default function VerticalTabs({ onChange, formik }) {
         aria-label="Vertical tabs example"
         sx={{ borderRight: 1, borderColor: "divider" }}>
         <Tab label="Gifts" {...a11yProps(0)} />
-        <Tab label="Discount" {...a11yProps(1)} />
+        {/* <Tab label="Discount" {...a11yProps(1)} /> */}
       </Tabs>
       <TabPanel value={value} index={0} sx={{ width: "100%" }}>
         <Stack direction={"row"} spacing={2} width={"100%"}>
@@ -92,7 +92,7 @@ export default function VerticalTabs({ onChange, formik }) {
           />
         </Stack>
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      {/* <TabPanel value={value} index={1}>
         <Stack direction={"row"} spacing={2} width={"100%"}>
           <TextField
             name="giftName"
@@ -118,7 +118,7 @@ export default function VerticalTabs({ onChange, formik }) {
             }}
           />
         </Stack>
-      </TabPanel>
+      </TabPanel> */}
     </Box>
   );
 }

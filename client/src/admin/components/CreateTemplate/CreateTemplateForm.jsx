@@ -24,7 +24,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { HexColorPicker } from "react-colorful";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 import ScanIcon1 from "../../../assets/images/stickers/barcode_icon-1.png";
 import ScanIcon2 from "../../../assets/images/stickers/qrCode_icon-1.png";
 import barcodeimg from "../../../assets/images/barcode-1.png";
@@ -91,9 +91,9 @@ function CreateTemplateForm({
       brandName: "",
       stickersNumber,
       name,
-      giftName: "",
-      giftPriceNPoints: "",
       business: "",
+      giftName: "",
+      giftPriceNPoints: 0,
       headerFieldLabel,
       headerFieldValue,
     },
@@ -300,7 +300,9 @@ function CreateTemplateForm({
       toast.error("The image size should be less than 512KB.");
       return false;
     } else if (!validExtension) {
-      toast.error("The image format is not supported. Please upload a JPEG, PNG, or JPG file.");
+      toast.error(
+        "The image format is not supported. Please upload a JPEG, PNG, or JPG file."
+      );
       return false;
     }
     const url = URL.createObjectURL(file);
@@ -355,9 +357,11 @@ function CreateTemplateForm({
       setStickersNumber(stickersNumber);
     }
   }, [textLogo, logoImg, stickersNumber]);
+
   const fileInputClick = (event) => {
     event.target.value = null;
   };
+
   const addStickerHandler = (item) => {
     if (formik.values.cardType === "LOYALTY") {
       if (activeStickers.length >= 2) {
@@ -424,6 +428,7 @@ function CreateTemplateForm({
     }
   }, [template]);
 
+  // Convert the color to an image
   const hexToRgb = (hex) => {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
@@ -431,10 +436,10 @@ function CreateTemplateForm({
 
     return `rgb(${r}, ${g}, ${b})`;
   };
+
   return (
     <Box>
       <form onSubmit={formik.handleSubmit}>
-        {/* ############ Accordion 1 ############ */}
         {errors && (
           <Alert severity="error" sx={{ marginBottom: 4 }}>
             {errors?.map((error) => {
@@ -453,7 +458,11 @@ function CreateTemplateForm({
             })}
           </Alert>
         )}
-        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
+
+        {/* ############ Accordion 1 : Main info ############ */}
+        <Accordion
+          defaultExpanded
+          sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -565,15 +574,44 @@ function CreateTemplateForm({
                   />
                 </>
               )}
-              {formik.values.cardType === "LOYALTY" && (
+              {/* {formik.values.cardType === "LOYALTY" && (
                 <TabPanel onChange={formik.handleChange} formik={formik} />
-              )}
+              )} */}
+              <Stack direction={"row"} spacing={2} width={"100%"}>
+                <TextField
+                  name="giftName"
+                  label="Gift"
+                  required
+                  value={formik.values.giftName}
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.errors.giftName)}
+                  helperText={formik.errors.giftName}
+                  sx={{
+                    width: "100%",
+                  }}
+                />
+                <TextField
+                  name="giftPriceNPoints"
+                  label="Points"
+                  type="number"
+                  required
+                  value={formik.values.giftPriceNPoints}
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.errors.giftPriceNPoints)}
+                  helperText={formik.errors.giftPriceNPoints}
+                  sx={{
+                    width: "100%",
+                  }}
+                />
+              </Stack>
             </Box>
           </AccordionDetails>
         </Accordion>
 
-        {/* ############ Accordion 2 ############ */}
-        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
+        {/* ############ Accordion 2 : Strip area(bgs) ############ */}
+        <Accordion
+          defaultExpanded
+          sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2a-content"
@@ -649,8 +687,10 @@ function CreateTemplateForm({
           </AccordionDetails>
         </Accordion>
 
-        {/* ############ Accordion 3 ############ */}
-        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
+        {/* ############ Accordion 3 : Design ############ */}
+        <Accordion
+          defaultExpanded
+          sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -913,8 +953,10 @@ function CreateTemplateForm({
             </Box>
           </AccordionDetails>
         </Accordion>
-        {/* ############ Accordion 4 ############ */}
-        <Accordion defaultExpanded sx={{ background: theme.palette.grey[900] }}>
+        {/* ############ Accordion 4 : Colors ############ */}
+        <Accordion
+          defaultExpanded
+          sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2a-content"
@@ -981,6 +1023,7 @@ function CreateTemplateForm({
             </Stack>
           </AccordionDetails>
         </Accordion>
+
         <Button
           type="submit"
           variant="contained"
@@ -988,6 +1031,7 @@ function CreateTemplateForm({
           disabled={loading}>
           submit
         </Button>
+
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}>

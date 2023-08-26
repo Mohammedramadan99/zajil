@@ -32,7 +32,6 @@ function CreateBranchForm() {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
-  console.log("key", import.meta.env);
   const [selectedAddress, setSelectedAddress] = useState("");
 
   const formik = useFormik({
@@ -44,17 +43,18 @@ function CreateBranchForm() {
       name: yup.string().required("name is required"),
       business: yup.string().required("business is required"),
     }),
-    onSubmit(values) {
-      handleSubmit(values);
+    onSubmit(values,{resetForm}) {
+      handleSubmit(values,resetForm);
     },
   });
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values,resetForm) => {
     const branchData = {
       businessId: values.business,
       address: selectedAddress,
       name: values.name,
     };
     dispatch(createBranch(branchData));
+    resetForm()
   };
   useEffect(() => {
     branch && setSuccess(`${branch.data.name} branch created successfully`);
