@@ -12,11 +12,12 @@ import useBusiness from "../../../hooks/useBusiness";
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 import { resetBusiness } from "../../../store/businessSlice";
+import { useGetBusinesses } from "../../hooks/Businesses";
 function CreateBusiness() {
   const theme = useTheme();
-
+  const { isLoading } = useGetBusinesses();
   return (
     <Box
       padding={2}
@@ -26,9 +27,6 @@ function CreateBusiness() {
       }}>
       <Container>
         <CreateBusinessForm />
-        {/* <Grid xs={6} item data-aos="fade-left">
-            <CreateBranchForm />
-          </Grid> */}
       </Container>
     </Box>
   );

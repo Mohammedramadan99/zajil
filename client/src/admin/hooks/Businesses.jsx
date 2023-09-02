@@ -19,8 +19,18 @@ export const useGetBusinesses = () => {
 
   const { data, error, isLoading } = useSWR(
     [`${import.meta.env.VITE_API_URL}/businesses`, user.token],
-    ([url, token]) => fetcher(url, token)
+    ([url, token]) => fetcher(url, token),
+    {
+      revalidateOnFocus: false, // Disable revalidation on focus
+      revalidateOnReconnect: false, // Disable revalidation on reconnect
+    }
   );
-  data?.data && dispatch(setBusinesses(data.data));
+
+  useEffect(() => {
+    if (data?.data) {
+      dispatch(setBusinesses(data.data));
+    }
+  }, [data, dispatch]);
+
   return { data, isLoading, error };
 };

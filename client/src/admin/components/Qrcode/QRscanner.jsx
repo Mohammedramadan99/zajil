@@ -2,32 +2,37 @@ import React, { useEffect, useState } from "react";
 import { QrReader } from "react-qr-reader";
 import { useNavigate } from "react-router-dom";
 
-const QRscanner = (props) => {
+const QRScanner = (props) => {
   const [cardId, setCardId] = useState(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (cardId) {
-      // dispatch(getCardDetails({ cardId }));
+      // dispatch(getCardDetails({ caprdId }));
       navigate(`/admin/cards/control/${cardId}`);
     }
-  }, [cardId]);
+  }, [cardId, navigate]);
+
+  const handleScan = (result) => {
+    if (result) {
+      setCardId(result.text);
+    }
+  };
+
+  const handleError = (error) => {
+    console.error(error);
+  };
 
   return (
     <>
       <QrReader
-        onResult={(result, error) => {
-          if (!!result) {
-            setCardId(result?.text);
-          }
-
-          if (!!error) {
-            console.info(error);
-          }
-        }}
+        onScan={handleScan}
+        onError={handleError}
         style={{ width: "100%" }}
       />
       <p>{cardId}</p>
     </>
   );
 };
-export default QRscanner;
+
+export default QRScanner;

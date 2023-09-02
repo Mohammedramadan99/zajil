@@ -41,7 +41,6 @@ function CreateBusinessForm() {
   
   const handleSubmit = (values) => {
     dispatch(createBusiness(values))
-    // resetForm({ values: { name: "" } });
   };
   if (business) {
     navigate("/admin/branch/new");
@@ -53,11 +52,7 @@ function CreateBusinessForm() {
   return (
     <Paper
       sx={{
-        // maxWidth: 700,
-        // backgroundColor: theme.palette.background.alt,
         maxWidth: 700,
-        // width: "100%",
-
         m: {
           xs: "30px auto",
           lg: "100px auto auto",
