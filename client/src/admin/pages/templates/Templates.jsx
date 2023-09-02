@@ -17,6 +17,7 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { useGetBusinesses } from "../../hooks/Businesses";
 import { useGetTemplates } from "../../hooks/Templates";
+import { getTemplates } from "../../../store/templateSlice";
 
 function Templates() {
   const theme = useTheme();
@@ -28,8 +29,11 @@ function Templates() {
 
   const { error: businessesError, isLoading: businessesLoading } =
     useGetBusinesses();
-  const { error: templetesError, isLoading: templetesLoading } =
-    useGetTemplates(businesses && businesses[0]?.id);
+  // const { error: templetesError, isLoading: templetesLoading } =
+  //   useGetTemplates(businesses && businesses[0]?.id);
+useEffect(() => {
+  businesses?.length > 0 && !templates && dispatch(getTemplates(businesses[0]?.id));
+}, [businesses])
 
   return (
     <Box

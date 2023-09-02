@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { getTemplates } from "../../../store/TemplateSlice";
+import { getTemplates } from "../../../store/templateSlice";
 import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
 import { useTheme } from "@mui/material";
 

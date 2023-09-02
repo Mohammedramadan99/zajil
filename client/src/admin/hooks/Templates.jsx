@@ -22,8 +22,18 @@ export const useGetTemplates = (businessId) => {
       `${import.meta.env.VITE_API_URL}/businesses/${businessId}/card-templates`,
       user.token,
     ],
-    ([url, token]) => businessId && fetcher(url, token)
+    ([url, token]) => businessId && fetcher(url, token,{
+      revalidateOnFocus: false, // Disable revalidation on focus
+      revalidateOnReconnect: false, // Disable revalidation on reconnect
+      revalidateOnMount: false, // Prevent initial request on component mount
+
+    })
   );
-  data?.data && dispatch(setTempletes(data.data));
+  useEffect(() => {
+    if (businessId && data?.data) {
+      dispatch(setTempletes(data.data));
+    }
+  }, [businessId, data, dispatch]);
+
   return { data, isLoading, error };
 };

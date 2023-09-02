@@ -34,14 +34,14 @@ function Cards() {
   const { businesses } = useSelector((state) => state.businesses);
   const { error: businessesError, isLoading: businessesLoading } =
     useGetBusinesses();
-  const { error: cardsError, isLoading: cardsLoading } = useGetCards(
-    businesses && businesses[0]?.id
-  );
-  // useEffect(() => {
-  //   if (businesses?.length >= 0) {
-  //     // dispatch(getCards(businesses[0]?.id));
-  //   }
-  // }, [businesses]);
+  // const { error: cardsError, isLoading: cardsLoading } = useGetCards(
+  //   businesses && businesses[0]?.id
+  // );
+  useEffect(() => {
+    if (businesses?.length >= 0) {
+      !cards && dispatch(getCards(businesses[0]?.id));
+    }
+  }, [businesses]);
   return (
     <Box
       padding={2}
