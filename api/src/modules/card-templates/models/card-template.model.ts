@@ -5,11 +5,13 @@ import { ItemsSubscriptionCardTemplate } from './items-subscription-card-templat
 import { Card } from '../../cards/models/card.model';
 import { StickerDto } from '../dto/create-card-template';
 import { EventTicketTemplate } from './event-ticket-template.model';
+import { CouponCardTemplate } from './coupon-card-template.model';
 
 export enum CardType {
     LOYALTY = 'LOYALTY',
     ITEMS_SUBSCRIPTION = 'ITEMS_SUBSCRIPTION',
     EVENT_TICKET = 'EVENT_TICKET',
+    COUPON = 'COUPON',
 }
 
 export class CardTemplate extends Model {
@@ -135,5 +137,12 @@ export const associate = () => {
     CardTemplate.hasMany(Card, {
         foreignKey: 'cardTemplateId',
         as: 'cards',
+    });
+
+    // Card Template | Coupon Card Template
+    CardTemplate.hasOne(CouponCardTemplate, {
+        foreignKey: 'id',
+        as: 'couponCardTemplate',
+        onDelete: 'CASCADE',
     });
 };
