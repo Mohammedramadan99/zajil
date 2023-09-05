@@ -228,7 +228,7 @@ function ShowCard({
               gap: 1,
               width: "100%",
             }}>
-            <Button variant="contained">select</Button>
+            {/* <Button variant="contained">select</Button> */}
             <Button onClick={() => setOpen(true)}>generate qr code</Button>
           </ButtonGroup>
         </>
