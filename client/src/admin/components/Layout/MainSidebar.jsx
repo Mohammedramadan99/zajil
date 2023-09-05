@@ -67,7 +67,8 @@ function MainSidebar() {
     {
       icon: <LocationOnOutlined />,
       text: "location",
-      path: "/admin/location",
+      // path: "/admin/location",
+      path: "#",
       slug: "location",
     },
   ];
