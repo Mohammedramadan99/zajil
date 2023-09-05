@@ -49,7 +49,7 @@ function Cards() {
         backgroundColor: theme.palette.background.alt,
         minHeight: "100vh",
       }}>
-      <Container>
+      <Container sx={{ pb: 20 }}>
         <PageHeader title={"Cards"} subTitle={"Here are all your cards"} />
         <Grid container spacing={2}>
           <Grid item xs={12} mb={5}>
