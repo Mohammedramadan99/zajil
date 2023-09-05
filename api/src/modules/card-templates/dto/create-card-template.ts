@@ -216,4 +216,52 @@ export class CreateCardTemplateDto {
     @IsEnum(EventTicketType)
     eventTicketType: EventTicketType;
 
+    // Coupon Card Template Validation
+    // discount value
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    discountValue: number;
+
+    // discount type | 'percentage' or 'fixed_amount'
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsString()
+    @IsIn(['percentage', 'fixed_amount'])
+    discountType: string;
+
+    // max usage | on coupon card type
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    maxUsage: number;
+
+    // ? public maxUsagePerUser: number;
+
+    // start date
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsDateString()
+    startDate: Date;
+
+    // end date
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsDateString()
+    endDate: Date;
+
+    // status | 'active' or 'inactive'
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsString()
+    @IsIn(['active', 'inactive'])
+    status: string;
+
+    // occasion name
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsString()
+    occasionName: string;
 }
