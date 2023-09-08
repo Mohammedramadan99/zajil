@@ -34,7 +34,12 @@ import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
 import TabPanel from "./LoyaltyTabs";
-import { createTemplate, reset } from "../../../store/TemplateSlice";
+import {
+  createTemplate,
+  reset,
+  setCardType,
+  setNormalCardsTemplate,
+} from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -93,8 +98,8 @@ function CreateTemplateForm({
       business: "",
       giftName: "",
       giftPriceNPoints: 0,
-      headerFieldLabel:"",
-      headerFieldValue:"",
+      headerFieldLabel: "",
+      headerFieldValue: "",
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
@@ -107,8 +112,8 @@ function CreateTemplateForm({
       nextGift: yup.number(),
       giftName: yup.string(),
       giftPriceNPoints: yup.number(),
-      headerFieldLabel:yup.string(),
-      headerFieldValue:yup.string(),
+      headerFieldLabel: yup.string(),
+      headerFieldValue: yup.string(),
     }),
     onSubmit(values) {
       (async () => {
@@ -238,8 +243,9 @@ function CreateTemplateForm({
   ];
 
   const cardTypes = [
-    { text: "Loyalty", type: "LOYALTY" },
-    { text: "Subscription", type: "ITEMS_SUBSCRIPTION" },
+    { text: "Loyalty", type: "LOYALTY", store: "normal" },
+    { text: "Subscription", type: "ITEMS_SUBSCRIPTION", store: "normal" },
+    { text: "Coupon", type: "COUPON",store:"coupon" },
   ];
 
   const [stickersIcons, setStickersIcons] = useState([
@@ -505,12 +511,15 @@ function CreateTemplateForm({
                   name="cardType"
                   value={formik.values.cardType}
                   label="Card Type"
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    dispatch(setCardType(e.target.value));
+                    formik.handleChange(e);
+                  }}
                   error={Boolean(formik.errors.cardType)}>
                   {cardTypes.map((item, i) => (
                     <MenuItem
                       key={i}
-                      value={item.type}
+                      value={item.store}
                       onClick={() => {
                         if (activeStickers.length > 2) {
                           setActiveStickers([]);
@@ -731,13 +740,17 @@ function CreateTemplateForm({
                     </label>
                   </div>
                 </div>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={2}>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                  mt={2}>
                   <TextField
                     name="brandName"
                     label="Brand Name"
                     value={formik.values.brandName}
                     onChange={(e) => {
                       setTextLogo(e.target.value);
+                      dispatch(setNormalCardsTemplate({propName:"textLogo",propValue:e.target.value}))
                       formik.setFieldValue("brandName", e.target.value);
                     }}
                     error={Boolean(formik.errors.brandName)}
@@ -863,7 +876,10 @@ function CreateTemplateForm({
                     </div>
                   </Box>
                 </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={2}>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                  mt={2}>
                   <TextField
                     name="headerFieldLabel"
                     label="Header"

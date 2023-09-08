@@ -32,7 +32,6 @@ function CreateBranchForm() {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
-  console.log("google",import.meta.env.VITE_GOOGLE_MAPS_API_KEY)
   const [selectedAddress, setSelectedAddress] = useState("");
 
   const formik = useFormik({

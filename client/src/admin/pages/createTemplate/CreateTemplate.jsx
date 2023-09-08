@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import Card from "../../components/Cards/Card/Card";
 import { Box, Container, Grid, useTheme } from "@mui/material";
 import CreateTemplateForm from "../../components/CreateTemplate/CreateTemplateForm";
-import {useGetBusinesses} from '../../hooks/Businesses'
+import { useGetBusinesses } from "../../hooks/Businesses";
+import { useSelector } from "react-redux";
+import CardFrame from "../../components/Coupon/Frame/CardFrame";
 function CreateCard() {
   const theme = useTheme();
+  const { cardType } = useSelector((state) => state.templates);
   const [tempPhoto, setTempPhoto] = useState("");
   const [imgColor, setImgColor] = useState("");
   const [activeImg, setActiveImg] = useState("");
@@ -20,8 +23,52 @@ function CreateCard() {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [headerFieldValue, setHeaderFieldValue] = useState("");
   const [headerFieldLabel, setHeaderFieldLabel] = useState("");
-  
-  const {error,isLoading} = useGetBusinesses()
+
+  const { error, isLoading } = useGetBusinesses();
+
+  const displayCardHandler = () => {
+    switch (cardType) {
+      case "normal":
+        return <Card
+        title="holidays"
+        withControl={false}
+        tempPhoto={tempPhoto}
+        activeImg={activeImg}
+        setActiveImg={setActiveImg}
+        textLogo={textLogo}
+        setTextLogo={setTextLogo}
+        logoImg={logoImg}
+        setLogoImg={setLogoImg}
+        stickersNumber={stickersNumber}
+        setStickersNumber={setStickersNumber}
+        activeIcon={activeIcon}
+        setActiveIcon={setActiveIcon}
+        name={name}
+        setName={setName}
+        activeScanType={activeScanType}
+        setActiveScanType={setActiveScanType}
+        imgColor={imgColor}
+        setImgColor={setImgColor}
+        barcode={barcode}
+        setBarcode={setBarcode}
+        labelColor={labelColor}
+        setLabelColor={setLabelColor}
+        textColor={textColor}
+        setTextColor={setTextColor}
+        backgroundColor={backgroundColor}
+        setBackgroundColor={setBackgroundColor}
+        headerFieldValue={headerFieldValue}
+        setHeaderFieldValue={setHeaderFieldValue}
+        headerFieldLabel={headerFieldLabel}
+        setHeaderFieldLabel={setHeaderFieldLabel}
+      />
+        break;
+      case "coupon":
+        return <CardFrame/>
+      default:
+        break;
+    }
+  }
   return (
     <Box
       sx={{
@@ -29,7 +76,7 @@ function CreateCard() {
         paddingBlock: 4,
         // flexGrow: 1,
         minHeight: "100vh",
-        pb:10
+        pb: 10,
       }}>
       <Container>
         <Grid container spacing={6}>
@@ -76,7 +123,8 @@ function CreateCard() {
                   "@media (max-width: 900px)": { width: "50%" },
                   "@media (max-width: 500px)": { width: "80%" },
                 }}>
-                <Card
+                {displayCardHandler()}
+                {/* <Card
                   title="holidays"
                   withControl={false}
                   tempPhoto={tempPhoto}
@@ -108,7 +156,7 @@ function CreateCard() {
                   setHeaderFieldValue={setHeaderFieldValue}
                   headerFieldLabel={headerFieldLabel}
                   setHeaderFieldLabel={setHeaderFieldLabel}
-                />
+                /> */}
               </Box>
             </div>
           </Grid>

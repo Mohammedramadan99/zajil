@@ -1,3 +1,4 @@
+import { useTheme } from "@mui/material";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const createTemplate = createAsyncThunk(
@@ -67,11 +68,29 @@ export const getTemplates = createAsyncThunk(
     }
   }
 );
-
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
   templates: null,
   template: null,
+  cardType: "LOYALTY",
+  couponTemplate: {},
+  normalCardsTemplate: {
+    tempPhoto: "",
+    imgColor: "",
+    activeImg: "",
+    stickersNumber: null,
+    textLogo: null,
+    logoImg: null,
+    activeIcon: "",
+    activeScanType: "",
+    name: "",
+    barcode: "",
+    labelColor: "",
+    textColor: "",
+    backgroundColor: "#ffffff",
+    headerFieldValue: "",
+    headerFieldLabel: "",
+  },
   loading: false,
   errors: null,
   errorMessage: null,
@@ -91,6 +110,13 @@ const templateSlice = createSlice({
     },
     setTempletes: (state, { payload }) => {
       state.templates = payload;
+    },
+    setCardType: (state, { payload }) => {
+      state.cardType = payload;
+    },
+    setNormalCardsTemplate: (state, action) => {
+      const { propName, propValue } = action.payload;
+      state.normalCardsTemplate[propName] = propValue;
     },
   },
   extraReducers: (builder) => {
@@ -123,6 +149,7 @@ const templateSlice = createSlice({
   },
 });
 
-export const { reset,setTempletes } = templateSlice.actions;
+export const { reset, setTempletes, setCardType, setNormalCardsTemplate } =
+  templateSlice.actions;
 
 export default templateSlice.reducer;
