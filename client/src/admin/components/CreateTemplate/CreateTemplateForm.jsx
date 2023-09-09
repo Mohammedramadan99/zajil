@@ -39,7 +39,7 @@ import {
   reset,
   setCardType,
   setNormalCardsTemplate,
-} from "../../../store/TemplateSlice";
+} from "../../../store/templateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -747,12 +747,12 @@ function CreateTemplateForm({
                   <TextField
                     name="brandName"
                     label="Brand Name"
-                    value={formik.values.brandName}
+                    value={textLogo}
                     onChange={(e) => {
                       setTextLogo(e.target.value);
                       dispatch(setNormalCardsTemplate({propName:"textLogo",propValue:e.target.value}))
-                      formik.setFieldValue("brandName", e.target.value);
                     }}
+                    onBlur={formik.handleChange}
                     error={Boolean(formik.errors.brandName)}
                     helperText={formik.errors.brandName}
                     sx={{
