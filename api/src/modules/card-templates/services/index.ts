@@ -106,9 +106,6 @@ export const createCardTemplate = async (
             case CardType.COUPON:
                 subCardTemplate = await CouponCardTemplate.create({
                     id: cardTemplate.id,
-                    discountType: createCardTemplateDto.discountType,
-                    discountValue: createCardTemplateDto.discountValue,
-                    maxUsage: createCardTemplateDto.maxUsage,
                     startDate: createCardTemplateDto.startDate,
                     endDate: createCardTemplateDto.endDate,
                     occasionName: createCardTemplateDto.occasionName,

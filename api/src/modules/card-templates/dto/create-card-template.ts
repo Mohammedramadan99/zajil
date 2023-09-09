@@ -217,26 +217,6 @@ export class CreateCardTemplateDto {
     eventTicketType: EventTicketType;
 
     // Coupon Card Template Validation
-    // discount value
-    @ValidateIf((o) => o.cardType === CardType.COUPON)
-    @IsNotEmpty()
-    @IsNumber()
-    @Min(1)
-    discountValue: number;
-
-    // discount type | 'percentage' or 'fixed_amount'
-    @ValidateIf((o) => o.cardType === CardType.COUPON)
-    @IsNotEmpty()
-    @IsString()
-    @IsIn(['percentage', 'fixed_amount'])
-    discountType: string;
-
-    // max usage | on coupon card type
-    @ValidateIf((o) => o.cardType === CardType.COUPON)
-    @IsNotEmpty()
-    @IsNumber()
-    @Min(1)
-    maxUsage: number;
 
     // ? public maxUsagePerUser: number;
 

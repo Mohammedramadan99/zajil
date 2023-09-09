@@ -4,9 +4,6 @@ import moment from 'moment';
 
 export class CouponCardTemplate extends Model {
     public declare id: number;
-    public discountValue: number;
-    public discountType: string; // 'percentage' or 'fixed_amount'
-    public maxUsage: number;
     // public maxUsagePerUser: number;
     public startDate: Date;
     public endDate: Date;
@@ -34,27 +31,6 @@ export const init = (sequelize: Sequelize) =>
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
-            },
-            discountValue: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    min: 1,
-                },
-            },
-            discountType: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    isIn: [['percentage', 'fixed_amount']],
-                },
-            },
-            maxUsage: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    min: 1,
-                },
             },
             // maxUsagePerUser: {
             //     type: DataTypes.INTEGER,

@@ -23,6 +23,8 @@ import { EventCard } from '../models/event-card.model';
 import { Event, SeatType } from '../../events/models/event.model';
 import { EventTicketTemplate, EventTicketType } from '../../card-templates/models/event-ticket-template.model';
 import { sendUpdatePassNotification } from '../../notifications/services/apn.service';
+import { CouponCard } from '../models/coupon-card.model';
+import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -44,7 +46,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     });
 
     // Create a sub card based on the card type
-    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard;
+    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard | CouponCard;
     switch (cardTemplate.cardType) {
         case CardType.LOYALTY:
             subCard = await LoyaltyCard.create({
@@ -105,6 +107,27 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 eventTicketTemplateId: eventTicketTemplate.id,
                 seatId: createCardDto.seat,
             });
+            break;
+
+        case CardType.COUPON:
+            // validate status from template
+            const couponCardTemplate = await CouponCardTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+            });
+
+            if (couponCardTemplate.status === 'inactive') throw new HttpError(400, 'Coupon template is not active');
+
+            // create coupon card
+            subCard = await CouponCard.create({
+                id: card.id,
+                discountValue: req.body.discountValue,
+                discountType: req.body.discountType,
+                maxUsage: req.body.maxUsage,
+                usageCount: 0,
+            });
+
             break;
     }
 
@@ -753,7 +776,7 @@ async function validateAndChooseSeat(event: Event, seat: string) {
     // update room
     room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
     console.log(room);
-    
+
     event.room = room;
     await Event.update(
         {
