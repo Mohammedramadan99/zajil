@@ -115,16 +115,27 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 where: {
                     id: cardTemplate.id,
                 },
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                        required: true,
+                    }]
             });
 
             if (couponCardTemplate.status === 'inactive') throw new HttpError(400, 'Coupon template is not active');
 
+            // validate dates must discountValue & discountType & maxUsage
+            if (!req.body.discountValue) throw new HttpError(400, 'discountValue is required');
+            if (!req.body.discountType) throw new HttpError(400, 'discountType is required');
+            if (!req.body.maxUsage) throw new HttpError(400, 'maxUsage is required');
+
             // create coupon card
             subCard = await CouponCard.create({
                 id: card.id,
-                discountValue: req.body.discountValue,
-                discountType: req.body.discountType,
-                maxUsage: req.body.maxUsage,
+                discountValue: createCardDto.discountValue,
+                discountType: createCardDto.discountType,
+                maxUsage: createCardDto.maxUsage,
                 usageCount: 0,
             });
 

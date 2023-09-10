@@ -232,13 +232,6 @@ export class CreateCardTemplateDto {
     @IsDateString()
     endDate: Date;
 
-    // status | 'active' or 'inactive'
-    @ValidateIf((o) => o.cardType === CardType.COUPON)
-    @IsNotEmpty()
-    @IsString()
-    @IsIn(['active', 'inactive'])
-    status: string;
-
     // occasion name
     @ValidateIf((o) => o.cardType === CardType.COUPON)
     @IsNotEmpty()

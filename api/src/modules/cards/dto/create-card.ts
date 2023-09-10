@@ -34,4 +34,21 @@ export class CreateCardDto {
     @IsString()
     @Matches(/^[A-Z]\d+$/) // ex: 'A1'
     seat?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    discountValue?: number;
+
+    // discount type | 'percentage' or 'fixed_amount'
+    @IsNotEmpty()
+    @IsString()
+    @IsIn(['percentage', 'fixed_amount'])
+    discountType?: string;
+
+    // max usage | on coupon card type
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    maxUsage?: number;
 }

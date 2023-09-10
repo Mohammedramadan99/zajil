@@ -7,7 +7,6 @@ export class CouponCard extends Model {
     public discountType: string; // 'percentage' or 'fixed_amount'
     public maxUsage: number;
     public usageCount: number;
-    public status: string; // 'active' or 'inactive'
 }
 
 export const init = (sequelize: Sequelize) =>
@@ -35,7 +34,7 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
-                    min: 1,
+                    min: 0,
                 },
                 defaultValue: 0,
             },

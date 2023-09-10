@@ -109,6 +109,7 @@ export const createCardTemplate = async (
                     startDate: createCardTemplateDto.startDate,
                     endDate: createCardTemplateDto.endDate,
                     occasionName: createCardTemplateDto.occasionName,
+                    status: "active"
                 });
                 break;
         }
