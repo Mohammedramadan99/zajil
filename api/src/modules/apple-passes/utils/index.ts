@@ -8,6 +8,8 @@ import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items
 import sharp, { OverlayOptions, Sharp } from 'sharp';
 import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
 import { ItemsSubscriptionCard } from '../../cards/models/items-subscription-card.model';
+import { CouponCard } from '../../cards/models/coupon-card.model';
+import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
 
 interface Cache {
     certificates:
@@ -87,13 +89,39 @@ export const populateVariables = async (str: string, cardId: number) => {
             });
 
             // items used
-            str = str.replace(/{{itemsUsed}}/g, (itemsSubscriptionCardTemplate.nItems - itemsSubscriptionCard.nItems).toString());
+            str = str.replace(
+                /{{itemsUsed}}/g,
+                (itemsSubscriptionCardTemplate.nItems - itemsSubscriptionCard.nItems).toString(),
+            );
 
             // items left
+            str = str.replace(/{{itemsLeft}}/g, itemsSubscriptionCard.nItems.toString());
+            break;
+
+        case CardType.COUPON:
+            const couponCard = await CouponCard.findOne({
+                where: { id: cardId },
+            });
+            const couponCardTemplate = await CouponCardTemplate.findOne({
+                where: { id: card.cardTemplate.id },
+            });
+
+            // {{ discount }} discountType == "percentage" ? "discountValue%" : "$discountValue"
             str = str.replace(
-                /{{itemsLeft}}/g,
-                (itemsSubscriptionCard.nItems).toString(),
+                /{{discount}}/g,
+                couponCard.discountType === 'percentage'
+                    ? `${couponCard.discountValue}%`
+                    : `$${couponCard.discountValue}`,
             );
+            // {{ cardName }} couponCardTemplate.occasionName
+            str = str.replace(/{{cardName}}/g, couponCardTemplate.occasionName);
+
+            // {{ availableUses }} couponCard.maxUsage - couponCard.usageCount
+            str = str.replace(/{{availableUses}}/g, (couponCard.maxUsage - couponCard.usageCount).toString());
+
+            // {{ endDate }} couponCardTemplate.endDate
+            str = str.replace(/{{endDate}}/g, couponCardTemplate.endDate.toDateString());
+
             break;
     }
 
