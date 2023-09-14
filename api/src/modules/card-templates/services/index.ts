@@ -14,6 +14,7 @@ import { CreateLoyaltyGiftDto } from '../dto/create-loyalty-gift.dto';
 import { BUCKET_NAME, deleteFolder, uploadFile } from '../../aws/s3';
 import { EventTicketTemplate } from '../models/event-ticket-template.model';
 import { Event } from '../../events/models/event.model';
+import { CouponCardTemplate } from '../models/coupon-card-template.model';
 
 export const createCardTemplate = async (
     createCardTemplateDto: CreateCardTemplateDto,
@@ -21,7 +22,7 @@ export const createCardTemplate = async (
     req: RequestMod,
 ): Promise<any> => {
     // define variables to be used in the try catch block
-    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate;
+    let subCardTemplate: LoyaltyCardTemplate | ItemsSubscriptionCardTemplate | EventTicketTemplate | CouponCardTemplate;
     let cardTemplate: CardTemplate;
     let applePassDesign;
 
@@ -99,6 +100,16 @@ export const createCardTemplate = async (
                     id: cardTemplate.id,
                     eventId: createCardTemplateDto.eventId,
                     type: createCardTemplateDto.eventTicketType,
+                });
+                break;
+
+            case CardType.COUPON:
+                subCardTemplate = await CouponCardTemplate.create({
+                    id: cardTemplate.id,
+                    startDate: createCardTemplateDto.startDate,
+                    endDate: createCardTemplateDto.endDate,
+                    occasionName: createCardTemplateDto.occasionName,
+                    status: "active"
                 });
                 break;
         }

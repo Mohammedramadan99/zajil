@@ -216,4 +216,25 @@ export class CreateCardTemplateDto {
     @IsEnum(EventTicketType)
     eventTicketType: EventTicketType;
 
+    // Coupon Card Template Validation
+
+    // ? public maxUsagePerUser: number;
+
+    // start date
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsDateString()
+    startDate: Date;
+
+    // end date
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsDateString()
+    endDate: Date;
+
+    // occasion name
+    @ValidateIf((o) => o.cardType === CardType.COUPON)
+    @IsNotEmpty()
+    @IsString()
+    occasionName: string;
 }

@@ -17,6 +17,7 @@ export const CardController: ICRUDController & {
     sendUpdatedPass: (req: RequestMod, res: Response, next: NextFunction) => void;
     log: (req: RequestMod, res: Response, next: NextFunction) => void;
     scanTicket: (req: RequestMod, res: Response, next: NextFunction) => void;
+    scanCoupon: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateCardDto = req.body;
@@ -214,6 +215,19 @@ export const CardController: ICRUDController & {
             .then((card) => res.json(card))
             .catch((err) => {
                 console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+
+    scanCoupon: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const cardId = Number(req.params.id);
+
+        cardServices
+            .scanCoupon(cardId)
+            .then((card) => res.json(card))
+            .catch((err) => {
+                console.log(err);
                 if (err instanceof HttpError) next(err);
                 else next(new HttpError(500, err.message));
             });

@@ -5,6 +5,7 @@ import cors from 'cors';
 import mainRouter from './routes';
 import fileUpload from 'express-fileupload';
 import config from './config';
+import { cronJob } from './utils/cronJob';
 
 const app = Express();
 app.use(config.apiPrefix, Express.static('public'));
@@ -20,5 +21,6 @@ applyMiddlewaresPre(app);
 app.use(config.apiPrefix, mainRouter);
 applyMiddlewaresPost(app);
 app.use(handleErrors);
+cronJob();
 
 export default app;

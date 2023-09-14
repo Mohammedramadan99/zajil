@@ -3,13 +3,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { getTemplates } from "../../../store/templateSlice";
-import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
+import { getTemplates } from "./../../../store/TemplateSlice";
+import BackdropSpinner from "./../../../components/Loading/BackdropSpinner";
 import { useTheme } from "@mui/material";
-
-
 export default function BusinessesTabs() {
-  const  theme = useTheme()
+  const theme = useTheme();
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const { businesses, loading } = useSelector((state) => state.businesses);
@@ -28,17 +26,16 @@ export default function BusinessesTabs() {
         onChange={handleChange}
         variant="scrollable"
         scrollButtons="auto"
-        indicatorColor='primary'
+        indicatorColor="primary"
         textColor="primary"
-
-        aria-label="scrollable auto tabs example">
+        aria-label="scrollable auto tabs example"
+      >
         {businesses &&
           businesses?.map((item, i) => (
             <Tab
               key={i}
               label={item.name}
               onClick={() => templatesHandler(item?.id)}
-              
             />
           ))}
       </Tabs>

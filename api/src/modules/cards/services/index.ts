@@ -23,6 +23,8 @@ import { EventCard } from '../models/event-card.model';
 import { Event, SeatType } from '../../events/models/event.model';
 import { EventTicketTemplate, EventTicketType } from '../../card-templates/models/event-ticket-template.model';
 import { sendUpdatePassNotification } from '../../notifications/services/apn.service';
+import { CouponCard } from '../models/coupon-card.model';
+import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
 
 export const createCard = async (createCardDto: CreateCardDto, req: Request): Promise<any> => {
     /*
@@ -44,7 +46,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
     });
 
     // Create a sub card based on the card type
-    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard;
+    let subCard: LoyaltyCard | ItemsSubscriptionCard | EventCard | CouponCard;
     switch (cardTemplate.cardType) {
         case CardType.LOYALTY:
             subCard = await LoyaltyCard.create({
@@ -105,6 +107,41 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 eventTicketTemplateId: eventTicketTemplate.id,
                 seatId: createCardDto.seat,
             });
+            break;
+
+        case CardType.COUPON:
+            // validate status from template
+            const couponCardTemplate = await CouponCardTemplate.findOne({
+                where: {
+                    id: cardTemplate.id,
+                },
+                include: [
+                    {
+                        model: CardTemplate,
+                        as: 'cardTemplate',
+                        required: true,
+                    },
+                ],
+            });
+
+            if (couponCardTemplate.status === 'inactive') throw new HttpError(400, 'Coupon template is not active');
+
+            // validate discountValue, discountType, and maxUsage
+            if (cardTemplate.cardType === CardType.COUPON) {
+                if (!createCardDto.discountValue) throw new HttpError(400, 'discountValue is required');
+                if (!createCardDto.discountType) throw new HttpError(400, 'discountType is required');
+                if (!createCardDto.maxUsage) throw new HttpError(400, 'maxUsage is required');
+            }
+
+            // create coupon card
+            subCard = await CouponCard.create({
+                id: card.id,
+                discountValue: createCardDto.discountValue,
+                discountType: createCardDto.discountType,
+                maxUsage: createCardDto.maxUsage,
+                usageCount: 0,
+            });
+
             break;
     }
 
@@ -213,6 +250,11 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                             },
                         ],
                     },
+                    {
+                        model: CouponCardTemplate,
+                        as: 'couponCardTemplate',
+                        required: false,
+                    },
                 ],
             },
             {
@@ -223,6 +265,11 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
             {
                 model: ItemsSubscriptionCard,
                 as: 'itemsSubscriptionCard',
+                required: false,
+            },
+            {
+                model: CouponCard,
+                as: 'couponCard',
                 required: false,
             },
             {
@@ -753,7 +800,7 @@ async function validateAndChooseSeat(event: Event, seat: string) {
     // update room
     room[seatRowIndex][seatColumnIndex] = SeatType.UNAVAILABLE_SEAT;
     console.log(room);
-    
+
     event.room = room;
     await Event.update(
         {
@@ -802,4 +849,31 @@ export async function scanTicket(cardId: number, user: User) {
 
     // return response
     return eventTicket.save();
+}
+
+export async function scanCoupon(cardId: number) {
+    const couponCard = await CouponCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: CouponCardTemplate,
+                as: 'couponCardTemplate',
+                required: true,
+            },
+        ],
+    });
+
+    // check if expired
+    if (await couponCard.isExpired()) throw new HttpError(400, 'Coupon expired');
+
+    // check if used
+    if (await couponCard.isUsed()) throw new HttpError(400, 'Coupon already used');
+
+    // use coupon
+    couponCard.usageCount += 1;
+
+    // return response
+    return couponCard.save();
 }
