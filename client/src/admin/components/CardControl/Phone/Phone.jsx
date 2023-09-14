@@ -10,7 +10,7 @@ function Phone({ children }) {
         // border: `5px solid ${theme.palette.grey[800]}`,
         // outline: `3px solid ${theme.palette.grey[900]}`,
         border: `7px solid #fff`,
-        outline: `3px solid ${theme.palette.grey[600]}`,
+        outline: `3px solid #eee`,
         maxWidth: "300px",
         width:"100%",
         marginLeft: "10px",

@@ -135,7 +135,7 @@ input {
   &.small {
     &::after,
     &::before {
-      background: unset;
+      // background:transparent;
     }
   }
   &::after,
@@ -149,12 +149,12 @@ input {
   }
   &::after {
     right: 0;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba($grey_color, 0.4),
-      $grey_color
-    );
+    // background: linear-gradient(
+    //   to right,
+    //   transparent,
+    //   rgba($grey_color, 0.4),
+    //   $grey_color
+    // );
   }
   &::before {
     left: 0;
