@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
-import { setTempletes } from "../../store/templateSlice";
+import { setTempletes } from "../../store/TemplateSlice";
 
 export const useGetTemplates = (businessId) => {
   const dispatch = useDispatch();

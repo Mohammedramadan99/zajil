@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
-import { setCard } from "../../store/cardSlice";
+import { setCard } from "../../store/CardSlice";
 
 export const useGetCardDetails = (cardId) => {
   const dispatch = useDispatch();

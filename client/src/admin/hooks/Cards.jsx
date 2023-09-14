@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
-import { setCards } from "../../store/cardSlice";
-
+import { setCards } from "../../store/CardSlice";
 export const useGetCards = (businessId) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);

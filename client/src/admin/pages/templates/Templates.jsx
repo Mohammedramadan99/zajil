@@ -17,7 +17,7 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
 import { useGetBusinesses } from "../../hooks/Businesses";
 import { useGetTemplates } from "../../hooks/Templates";
-import { getTemplates } from "../../../store/templateSlice";
+import { getTemplates } from "../../../store/TemplateSlice";
 
 function Templates() {
   const theme = useTheme();

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { getTemplates, reset } from "../../../store/templateSlice";
+import { getTemplates, reset } from "../../../store/TemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import cardBg_1 from "../../../assets/images/card_bg_1.jpg";
 import Card from "../../components/Cards/Card/Card";
