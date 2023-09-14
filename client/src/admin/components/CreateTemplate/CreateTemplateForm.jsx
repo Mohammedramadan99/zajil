@@ -244,8 +244,12 @@ function CreateTemplateForm({
 
   const cardTypes = [
     { text: "Loyalty", type: "LOYALTY", store: "normal" },
-    { text: "Subscription", type: "ITEMS_SUBSCRIPTION", store: "normal" },
-    { text: "Coupon", type: "COUPON",store:"coupon" },
+    {
+      text: "Subscription",
+      type: "ITEMS_SUBSCRIPTION",
+      store: "ITEMS_SUBSCRIPTION",
+    },
+    { text: "Coupon", type: "COUPON", store: "coupon" },
   ];
 
   const [stickersIcons, setStickersIcons] = useState([
@@ -578,33 +582,35 @@ function CreateTemplateForm({
               {/* {formik.values.cardType === "LOYALTY" && (
                 <TabPanel onChange={formik.handleChange} formik={formik} />
               )} */}
-              <Stack direction={"row"} spacing={2} width={"100%"}>
-                <TextField
-                  name="giftName"
-                  label="Gift"
-                  required
-                  value={formik.values.giftName}
-                  onChange={formik.handleChange}
-                  error={Boolean(formik.errors.giftName)}
-                  helperText={formik.errors.giftName}
-                  sx={{
-                    width: "100%",
-                  }}
-                />
-                <TextField
-                  name="giftPriceNPoints"
-                  label="Points"
-                  type="number"
-                  required
-                  value={formik.values.giftPriceNPoints}
-                  onChange={formik.handleChange}
-                  error={Boolean(formik.errors.giftPriceNPoints)}
-                  helperText={formik.errors.giftPriceNPoints}
-                  sx={{
-                    width: "100%",
-                  }}
-                />
-              </Stack>
+              {formik.values.cardType === "normal" && (
+                <Stack direction={"row"} spacing={2} width={"100%"}>
+                  <TextField
+                    name="giftName"
+                    label="Gift"
+                    required
+                    value={formik.values.giftName}
+                    onChange={formik.handleChange}
+                    error={Boolean(formik.errors.giftName)}
+                    helperText={formik.errors.giftName}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                  <TextField
+                    name="giftPriceNPoints"
+                    label="Points"
+                    type="number"
+                    required
+                    value={formik.values.giftPriceNPoints}
+                    onChange={formik.handleChange}
+                    error={Boolean(formik.errors.giftPriceNPoints)}
+                    helperText={formik.errors.giftPriceNPoints}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                </Stack>
+              )}
             </Box>
           </AccordionDetails>
         </Accordion>
@@ -750,7 +756,12 @@ function CreateTemplateForm({
                     value={textLogo}
                     onChange={(e) => {
                       setTextLogo(e.target.value);
-                      dispatch(setNormalCardsTemplate({propName:"textLogo",propValue:e.target.value}))
+                      dispatch(
+                        setNormalCardsTemplate({
+                          propName: "textLogo",
+                          propValue: e.target.value,
+                        })
+                      );
                     }}
                     onBlur={formik.handleChange}
                     error={Boolean(formik.errors.brandName)}

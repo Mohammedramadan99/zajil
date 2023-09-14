@@ -1,27 +1,32 @@
 import { Box, Stack, useTheme } from "@mui/material";
 import React from "react";
 import backgroundImg from "../../../../../assets/images/background.webp";
+import { useSelector } from "react-redux";
 function Phone({ children }) {
   const theme = useTheme();
+  const { mode } = useSelector((state) => state.mode);
   return (
     <Box
       sx={{
         position: "relative",
         // border: `5px solid ${theme.palette.grey[800]}`,
         // outline: `3px solid ${theme.palette.grey[900]}`,
-        border: `7px solid #000`,
-        outline: `3px double ${theme.palette.grey[600]}`,
+        border: `7px solid ${
+          mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]
+        }`,
+        outline: `3px double ${theme.palette.grey[500]}`,
         maxWidth: "300px",
-        width:"100%",
+        width: "100%",
         marginLeft: "10px",
         minHeight: "550px",
         borderRadius: "20px",
-        background: `#000`,
+        background: `${
+          mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]
+        }`,
         // for home page
-        margin:"auto",
+        margin: "auto",
         // background: `url(${backgroundImg}) center center`,
       }}>
-      
       <Stack
         direction={"row"}
         spacing={1}
@@ -33,7 +38,7 @@ function Phone({ children }) {
             height: "10px",
             background: theme.palette.grey[700],
             borderRadius: "50%",
-            zIndex:999
+            zIndex: 999,
           }}></Box>
         <Box
           sx={{
@@ -41,7 +46,7 @@ function Phone({ children }) {
             height: "10px",
             background: theme.palette.grey[800],
             borderRadius: "10px",
-            zIndex:999
+            zIndex: 999,
           }}></Box>
       </Stack>
       {children}
