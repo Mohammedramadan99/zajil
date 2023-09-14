@@ -850,3 +850,30 @@ export async function scanTicket(cardId: number, user: User) {
     // return response
     return eventTicket.save();
 }
+
+export async function scanCoupon(cardId: number) {
+    const couponCard = await CouponCard.findOne({
+        where: {
+            id: cardId,
+        },
+        include: [
+            {
+                model: CouponCardTemplate,
+                as: 'couponCardTemplate',
+                required: true,
+            },
+        ],
+    });
+
+    // check if expired
+    if (await couponCard.isExpired()) throw new HttpError(400, 'Coupon expired');
+
+    // check if used
+    if (await couponCard.isUsed()) throw new HttpError(400, 'Coupon already used');
+
+    // use coupon
+    couponCard.usageCount += 1;
+
+    // return response
+    return couponCard.save();
+}

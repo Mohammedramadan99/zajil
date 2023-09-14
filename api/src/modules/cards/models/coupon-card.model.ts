@@ -16,7 +16,11 @@ export class CouponCard extends Model {
             },
         });
         const currentDate = new Date();
-        return this.usageCount >= this.maxUsage && couponCardTemplate.endDate <= currentDate;
+        return couponCardTemplate.endDate <= currentDate;
+    }
+
+    public async isUsed(): Promise<boolean> {
+        return this.usageCount >= this.maxUsage;
     }
 }
 

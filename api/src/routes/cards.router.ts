@@ -42,7 +42,7 @@ cardsRouter.patch(
 // scan ticket
 cardsRouter.patch('/:id/scan-ticket', canUseBusinessId, CardController.scanTicket);
 
-// coupon functions
-// cardsRouter.patch('/:id/coupon/use', canUseBusinessId, CardController.couponUse);
+// scan coupon
+cardsRouter.patch('/:id/scan-coupon', canUseBusinessId, CardController.scanCoupon);
 
 export default cardsRouter;
