@@ -120,7 +120,8 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                         model: CardTemplate,
                         as: 'cardTemplate',
                         required: true,
-                    }]
+                    },
+                ],
             });
 
             if (couponCardTemplate.status === 'inactive') throw new HttpError(400, 'Coupon template is not active');
@@ -249,6 +250,11 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
                             },
                         ],
                     },
+                    {
+                        model: CouponCardTemplate,
+                        as: 'couponCardTemplate',
+                        required: false,
+                    },
                 ],
             },
             {
@@ -259,6 +265,11 @@ export const findOneCardById = async (cardId: number, req: RequestMod): Promise<
             {
                 model: ItemsSubscriptionCard,
                 as: 'itemsSubscriptionCard',
+                required: false,
+            },
+            {
+                model: CouponCard,
+                as: 'couponCard',
                 required: false,
             },
             {
