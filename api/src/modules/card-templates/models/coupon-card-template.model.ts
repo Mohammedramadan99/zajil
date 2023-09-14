@@ -1,7 +1,7 @@
 import { DataTypes, Model, Sequelize, Op } from 'sequelize';
 import { CardTemplate } from './card-template.model';
 import moment from 'moment';
-
+import { CouponCard } from '../../cards/models/coupon-card.model';
 export class CouponCardTemplate extends Model {
     public declare id: number;
     public startDate: Date;
@@ -64,5 +64,11 @@ export const associate = () => {
     CouponCardTemplate.belongsTo(CardTemplate, {
         foreignKey: 'id',
         as: 'cardTemplate',
+    });
+
+    // Coupon Card Template | Coupon Card
+    CouponCardTemplate.hasMany(CouponCard, {
+        foreignKey: 'couponCardTemplateId',
+        as: 'couponCards',
     });
 };
