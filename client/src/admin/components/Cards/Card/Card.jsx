@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Dialog from "../../../components/Templates/Dialog";
+import { useSelector } from "react-redux";
 
 function Card({
   template,
@@ -42,6 +43,7 @@ function Card({
   textColor,
   setTextColor,
 }) {
+  const { cardType } = useSelector((state) => state.templates);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   useEffect(() => {
@@ -68,6 +70,7 @@ function Card({
       {/* Card */}
       <Phone>
         <Stack
+          className={cardType === "coupon" ? "zigzag" : ""}
           sx={{
             background: backgroundColor,
             borderRadius: "10px",
@@ -88,15 +91,18 @@ function Card({
               spacing={2}
               alignItems={"center"}
               justifyContent={"space-between"}>
-              <Box display={"flex"}
-              gap={2}
-              alignItems={"center"}
-              justifyContent={"space-between"}>
+              <Box
+                display={"flex"}
+                gap={2}
+                alignItems={"center"}
+                justifyContent={"space-between"}>
                 {logoImg && (
                   <img src={logoImg} id="photo" width={30} height={30} />
                 )}
                 {/* )} */}
-                {textLogo && <Typography color={labelColor}> {textLogo} </Typography>}
+                {textLogo && (
+                  <Typography color={labelColor}> {textLogo} </Typography>
+                )}
               </Box>
               <Box>
                 <Typography variant="h6" color={labelColor}>
