@@ -38,7 +38,9 @@ import {
   createTemplate,
   reset,
   setCardType,
+  setCouponCardsTemplate,
   setNormalCardsTemplate,
+  setSharedProps,
 } from "../../../store/templateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -77,7 +79,27 @@ function CreateTemplateForm({
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { template, errors, loading } = useSelector((state) => state.templates);
+  const { template, couponCardsTemplate, errors, loading } = useSelector(
+    (state) => state.templates
+  );
+  const {
+    name: couponname,
+    cardType: couponcardType,
+    startDate: couponstartDate,
+    endDate: couponendDate,
+    occasionName: couponoccasionName,
+    logoUrl: couponlogoUrl,
+    iconUrl: couponiconUrl,
+    stripUrl: couponstripUrl,
+    logoText: couponlogoText,
+    designType: coupondesignType,
+    backgroundColor: couponbackgroundColor,
+    foregroundColor: couponforegroundColor,
+    labelColor: couponlabelColor,
+    headerFields: couponheaderFields,
+    secondaryFields: couponsecondaryFields,
+  } = couponCardsTemplate;
+
   const { businesses } = useSelector((state) => state.businesses);
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
@@ -100,6 +122,9 @@ function CreateTemplateForm({
       giftPriceNPoints: 0,
       headerFieldLabel: "",
       headerFieldValue: "",
+      couponOccasionName: "",
+      couponStartDate: "",
+      couponEndDate: "",
     },
     validationSchema: yup.object({
       cardName: yup.string().required(),
@@ -292,6 +317,9 @@ function CreateTemplateForm({
 
   const cardBgHandler = (bg) => {
     setActiveImg(bg);
+    dispatch(
+      setSharedProps({ propName: "stripUrl", propValue: bg })
+    );
   };
 
   const onImageChange = (e) => {
@@ -314,8 +342,20 @@ function CreateTemplateForm({
       return false;
     }
     const url = URL.createObjectURL(file);
-    setLogoImg(url);
-    setTempPhoto(file);
+    dispatch(
+      setNormalCardsTemplate({
+        propName: "logoImg",
+        propValue: url,
+      })
+    );
+    dispatch(
+      setNormalCardsTemplate({
+        propName: "tempPhoto",
+        propValue: file,
+      })
+    );
+    // setLogoImg(url);
+    // setTempPhoto(file);
   };
 
   const onStickerIconChange = async (e) => {
@@ -477,17 +517,27 @@ function CreateTemplateForm({
               flexDirection={"column"}
               gap={2}
               marginBottom={2}>
+              {/* Card Name */}
               <TextField
                 name="cardName"
                 label="Card Name"
                 value={formik.values.cardName}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  dispatch(
+                    setCouponCardsTemplate({
+                      propName: "cardName",
+                      propValue: e.target.value,
+                    })
+                  );
+                  formik.handleChange(e);
+                }}
                 error={Boolean(formik.errors.cardName)}
                 helperText={formik.errors.cardName}
                 sx={{
                   width: "100%",
                 }}
               />
+              {/* Business ID */}
               <FormControl required sx={{ my: 2, minWidth: 120 }}>
                 <InputLabel id="demo-simple-select-required-label">
                   Business
@@ -506,6 +556,7 @@ function CreateTemplateForm({
                   ))}
                 </Select>
               </FormControl>
+              {/* Card Type */}
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Card Type</InputLabel>
                 <Select
@@ -534,6 +585,7 @@ function CreateTemplateForm({
                   ))}
                 </Select>
               </FormControl>
+              {/* Special Components for each card type */}
               {formik.values.cardType === "ITEMS_SUBSCRIPTION" && (
                 <>
                   <Stack direction={"row"} spacing={2}>
@@ -579,9 +631,6 @@ function CreateTemplateForm({
                   />
                 </>
               )}
-              {/* {formik.values.cardType === "LOYALTY" && (
-                <TabPanel onChange={formik.handleChange} formik={formik} />
-              )} */}
               {formik.values.cardType === "normal" && (
                 <Stack direction={"row"} spacing={2} width={"100%"}>
                   <TextField
@@ -605,6 +654,68 @@ function CreateTemplateForm({
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.giftPriceNPoints)}
                     helperText={formik.errors.giftPriceNPoints}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                </Stack>
+              )}
+              {formik.values.cardType === "coupon" && (
+                <Stack direction={"row"} spacing={2} width={"100%"}>
+                  <TextField
+                    name="couponOccasionName"
+                    label="Occasion Name"
+                    required
+                    value={formik.values.couponOccasionName}
+                    onChange={(e) => {
+                      setCouponCardsTemplate({
+                        propName: "occasionName",
+                        propValue: e.target.value,
+                      });
+                      formik.handleChange(e);
+                    }}
+                    error={Boolean(formik.errors.couponOccasionName)}
+                    helperText={formik.errors.couponOccasionName}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                  {/* Replace it with datepicker of MUI */}
+                  <TextField
+                    name="couponStartDate"
+                    label="Start Date"
+                    type="text"
+                    required
+                    value={formik.values.couponStartDate}
+                    onChange={(e) => {
+                      setCouponCardsTemplate({
+                        propName: "startDate",
+                        propValue: e.target.value,
+                      });
+                      formik.handleChange(e);
+                    }}
+                    error={Boolean(formik.errors.couponStartDate)}
+                    helperText={formik.errors.couponStartDate}
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
+                  {/* Replace it with datepicker of MUI */}
+                  <TextField
+                    name="couponEndDate"
+                    label="End Date"
+                    type="text"
+                    required
+                    value={formik.values.couponEndDate}
+                    onChange={(e) => {
+                      setCouponCardsTemplate({
+                        propName: "endDate",
+                        propValue: e.target.value,
+                      });
+                      formik.handleChange(e);
+                    }}
+                    error={Boolean(formik.errors.couponEndDate)}
+                    helperText={formik.errors.couponEndDate}
                     sx={{
                       width: "100%",
                     }}
@@ -684,10 +795,8 @@ function CreateTemplateForm({
                   cardBgHandler({ color: newColor });
                 }}
                 style={{
-                  // maxWidth: "250px",
                   width: "100%",
                   height: "170px",
-                  // marginLeft: "15px",
                 }}
               />
             </div>
@@ -806,29 +915,6 @@ function CreateTemplateForm({
                     }}
                   />
                 </Stack>
-                {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    name="Name"
-                    label="Name"
-                    type="text"
-                    value={formik.values.name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      formik.setFieldValue("name", e.target.value);
-                    }}
-                    error={Boolean(formik.errors.name)}
-                    helperText={formik.errors.name}
-                    inputProps={{
-                      min: 1,
-                      max: 30,
-                    }}
-                    sx={{
-                      width: "100%",
-                      xs: { width: "100%" },
-                      sm: { width: "50%" },
-                    }}
-                  />
-                </Stack> */}
                 <Stack direction={{ xs: "column", sm: "row" }}>
                   <Box>
                     <div

@@ -73,23 +73,61 @@ const initialState = {
   templates: null,
   template: null,
   cardType: "LOYALTY",
-  couponTemplate: {},
-  normalCardsTemplate: {
+  sharedProps: {
+    textLogo: "",
     tempPhoto: "",
-    imgColor: "",
-    activeImg: "",
-    stickersNumber: null,
-    textLogo: null,
     logoImg: null,
-    activeIcon: "",
-    activeScanType: "",
-    name: "",
-    barcode: "",
     labelColor: "",
     textColor: "",
     backgroundColor: "#ffffff",
     headerFieldValue: "",
     headerFieldLabel: "",
+    activeImg: "",
+    imgColor: "",
+    logoUrl: "",
+    iconUrl: "",
+    stripUrl: {},
+    barcode: "",
+  },
+  normalCardsTemplate: {
+    stickersNumber: null,
+    activeIcon: "",
+    activeScanType: "",
+    name: "",
+    barcode: "",
+    // Shared
+    tempPhoto: "",
+    logoImg: null,
+    textLogo: null,
+    imgColor: "",
+    activeImg: "",
+    labelColor: "",
+    textColor: "",
+    backgroundColor: "#ffffff",
+    headerFieldValue: "",
+    headerFieldLabel: "",
+  },
+  couponCardsTemplate: {
+    name: "",
+    startDate: "",
+    endDate: "",
+    occasionName: "",
+    logoUrl: "",
+    iconUrl: "",
+    stripUrl: "",
+    logoText: "",
+    designType: "",
+    backgroundColor: "",
+    foregroundColor: "",
+    labelColor: "",
+    headerFields: {
+      label: "",
+      value: "",
+    },
+    secondaryFields: {
+      label: "",
+      value: "",
+    },
   },
   loading: false,
   errors: null,
@@ -114,7 +152,15 @@ const templateSlice = createSlice({
     setCardType: (state, { payload }) => {
       state.cardType = payload;
     },
+    setSharedProps: (state, action) => {
+      const { propName, propValue } = action.payload;
+      state.sharedProps[propName] = propValue;
+    },
     setNormalCardsTemplate: (state, action) => {
+      const { propName, propValue } = action.payload;
+      state.normalCardsTemplate[propName] = propValue;
+    },
+    setCouponCardsTemplate: (state, action) => {
       const { propName, propValue } = action.payload;
       state.normalCardsTemplate[propName] = propValue;
     },
@@ -149,7 +195,13 @@ const templateSlice = createSlice({
   },
 });
 
-export const { reset, setTempletes, setCardType, setNormalCardsTemplate } =
-  templateSlice.actions;
+export const {
+  reset,
+  setTempletes,
+  setCardType,
+  setNormalCardsTemplate,
+  setCouponCardsTemplate,
+  setSharedProps,
+} = templateSlice.actions;
 
 export default templateSlice.reducer;
