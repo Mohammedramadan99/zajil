@@ -100,6 +100,7 @@ function CreateTemplateForm({
     secondaryFields: couponsecondaryFields,
   } = couponCardsTemplate;
 
+  const { cardType } = useSelector((state) => state.templates);
   const { businesses } = useSelector((state) => state.businesses);
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
@@ -317,9 +318,7 @@ function CreateTemplateForm({
 
   const cardBgHandler = (bg) => {
     setActiveImg(bg);
-    dispatch(
-      setSharedProps({ propName: "stripUrl", propValue: bg })
-    );
+    dispatch(setSharedProps({ propName: "stripUrl", propValue: bg }));
   };
 
   const onImageChange = (e) => {
@@ -855,170 +854,182 @@ function CreateTemplateForm({
                     </label>
                   </div>
                 </div>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  mt={2}>
-                  <TextField
-                    name="brandName"
-                    label="Brand Name"
-                    value={textLogo}
-                    onChange={(e) => {
-                      setTextLogo(e.target.value);
-                      dispatch(
-                        setNormalCardsTemplate({
-                          propName: "textLogo",
-                          propValue: e.target.value,
-                        })
-                      );
-                    }}
-                    onBlur={formik.handleChange}
-                    error={Boolean(formik.errors.brandName)}
-                    helperText={formik.errors.brandName}
-                    sx={{
-                      width: "100%",
-                      "& .MuiOutlinedInput-root": {
-                        // outlineColor: "transparent",
-                      },
-                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                        {
-                          // borderColor: "#7b2cbfff !important",
-                        },
-                      "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused":
-                        {
-                          // color: "#7b2cbfff",
-                        },
-                    }}
-                  />
-                  <TextField
-                    name="stickersNumber"
-                    label="Stickers Number"
-                    type="number"
-                    value={formik.values.stickersNumber}
-                    onChange={(e) => {
-                      setStickersNumber(Number(e.target.value));
-                      formik.setFieldValue(
-                        "stickersNumber",
-                        Number(e.target.value)
-                      );
-                    }}
-                    error={Boolean(formik.errors.stickersNumber)}
-                    helperText={formik.errors.stickersNumber}
-                    inputProps={{
-                      min: 1,
-                      max: 30,
-                    }}
-                    sx={{
-                      width: "100%",
-                      xs: { width: "100%" },
-                      sm: { width: "50%" },
-                    }}
-                  />
-                </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }}>
-                  <Box>
-                    <div
-                      style={{
-                        color: "#999",
-                        marginBlock: "10px",
-                        display: "flex",
-                        gap: "10px",
-                      }}>
-                      Stickers
-                      {activeStickers.length > 0 && (
-                        <span
+                {/* Start Features For Normal Cards */}
+                {cardType !== "coupon" && (
+                  <>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={2}
+                      mt={2}>
+                      <TextField
+                        name="brandName"
+                        label="Brand Name"
+                        value={textLogo}
+                        onChange={(e) => {
+                          setTextLogo(e.target.value);
+                          dispatch(
+                            setNormalCardsTemplate({
+                              propName: "textLogo",
+                              propValue: e.target.value,
+                            })
+                          );
+                        }}
+                        onBlur={formik.handleChange}
+                        error={Boolean(formik.errors.brandName)}
+                        helperText={formik.errors.brandName}
+                        sx={{
+                          width: "100%",
+                          "& .MuiOutlinedInput-root": {
+                            // outlineColor: "transparent",
+                          },
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              // borderColor: "#7b2cbfff !important",
+                            },
+                          "& .MuiInputLabel-root, & .MuiInputLabel-root.Mui-focused":
+                            {
+                              // color: "#7b2cbfff",
+                            },
+                        }}
+                      />
+                      <TextField
+                        name="stickersNumber"
+                        label="Stickers Number"
+                        type="number"
+                        value={formik.values.stickersNumber}
+                        onChange={(e) => {
+                          setStickersNumber(Number(e.target.value));
+                          formik.setFieldValue(
+                            "stickersNumber",
+                            Number(e.target.value)
+                          );
+                        }}
+                        error={Boolean(formik.errors.stickersNumber)}
+                        helperText={formik.errors.stickersNumber}
+                        inputProps={{
+                          min: 1,
+                          max: 30,
+                        }}
+                        sx={{
+                          width: "100%",
+                          xs: { width: "100%" },
+                          sm: { width: "50%" },
+                        }}
+                      />
+                    </Stack>
+                    <Stack direction={{ xs: "column", sm: "row" }}>
+                      <Box>
+                        <div
                           style={{
-                            color: "#0ddc0d",
-                            background: "#0ddc0d3b",
-                            borderRadius: "10px",
-                            padding: "2px 10px",
-                            fontSize: "12px",
+                            color: "#999",
+                            marginBlock: "10px",
+                            display: "flex",
+                            gap: "10px",
                           }}>
-                          selected {activeStickers.length}{" "}
-                        </span>
-                      )}
-                    </div>
-                    <div className="stickers-icons">
-                      {stickersIcons.map((item) => {
-                        const isActive = activeStickers.some(
-                          (sticker) => sticker.id === item.id
-                        );
-                        return (
-                          <div
-                            className={isActive ? "icon active" : "icon"}
-                            onClick={() => addStickerHandler(item)}
-                            key={item.id}>
-                            {uploadStickerLoading ? (
-                              <CircularProgress />
-                            ) : (
-                              <img src={item.icon} alt="" width={30} />
-                            )}
-                          </div>
-                        );
-                      })}
-                      <label
-                        className="icon"
-                        // onClick={() => addStickerHandler(item)}
-                      >
-                        {/* <input type="file" onChange={onStickerIconChange} /> */}
-                        <AddAPhoto fontSize="medium" />
-                        <input
-                          type="file"
-                          multiple={false}
-                          accept="image/jpeg,image/jpg,image/png"
-                          style={{ display: "none" }}
-                          onChange={onStickerIconChange}
-                        />
-                      </label>
-                    </div>
-                  </Box>
-                </Stack>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  mt={2}>
-                  <TextField
-                    name="headerFieldLabel"
-                    label="Header"
-                    value={headerFieldLabel}
-                    onChange={(e) => {
-                      setHeaderFieldLabel(e.target.value);
-                      formik.setFieldValue("headerFieldLabel", e.target.value);
-                    }}
-                    error={Boolean(formik.errors.headerFieldLabel)}
-                    helperText={formik.errors.headerFieldLabel}
-                    inputProps={{
-                      min: 1,
-                      max: 30,
-                    }}
-                    sx={{
-                      width: "100%",
-                      xs: { width: "100%" },
-                      sm: { width: "50%" },
-                    }}
-                  />
-                  <TextField
-                    name="headerFieldValue"
-                    label="Value"
-                    type="text"
-                    value={headerFieldValue}
-                    onChange={(e) => {
-                      setHeaderFieldValue(e.target.value);
-                      formik.setFieldValue("headerFieldValue", e.target.value);
-                    }}
-                    error={Boolean(formik.errors.headerFieldValue)}
-                    helperText={formik.errors.headerFieldValue}
-                    inputProps={{
-                      min: 1,
-                      max: 30,
-                    }}
-                    sx={{
-                      width: "100%",
-                      xs: { width: "100%" },
-                      sm: { width: "50%" },
-                    }}
-                  />
-                </Stack>
+                          Stickers
+                          {activeStickers.length > 0 && (
+                            <span
+                              style={{
+                                color: "#0ddc0d",
+                                background: "#0ddc0d3b",
+                                borderRadius: "10px",
+                                padding: "2px 10px",
+                                fontSize: "12px",
+                              }}>
+                              selected {activeStickers.length}{" "}
+                            </span>
+                          )}
+                        </div>
+                        <div className="stickers-icons">
+                          {stickersIcons.map((item) => {
+                            const isActive = activeStickers.some(
+                              (sticker) => sticker.id === item.id
+                            );
+                            return (
+                              <div
+                                className={isActive ? "icon active" : "icon"}
+                                onClick={() => addStickerHandler(item)}
+                                key={item.id}>
+                                {uploadStickerLoading ? (
+                                  <CircularProgress />
+                                ) : (
+                                  <img src={item.icon} alt="" width={30} />
+                                )}
+                              </div>
+                            );
+                          })}
+                          <label
+                            className="icon"
+                            // onClick={() => addStickerHandler(item)}
+                          >
+                            {/* <input type="file" onChange={onStickerIconChange} /> */}
+                            <AddAPhoto fontSize="medium" />
+                            <input
+                              type="file"
+                              multiple={false}
+                              accept="image/jpeg,image/jpg,image/png"
+                              style={{ display: "none" }}
+                              onChange={onStickerIconChange}
+                            />
+                          </label>
+                        </div>
+                      </Box>
+                    </Stack>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={2}
+                      mt={2}>
+                      <TextField
+                        name="headerFieldLabel"
+                        label="Header"
+                        value={headerFieldLabel}
+                        onChange={(e) => {
+                          setHeaderFieldLabel(e.target.value);
+                          formik.setFieldValue(
+                            "headerFieldLabel",
+                            e.target.value
+                          );
+                        }}
+                        error={Boolean(formik.errors.headerFieldLabel)}
+                        helperText={formik.errors.headerFieldLabel}
+                        inputProps={{
+                          min: 1,
+                          max: 30,
+                        }}
+                        sx={{
+                          width: "100%",
+                          xs: { width: "100%" },
+                          sm: { width: "50%" },
+                        }}
+                      />
+                      <TextField
+                        name="headerFieldValue"
+                        label="Value"
+                        type="text"
+                        value={headerFieldValue}
+                        onChange={(e) => {
+                          setHeaderFieldValue(e.target.value);
+                          formik.setFieldValue(
+                            "headerFieldValue",
+                            e.target.value
+                          );
+                        }}
+                        error={Boolean(formik.errors.headerFieldValue)}
+                        helperText={formik.errors.headerFieldValue}
+                        inputProps={{
+                          min: 1,
+                          max: 30,
+                        }}
+                        sx={{
+                          width: "100%",
+                          xs: { width: "100%" },
+                          sm: { width: "50%" },
+                        }}
+                      />
+                    </Stack>
+                  </>
+                )}
+                {/* End Features For Normal Cards */}
                 <Stack>
                   <div
                     style={{
@@ -1046,6 +1057,12 @@ function CreateTemplateForm({
                         onClick={() => {
                           setActiveScanType(item);
                           setBarcode(item.type);
+                          dispatch(
+                            setSharedProps({
+                              propName: "barcode",
+                              propValue: item,
+                            })
+                          );
                         }}>
                         <img
                           src={item.icon}
@@ -1083,6 +1100,12 @@ function CreateTemplateForm({
                     color={labelColor}
                     onChange={(newColor) => {
                       setLabelColor(newColor);
+                      dispatch(
+                        setSharedProps({
+                          propName: "labelColor",
+                          propValue: newColor,
+                        })
+                      );
                     }}
                     style={{
                       // maxWidth: "250px",
@@ -1101,6 +1124,12 @@ function CreateTemplateForm({
                     color={backgroundColor}
                     onChange={(newColor) => {
                       setBackgroundColor(newColor);
+                      dispatch(
+                        setSharedProps({
+                          propName: "backgroundColor",
+                          propValue: newColor,
+                        })
+                      );
                     }}
                     style={{
                       // maxWidth: "250px",
@@ -1118,7 +1147,15 @@ function CreateTemplateForm({
                   </Typography>
                   <HexColorPicker
                     color={textColor}
-                    onChange={(newColor) => setTextColor(newColor)}
+                    onChange={(newColor) => {
+                      setTextColor(newColor);
+                      dispatch(
+                        setSharedProps({
+                          propName: "textColor",
+                          propValue: newColor,
+                        })
+                      );
+                    }}
                     style={{
                       // maxWidth: "250px",
                       width: "100%",

@@ -94,7 +94,6 @@ const initialState = {
     activeIcon: "",
     activeScanType: "",
     name: "",
-    barcode: "",
     // Shared
     tempPhoto: "",
     logoImg: null,
@@ -106,6 +105,7 @@ const initialState = {
     backgroundColor: "#ffffff",
     headerFieldValue: "",
     headerFieldLabel: "",
+    barcode: "",
   },
   couponCardsTemplate: {
     name: "",

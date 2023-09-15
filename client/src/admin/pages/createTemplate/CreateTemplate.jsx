@@ -123,8 +123,8 @@ function CreateCard() {
                   "@media (max-width: 900px)": { width: "50%" },
                   "@media (max-width: 500px)": { width: "80%" },
                 }}>
-                {displayCardHandler()}
-                {/* <Card
+                {/* {displayCardHandler()} */}
+                <Card
                   title="holidays"
                   withControl={false}
                   tempPhoto={tempPhoto}
@@ -156,7 +156,7 @@ function CreateCard() {
                   setHeaderFieldValue={setHeaderFieldValue}
                   headerFieldLabel={headerFieldLabel}
                   setHeaderFieldLabel={setHeaderFieldLabel}
-                /> */}
+                />
               </Box>
             </div>
           </Grid>
