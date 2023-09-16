@@ -43,7 +43,11 @@ function Card({
   textColor,
   setTextColor,
 }) {
-  const { cardType } = useSelector((state) => state.templates);
+  const { cardType, sharedProps, couponCardsTemplate } = useSelector(
+    (state) => state.templates
+  );
+  const { occasionName, availableUses, endDate } = couponCardsTemplate;
+
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   useEffect(() => {
@@ -56,7 +60,6 @@ function Card({
     if (stickersNumber) {
       setStickersNumber(stickersNumber);
     }
-    console.log({ stickersNumber });
   }, [textLogo, logoImg, stickersNumber]);
 
   const boxRef = useRef(null);
@@ -72,6 +75,7 @@ function Card({
         <Stack
           className={cardType === "coupon" ? "zigzag" : ""}
           sx={{
+            minHeight: "430px",
             background: backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
@@ -190,22 +194,46 @@ function Card({
               </Typography>
             </Box>
           </Box>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            color={textColor}
-            px={2}
-            mb={2}
-            gap={2}>
-            <Box>
-              <Typography variant="body2">Earned Rewards</Typography>
-              <Typography variant={"body2"}> 0 </Typography>
+          {cardType === "coupon" ? (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              
+              color={textColor}
+              px={2}
+              mb={2}
+              gap={2}>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2">اسم البطاقة</Typography>
+                <Typography fontSize={13} fontWeight={800} variant={"body2"}> {occasionName} </Typography>
+              </Box>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2">الاستخدامات المتاحة</Typography>
+                <Typography fontSize={13} fontWeight={800} variant={"body2"}> {availableUses} </Typography>
+              </Box>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2">تاريخ الانتهاء</Typography>
+                <Typography fontSize={13} fontWeight={800} variant={"body2"}> {endDate} </Typography>
+              </Box>
             </Box>
-            <Box>
-              <Typography variant="body2">Next Gift</Typography>
-              <Typography variant={"body2"}> 0 </Typography>
+          ) : (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              color={textColor}
+              px={2}
+              mb={2}
+              gap={2}>
+              <Box>
+                <Typography variant="body2">Earned Rewards</Typography>
+                <Typography variant={"body2"}> 0 </Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2">Next Gift</Typography>
+                <Typography variant={"body2"}> 0 </Typography>
+              </Box>
             </Box>
-          </Box>
+          )}
           <Box className="flex">
             <div>
               {/* <img

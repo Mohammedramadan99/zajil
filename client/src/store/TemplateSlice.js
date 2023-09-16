@@ -88,6 +88,11 @@ const initialState = {
     iconUrl: "",
     stripUrl: {},
     barcode: "",
+    activeScanType: {
+      icon: "/src/assets/images/stickers/qrCode_icon-1.png",
+      type: "PKBarcodeFormatCode128",
+      url: "/src/assets/images/qrcode.png",
+    },
   },
   normalCardsTemplate: {
     stickersNumber: null,

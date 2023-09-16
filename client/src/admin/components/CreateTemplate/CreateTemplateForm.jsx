@@ -128,12 +128,12 @@ function CreateTemplateForm({
       couponEndDate: "",
     },
     validationSchema: yup.object({
-      cardName: yup.string().required(),
-      cardType: yup.string().required(),
-      brandName: yup.string().required(),
+      cardName: yup.string().required("cardName is required"),
+      cardType: yup.string().required("cardType is required"),
+      brandName: yup.string().required("brandName is required"),
       nItems: yup.number(),
       name: yup.string(),
-      stickersNumber: yup.number().min(1).max(30).required(),
+      stickersNumber: yup.number().min(1).max(30),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
       giftName: yup.string(),
@@ -1060,6 +1060,12 @@ function CreateTemplateForm({
                           dispatch(
                             setSharedProps({
                               propName: "barcode",
+                              propValue: item,
+                            })
+                          );
+                          dispatch(
+                            setSharedProps({
+                              propName: "activeScanType",
                               propValue: item,
                             })
                           );
