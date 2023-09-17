@@ -97,9 +97,7 @@ function ShowCard({
                       position: "relative",
                     }
               }>
-              {activeImg?.color && (
-                <img src={template.stripUrl} alt="" />
-              )}
+              {activeImg?.color && <img src={template.stripUrl} alt="" />}
 
               <div
                 className="stickers"
@@ -172,9 +170,7 @@ function ShowCard({
                 {" "}
                 Name{" "}
               </Typography>
-              <Typography
-                variant={"body2"}
-                color={template.design.labelColor}>
+              <Typography variant={"body2"} color={template.design.labelColor}>
                 {template?.name}
               </Typography>
             </Box>
@@ -237,7 +233,9 @@ function ShowCard({
         <Dialog
           open={open}
           setOpen={setOpen}
-          url={`/card/create/${template?.id}/${template?.businessId}`}
+          url={`/card/create/${template?.id}/${template?.businessId}${
+            template.cardType === "COUPON" ? "?type=coupon" : ""
+          }`}
         />
       )}
     </Box>

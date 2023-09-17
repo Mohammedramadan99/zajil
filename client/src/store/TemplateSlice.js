@@ -167,7 +167,7 @@ const templateSlice = createSlice({
     },
     setCouponCardsTemplate: (state, action) => {
       const { propName, propValue } = action.payload;
-      state.normalCardsTemplate[propName] = propValue;
+      state.couponCardsTemplate[propName] = propValue;
     },
   },
   extraReducers: (builder) => {
