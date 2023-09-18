@@ -150,14 +150,18 @@ export const loyaltyGenerateStickersIfPossible = async (
     });
     if (!card) throw new Error('Card not found');
 
+    const stickersCount = cardTemplate.stickersCount;
+
     const stripWidth = 1125;
     const stripHeight = 432;
     const margin = 0.1;
     const innerStripWidth = stripWidth * (1 - margin * 2);
     const innerStripHeight = stripHeight * (1 - margin * 2);
 
-    const stickersPerRow = 1;
-    const numberOfRows = 1;
+    const MAX_STICKERS_PER_ROW = Math.max(Math.ceil(Math.sqrt(stickersCount)), 5);
+
+    const stickersPerRow = Math.min(stickersCount, MAX_STICKERS_PER_ROW);
+    const numberOfRows = Math.ceil(stickersCount / stickersPerRow);
 
     const stickerSize = Math.min(innerStripWidth / stickersPerRow, innerStripHeight / numberOfRows);
     const stickerCellWidth = innerStripWidth / stickersPerRow;
@@ -183,7 +187,7 @@ export const loyaltyGenerateStickersIfPossible = async (
     const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
         numberOfRows,
         stickersPerRow,
-        1,
+        stickersCount,
         [stickerToUse],
         stickerToUse,
         stripHeight,
