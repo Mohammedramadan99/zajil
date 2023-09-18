@@ -44,19 +44,15 @@ function CreateCardForm() {
       clientName: yup.string().required("Client name shouldn't be empty"),
       clientPhone: yup.string().required("Client phone shouldn't be empty"),
       gender: yup.string().required("Gender is required"),
-      discountValue: yup.string().when("type", {
-        is: "coupon",
-        then: yup.string().required("Discount Value shouldn't be empty"),
-      }),
-      discountType: yup.number().when("type", {
-        is: "coupon",
-        then: yup.number().min(1).required("Discount Type is required"),
-      }),
-      maxUsage: yup.number().when("type", {
-        is: "coupon",
-        then: yup.number().min(1).required("Max Usage is required"),
-      }),
-      
+      discountValue: type
+        ? yup.string().required("Discount Value shouldn't be empty")
+        : yup.string(),
+      discountType: type
+        ? yup.number().min(1).required("Discount Type is required")
+        : yup.number(),
+      maxUsage: type
+        ? yup.number().min(1).required("Max Usage is required")
+        : yup.number(),
     }),
     onSubmit(values) {
       handleSubmit(values);
@@ -152,7 +148,10 @@ function CreateCardForm() {
                     value={formik.values.discountValue}
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.discountValue)}
-                    helperText={formik.touched.discountValue && formik.errors.discountValue}
+                    helperText={
+                      formik.touched.discountValue &&
+                      formik.errors.discountValue
+                    }
                     sx={{ width: "100%" }}
                   />
                   <Stack direction={"row"} spacing={2}>
