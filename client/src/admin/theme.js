@@ -66,6 +66,21 @@ function reverseTokens(tokensDark) {
 export const tokensLight = reverseTokens(tokensDark);
 
 export const themeSettings = (mode) => {
+  const shadowsDark = [
+    'none',
+    '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)',
+    '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+    '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
+    // Define shadows for dark mode elevations 4 to 24
+  ];
+
+  const shadowsLight = [
+    'none',
+    '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)',
+    '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+    '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
+    // Define shadows for light mode elevations 4 to 24
+  ];
   return {
     palette: {
       mode: mode,
@@ -165,7 +180,9 @@ export const themeSettings = (mode) => {
         fontSize: 14,
       },
     },
-    shadows: mode === "dark" ? ["0px 2px 8px 10px rgba(0,0,0,0.9)"] : ["0px 2px 8px 10px rgba(0,0,0,0.9)"],
+    // shadows: mode === "dark" ? ["0px 2px 8px 10px rgba(0,0,0,0.9)"] : ["0px 2px 8px 10px rgba(0,0,0,0.9)"],
+    shadows: mode === 'dark' ? shadowsDark : shadowsLight,
+
     components: {
       MuiPaper: {
         styleOverrides: {
