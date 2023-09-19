@@ -18,6 +18,8 @@ import { createCard, reset } from "../../../../store/CardSlice";
 import { useDispatch, useSelector } from "react-redux";
 import BasicSelect from "../../GlobalComponents/BasicSelect";
 import { toast } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
+
 function CreateCardForm() {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -26,17 +28,31 @@ function CreateCardForm() {
   const { loading, errors, errorMessage, card, cardCreated } = useSelector(
     (state) => state.cards
   );
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const type = searchParams.get("type");
   const formik = useFormik({
     initialValues: {
       clientName: "",
       clientPhone: "",
       gender: "",
+      // Coupon
+      discountValue: "",
+      discountType: 0,
+      maxUsage: 0,
     },
     validationSchema: yup.object({
-      clientName: yup.string().required("client name shouldn't be empty"),
-      clientPhone: yup.string().required("client phone shouldn't be empty"),
-      gender: yup.string().required("gender is required"),
+      clientName: yup.string().required("Client name shouldn't be empty"),
+      clientPhone: yup.string().required("Client phone shouldn't be empty"),
+      gender: yup.string().required("Gender is required"),
+      discountValue: type
+        ? yup.string().required("Discount Value shouldn't be empty")
+        : yup.string(),
+      discountType: type
+        ? yup.number().min(1).required("Discount Type is required")
+        : yup.number(),
+      maxUsage: type
+        ? yup.number().min(1).required("Max Usage is required")
+        : yup.number(),
     }),
     onSubmit(values) {
       handleSubmit(values);
@@ -124,6 +140,42 @@ function CreateCardForm() {
                 value={formik.values.gender}
                 onChange={formik.handleChange}
               />
+              {type === "coupon" && (
+                <>
+                  <TextField
+                    name="discountValue"
+                    label="Discount Value"
+                    value={formik.values.discountValue}
+                    onChange={formik.handleChange}
+                    error={Boolean(formik.errors.discountValue)}
+                    helperText={
+                      formik.touched.discountValue &&
+                      formik.errors.discountValue
+                    }
+                    sx={{ width: "100%" }}
+                  />
+                  <Stack direction={"row"} spacing={2}>
+                    <TextField
+                      name="discountType"
+                      label="Discount Type"
+                      value={formik.values.discountType}
+                      onChange={formik.handleChange}
+                      error={Boolean(formik.errors.discountType)}
+                      helperText={formik.errors.discountType}
+                      sx={{ width: "100%" }}
+                    />
+                    <TextField
+                      name="maxUsage"
+                      label="Max Usage"
+                      value={formik.values.maxUsage}
+                      onChange={formik.handleChange}
+                      error={Boolean(formik.errors.maxUsage)}
+                      helperText={formik.errors.maxUsage}
+                      sx={{ width: "100%" }}
+                    />
+                  </Stack>
+                </>
+              )}
             </Stack>
             <Button
               type="submit"

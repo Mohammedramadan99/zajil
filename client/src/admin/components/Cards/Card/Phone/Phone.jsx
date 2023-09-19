@@ -11,18 +11,14 @@ function Phone({ children }) {
         position: "relative",
         // border: `5px solid ${theme.palette.grey[800]}`,
         // outline: `3px solid ${theme.palette.grey[900]}`,
-        border: `7px solid ${
-          mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]
-        }`,
+        border: `7px solid ${theme.palette.grey[900]}`,
         outline: `3px double ${theme.palette.grey[500]}`,
         maxWidth: "300px",
         width: "100%",
         marginLeft: "10px",
         minHeight: "550px",
         borderRadius: "20px",
-        background: `${
-          mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]
-        }`,
+        background: `${theme.palette.grey[900]}`,
         // for home page
         margin: "auto",
         // background: `url(${backgroundImg}) center center`,

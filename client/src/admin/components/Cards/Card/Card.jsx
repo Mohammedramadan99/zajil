@@ -14,36 +14,55 @@ import {
 } from "@mui/material";
 import Dialog from "../../../components/Templates/Dialog";
 import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 
 function Card({
   template,
   title,
   bg,
-  logoImg,
+  // logoImg,
   setLogoImg,
   setTextLogo,
   setStickersNumber,
   stickersNumber,
   withControl = true,
-  textLogo,
-  activeImg,
-  activeIcon,
+  // textLogo,
+  // activeIcon,
   name,
-  activeScanType,
+  // activeScanType,
   setImgColor,
-  labelColor,
-  setLabelColor,
-  backgroundColor,
-  setBackgroundColor,
-  barcode,
-  headerFieldValue,
-  setHeaderFieldValue,
-  headerFieldLabel,
-  setHeaderFieldLabel,
-  textColor,
-  setTextColor,
+  // labelColor,
+  // setLabelColor,
+  // backgroundColor,
+  // setBackgroundColor,
+  // barcode,
+  // headerFieldValue,
+  // setHeaderFieldValue,
+  // headerFieldLabel,
+  // setHeaderFieldLabel,
+  // textColor,
+  // setTextColor,
 }) {
-  const { cardType } = useSelector((state) => state.templates);
+  const { cardType, sharedProps, normalCardsTemplate, couponCardsTemplate } =
+    useSelector((state) => state.templates);
+  const {
+    tempPhoto,
+    stripUrl,
+    logoImg,
+    textLogo,
+    activeIcon,
+    activeScanType,
+    imgColor,
+    barcode,
+    backgroundColor,
+    foregroundColor,
+    labelColor,
+    headerFieldValue,
+    headerFieldLabel,
+    textColor,
+  } = sharedProps;
+  const { occasionName, availableUses, endDate } = couponCardsTemplate;
+
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   useEffect(() => {
@@ -56,26 +75,27 @@ function Card({
     if (stickersNumber) {
       setStickersNumber(stickersNumber);
     }
-    console.log({ stickersNumber });
   }, [textLogo, logoImg, stickersNumber]);
 
   const boxRef = useRef(null);
   useEffect(() => {
     const box = boxRef.current;
     setImgColor && setImgColor(box);
-  }, [activeImg?.color]);
+  }, [stripUrl?.color]);
 
   return (
     <>
       {/* Card */}
       <Phone>
         <Stack
-          className={cardType === "coupon" ? "zigzag" : ""}
+          className={cardType.type === "COUPON" ? "zigzag" : ""}
           sx={{
+            minHeight: "430px",
             background: backgroundColor,
             borderRadius: "10px",
             paddingBlock: "10px",
           }}>
+          {/* Start Logo and Strip */}
           <Box
             sx={{
               width: "100%",
@@ -84,18 +104,19 @@ function Card({
               background: `url(${bg}) no-repeat`,
               backgroundSize: "cover",
               backgroundPosition: "cover",
-              paddingInline: "10px",
             }}>
             <Stack
               direction={"row"}
               spacing={2}
               alignItems={"center"}
-              justifyContent={"space-between"}>
+              justifyContent={"space-between"}
+              paddingInline="10px">
               <Box
                 display={"flex"}
                 gap={2}
                 alignItems={"center"}
-                justifyContent={"space-between"}>
+                justifyContent={"space-between"}
+                paddingTop={cardType.type === "COUPON" ? "1rem" : ".5rem"}>
                 {logoImg && (
                   <img src={logoImg} id="photo" width={30} height={30} />
                 )}
@@ -106,12 +127,10 @@ function Card({
               </Box>
               <Box>
                 <Typography variant="h6" color={labelColor}>
-                  {" "}
-                  {headerFieldLabel}{" "}
+                  {headerFieldLabel}
                 </Typography>
                 <Typography variant="body2" color={textColor}>
-                  {" "}
-                  {headerFieldValue}{" "}
+                  {headerFieldValue}
                 </Typography>
               </Box>
             </Stack>
@@ -121,10 +140,10 @@ function Card({
               mt={2}
               flexWrap={"wrap"}
               sx={
-                activeImg?.url
+                stripUrl?.url
                   ? {
                       position: "relative",
-                      backgroundImage: `url(${activeImg?.url})`,
+                      backgroundImage: `url(${stripUrl?.url})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                     }
@@ -132,12 +151,12 @@ function Card({
                       position: "relative",
                     }
               }>
-              {activeImg?.color && (
+              {stripUrl?.color && (
                 <div
                   className="strip"
                   ref={boxRef}
                   style={{
-                    backgroundColor: activeImg?.color,
+                    backgroundColor: stripUrl?.color,
                   }}></div>
               )}
               <div
@@ -173,40 +192,95 @@ function Card({
               </div>
             </Stack>
           </Box>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            p={2}
-            mt={1}
-            gap={2}>
-            <Box>
-              <Typography variant={"body2"} fontWeight={600} color={labelColor}>
-                {" "}
-                Name{" "}
-              </Typography>
-              <Typography variant={"body2"} color={textColor}>
-                {" "}
-                {name}{" "}
-              </Typography>
+          {/* End Logo and Strip */}
+          {/* Normal Cards -- Start Name */}
+          {cardType.type !== "COUPON" && (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              paddingTop={2}
+              paddingInline={2}
+              mt={1}
+              gap={2}>
+              <Box>
+                <Typography
+                  variant={"body2"}
+                  fontWeight={600}
+                  color={labelColor}>
+                  Name
+                </Typography>
+                <Typography variant={"body2"} color={textColor}>
+                  {name}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            color={textColor}
-            px={2}
-            mb={2}
-            gap={2}>
-            <Box>
-              <Typography variant="body2">Earned Rewards</Typography>
-              <Typography variant={"body2"}> 0 </Typography>
+          )}
+          {/* Normal Cards -- End Name */}
+          {cardType.type === "COUPON" ? (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              color={textColor}
+              paddingTop={2}
+              px={2}
+              mb={2}
+              gap={2}>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2" color={labelColor}>
+                  اسم البطاقة
+                </Typography>
+                <Typography
+                  fontSize={13}
+                  fontWeight={800}
+                  variant={"body2"}
+                  color={textColor}>
+                  {occasionName}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2" color={labelColor}>
+                  الاستخدامات المتاحة
+                </Typography>
+                <Typography
+                  fontSize={13}
+                  fontWeight={800}
+                  variant={"body2"}
+                  color={textColor}>
+                  {availableUses}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography fontSize={13} fontWeight={800} variant="body2" color={labelColor}>
+                  تاريخ الانتهاء
+                </Typography>
+                <Typography
+                  fontSize={13}
+                  fontWeight={800}
+                  variant={"body2"}
+                  color={textColor}>
+                  {dayjs(endDate).format("DD-MM-YYYY")}
+                </Typography>
+              </Box>
             </Box>
-            <Box>
-              <Typography variant="body2">Next Gift</Typography>
-              <Typography variant={"body2"}> 0 </Typography>
+          ) : (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              color={textColor}
+              px={2}
+              mb={2}
+              gap={2}>
+              <Box>
+                <Typography variant="body2">Earned Rewards</Typography>
+                <Typography variant={"body2"}> 0 </Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2">Next Gift</Typography>
+                <Typography variant={"body2"}> 0 </Typography>
+              </Box>
             </Box>
-          </Box>
-          <Box className="flex">
+          )}
+          <Box className="flex" pb={2}>
             <div>
               {/* <img
                 src={qrcode}

@@ -33,7 +33,9 @@ import qrcode from "../../../assets/images/qrcode.png";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import html2canvas from "html2canvas";
-import TabPanel from "./LoyaltyTabs";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+
 import {
   createTemplate,
   reset,
@@ -46,45 +48,50 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function CreateTemplateForm({
-  tempPhoto,
-  setTempPhoto,
-  activeImg,
-  setActiveImg,
-  logoImg,
-  setLogoImg,
-  textLogo,
-  setTextLogo,
   stickersNumber,
   setStickersNumber,
-  activeIcon,
-  setActiveIcon,
   name,
-  setName,
-  activeScanType,
-  setActiveScanType,
-  imgColor,
-  setImgColor,
-  barcode,
-  setBarcode,
-  labelColor,
-  setLabelColor,
-  backgroundColor,
-  setBackgroundColor,
-  headerFieldValue,
-  setHeaderFieldValue,
-  headerFieldLabel,
-  setHeaderFieldLabel,
-  textColor,
-  setTextColor,
+  // tempPhoto,
+  // setTempPhoto,
+  // activeImg,
+  // setActiveImg,
+  // logoImg,
+  // setLogoImg,
+  // textLogo,
+  // setTextLogo,
+  // activeIcon,
+  // setActiveIcon,
+  // setName,
+  // activeScanType,
+  // setActiveScanType,
+  // imgColor,
+  // setImgColor,
+  // barcode,
+  // setBarcode,
+  // labelColor,
+  // setLabelColor,
+  // backgroundColor,
+  // setBackgroundColor,
+  // headerFieldValue,
+  // setHeaderFieldValue,
+  // headerFieldLabel,
+  // setHeaderFieldLabel,
+  // textColor,
+  // setTextColor,
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { template, couponCardsTemplate, errors, loading } = useSelector(
-    (state) => state.templates
-  );
+  const {
+    template,
+    cardType,
+    sharedProps,
+    normalCardsTemplate,
+    couponCardsTemplate,
+    errors,
+    loading,
+  } = useSelector((state) => state.templates);
   const {
     name: couponname,
-    cardType: couponcardType,
     startDate: couponstartDate,
     endDate: couponendDate,
     occasionName: couponoccasionName,
@@ -99,15 +106,30 @@ function CreateTemplateForm({
     headerFields: couponheaderFields,
     secondaryFields: couponsecondaryFields,
   } = couponCardsTemplate;
-
-  const { cardType } = useSelector((state) => state.templates);
+  const {
+    textLogo,
+    tempPhoto,
+    logoImg,
+    labelColor,
+    textColor,
+    backgroundColor,
+    headerFieldValue,
+    headerFieldLabel,
+    activeImg,
+    imgColor,
+    logoUrl,
+    iconUrl,
+    stripUrl,
+    barcode,
+    activeScanType,
+  } = sharedProps;
   const { businesses } = useSelector((state) => state.businesses);
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
-  const [logoUrl, setLogoUrl] = useState(null);
-  const [stripUrl, setStripUrl] = useState(null);
-  const [newStrip, setNewStrip] = useState(null);
+  // const [logoUrl, setLogoUrl] = useState(null);
+  // const [stripUrl, setStripUrl] = useState(null);
+  // const [newStrip, setNewStrip] = useState(null);
   const [uploadStickerLoading, setUploadStickerLoading] = useState(false);
   const theme = useTheme();
 
@@ -124,16 +146,26 @@ function CreateTemplateForm({
       headerFieldLabel: "",
       headerFieldValue: "",
       couponOccasionName: "",
-      couponStartDate: "",
-      couponEndDate: "",
+      couponStartDate: couponstartDate,
+      couponEndDate: couponendDate,
     },
     validationSchema: yup.object({
-      cardName: yup.string().required(),
-      cardType: yup.string().required(),
-      brandName: yup.string().required(),
+      cardName: yup.string().required("card name is required"),
+      cardType: yup.string().required("card type is required"),
+      couponStartDate: yup.date().when("cardType", {
+        is: "COUPON",
+        // then: yup.date().required('coupon Start Date is required'),
+        otherwise: yup.date(), // Not required when cardType is not 'COUPON'
+      }),
+      couponEndDate: yup.date().when("cardType", {
+        is: "COUPON",
+        // then: yup.date().required('coupon End Date is required'),
+        otherwise: yup.date(), // Not required when cardType is not 'COUPON'
+      }),
+      brandName: yup.string(),
       nItems: yup.number(),
       name: yup.string(),
-      stickersNumber: yup.number().min(1).max(30).required(),
+      stickersNumber: yup.number().min(1).max(30),
       earnedRewards: yup.number(),
       nextGift: yup.number(),
       giftName: yup.string(),
@@ -182,16 +214,25 @@ function CreateTemplateForm({
             }
           );
           const imgUrl = await res.json();
-          console.log({ imgUrl });
           if (img.name === "logoUrl") {
-            setLogoUrl(imgUrl.data.url);
+            // setLogoUrl(imgUrl.data.url);
+            setNormalCardsTemplate({
+              propName: "imgUrl",
+              propValue: imgUrl.data.url,
+            });
           } else if (img.name === "stripUrl") {
-            setStripUrl(imgUrl.data.url);
+            // setStripUrl(imgUrl.data.url);
+            dispatch(
+              setNormalCardsTemplate({
+                propName: "stripUrl",
+                propValue: imgUrl.data.url,
+              })
+            );
           }
           return imgUrl.data.url;
         });
         const uploadedImgUrls = await Promise.all(uploadPromises);
-        const cardData = {
+        const normalCardData = {
           params: { businessId: values.business },
           data: {
             ...values,
@@ -241,7 +282,57 @@ function CreateTemplateForm({
             },
           },
         };
-        dispatch(createTemplate(cardData));
+        const couponCardData = {
+          params: { businessId: values.business },
+          data: {
+            ...values,
+            name: formik.values.cardName,
+            cardType: cardType.type,
+            startDate: couponstartDate,
+            endDate: couponendDate,
+            occasionName: couponoccasionName,
+            logoUrl: uploadedImgUrls[0],
+            logoText: "COUPON LOGO",
+            iconUrl: uploadedImgUrls[0] || "",
+            stripUrl: uploadedImgUrls[1] || stripUrl.url,
+            designType: "coupon",
+            qrCodeFormat: barcode.type,
+            cardProps: {
+              backgroundColor: hexToRgb(backgroundColor || "#ffffff"),
+              labelColor: hexToRgb(labelColor),
+              foregroundColor: hexToRgb(textColor),
+              headerFields: [
+                {
+                  key: "header",
+                  label: "خصم",
+                  value: "{{clientName}}",
+                },
+              ],
+              secondaryFields: [
+                {
+                  key: "cardName",
+                  label: "اسم البطاقة",
+                  value: "{{cardName}}",
+                },
+                {
+                  key: "availableUses",
+                  label: "الاستخدامات المتاحة",
+                  value: "{{availableUses}}",
+                },
+                {
+                  key: "endDate",
+                  label: "تاريخ الانتهاء",
+                  value: "{{endDate}}",
+                },
+              ],
+            },
+          },
+        };
+        dispatch(
+          createTemplate(
+            cardType.type === "COUPON" ? couponCardData : normalCardData
+          )
+        );
       })();
     },
   });
@@ -269,13 +360,13 @@ function CreateTemplateForm({
   ];
 
   const cardTypes = [
-    { text: "Loyalty", type: "LOYALTY", store: "normal" },
+    { text: "Loyalty", type: "LOYALTY", store: "LOYALTY" },
     {
       text: "Subscription",
       type: "ITEMS_SUBSCRIPTION",
       store: "ITEMS_SUBSCRIPTION",
     },
-    { text: "Coupon", type: "COUPON", store: "coupon" },
+    { text: "Coupon", type: "COUPON", store: "COUPON" },
   ];
 
   const [stickersIcons, setStickersIcons] = useState([
@@ -317,7 +408,7 @@ function CreateTemplateForm({
   ];
 
   const cardBgHandler = (bg) => {
-    setActiveImg(bg);
+    // setActiveImg(bg);
     dispatch(setSharedProps({ propName: "stripUrl", propValue: bg }));
   };
 
@@ -342,13 +433,13 @@ function CreateTemplateForm({
     }
     const url = URL.createObjectURL(file);
     dispatch(
-      setNormalCardsTemplate({
+      setSharedProps({
         propName: "logoImg",
         propValue: url,
       })
     );
     dispatch(
-      setNormalCardsTemplate({
+      setSharedProps({
         propName: "tempPhoto",
         propValue: file,
       })
@@ -392,9 +483,21 @@ function CreateTemplateForm({
 
   useEffect(() => {
     if (textLogo) {
-      setTextLogo(textLogo);
+      // setTextLogo(textLogo);
+      dispatch(
+        setSharedProps({
+          propName: "textLogo",
+          propValue: textLogo,
+        })
+      );
     } else if (logoImg) {
-      setLogoImg(logoImg);
+      // setLogoImg(logoImg);
+      dispatch(
+        setSharedProps({
+          propName: "logoImg",
+          propValue: logoImg,
+        })
+      );
     }
     if (stickersNumber) {
       setStickersNumber(stickersNumber);
@@ -404,9 +507,9 @@ function CreateTemplateForm({
   const fileInputClick = (event) => {
     event.target.value = null;
   };
-
+  // Use State
   const addStickerHandler = (item) => {
-    if (formik.values.cardType === "LOYALTY") {
+    if (cardType.type === "LOYALTY") {
       if (activeStickers.length >= 1) {
         const stickerIndex = activeStickers.findIndex(
           (sticker) => sticker.id === item.id
@@ -503,6 +606,7 @@ function CreateTemplateForm({
         {/* ############ Accordion 1 : Main info ############ */}
         <Accordion
           defaultExpanded
+          elevation={1}
           sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -522,13 +626,13 @@ function CreateTemplateForm({
                 label="Card Name"
                 value={formik.values.cardName}
                 onChange={(e) => {
+                  formik.handleChange(e)
                   dispatch(
                     setCouponCardsTemplate({
-                      propName: "cardName",
+                      propName: "name",
                       propValue: e.target.value,
                     })
                   );
-                  formik.handleChange(e);
                 }}
                 error={Boolean(formik.errors.cardName)}
                 helperText={formik.errors.cardName}
@@ -537,7 +641,7 @@ function CreateTemplateForm({
                 }}
               />
               {/* Business ID */}
-              <FormControl required sx={{ my: 2, minWidth: 120 }}>
+              <FormControl sx={{ my: 2, minWidth: 120 }}>
                 <InputLabel id="demo-simple-select-required-label">
                   Business
                 </InputLabel>
@@ -546,7 +650,6 @@ function CreateTemplateForm({
                   label="Business"
                   value={formik.values.business}
                   error={Boolean(formik.errors.business)}
-                  required
                   onChange={formik.handleChange}>
                   {businesses?.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -561,12 +664,15 @@ function CreateTemplateForm({
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  required
                   name="cardType"
-                  value={formik.values.cardType}
+                  value={cardType.type}
                   label="Card Type"
                   onChange={(e) => {
-                    dispatch(setCardType(e.target.value));
+                    console.log(e.target.value);
+                    const selectedCardType = cardTypes.find(
+                      (item) => item.store === e.target.value
+                    );
+                    dispatch(setCardType(selectedCardType));
                     formik.handleChange(e);
                   }}
                   error={Boolean(formik.errors.cardType)}>
@@ -574,6 +680,7 @@ function CreateTemplateForm({
                     <MenuItem
                       key={i}
                       value={item.store}
+                      cardType={item.type}
                       onClick={() => {
                         if (activeStickers.length > 2) {
                           setActiveStickers([]);
@@ -585,14 +692,13 @@ function CreateTemplateForm({
                 </Select>
               </FormControl>
               {/* Special Components for each card type */}
-              {formik.values.cardType === "ITEMS_SUBSCRIPTION" && (
+              {cardType.type === "ITEMS_SUBSCRIPTION" && (
                 <>
                   <Stack direction={"row"} spacing={2}>
                     <TextField
                       name="itemsNumber"
                       label="Items Number"
                       type="number"
-                      required
                       value={formik.values.nItems}
                       onChange={formik.handleChange}
                       error={Boolean(formik.errors.nItems)}
@@ -605,7 +711,6 @@ function CreateTemplateForm({
                       name="maxDailyUsage"
                       label="Max Daily Usage"
                       type="number"
-                      required
                       value={formik.values.maxDailyUsage}
                       onChange={formik.handleChange}
                       error={Boolean(formik.errors.maxDailyUsage)}
@@ -619,7 +724,6 @@ function CreateTemplateForm({
                     name="subscriptionDurationDays"
                     label="subscription Duration Days"
                     type="number"
-                    required
                     value={formik.values.subscriptionDurationDays}
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.subscriptionDurationDays)}
@@ -630,12 +734,11 @@ function CreateTemplateForm({
                   />
                 </>
               )}
-              {formik.values.cardType === "normal" && (
+              {cardType.type === "LOYALTY" && (
                 <Stack direction={"row"} spacing={2} width={"100%"}>
                   <TextField
                     name="giftName"
                     label="Gift"
-                    required
                     value={formik.values.giftName}
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.giftName)}
@@ -648,7 +751,6 @@ function CreateTemplateForm({
                     name="giftPriceNPoints"
                     label="Points"
                     type="number"
-                    required
                     value={formik.values.giftPriceNPoints}
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.giftPriceNPoints)}
@@ -659,18 +761,19 @@ function CreateTemplateForm({
                   />
                 </Stack>
               )}
-              {formik.values.cardType === "coupon" && (
+              {cardType.type === "COUPON" && (
                 <Stack direction={"row"} spacing={2} width={"100%"}>
                   <TextField
                     name="couponOccasionName"
                     label="Occasion Name"
-                    required
                     value={formik.values.couponOccasionName}
                     onChange={(e) => {
-                      setCouponCardsTemplate({
-                        propName: "occasionName",
-                        propValue: e.target.value,
-                      });
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "occasionName",
+                          propValue: e.target.value,
+                        })
+                      );
                       formik.handleChange(e);
                     }}
                     error={Boolean(formik.errors.couponOccasionName)}
@@ -680,17 +783,19 @@ function CreateTemplateForm({
                     }}
                   />
                   {/* Replace it with datepicker of MUI */}
-                  <TextField
+                  {/* <TextField
                     name="couponStartDate"
                     label="Start Date"
                     type="text"
                     required
                     value={formik.values.couponStartDate}
                     onChange={(e) => {
-                      setCouponCardsTemplate({
-                        propName: "startDate",
-                        propValue: e.target.value,
-                      });
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "startDate",
+                          propValue: e.target.value,
+                        })
+                      );
                       formik.handleChange(e);
                     }}
                     error={Boolean(formik.errors.couponStartDate)}
@@ -698,19 +803,65 @@ function CreateTemplateForm({
                     sx={{
                       width: "100%",
                     }}
+                  /> */}
+                  <DatePicker
+                    label="Start Date"
+                    value={dayjs(formik.values.couponStartDate)}
+                    sx={{ width: "100%" }}
+                    minDate={dayjs()}
+                    onChange={(value) => {
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "startDate",
+                          propValue: value,
+                        })
+                      );
+                      formik.setFieldValue("couponStartDate", value);
+                    }}
                   />
+                  <DatePicker
+                    label="End Date"
+                    value={dayjs(formik.values.couponEndDate)}
+                    sx={{ width: "100%" }}
+                    onChange={(value) => {
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "endDate",
+                          propValue: value,
+                        })
+                      );
+                      formik.setFieldValue("couponEndDate", value);
+                    }}
+                    minDate={dayjs(formik.values.couponStartDate)}
+                  />
+                  {/* <DatePicker
+                    label="End Date"
+                    value={formik.values.couponEndDate}
+                    sx={{width:"100%"}}
+                    onChange={(value) => {
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "endDate",
+                          propValue: value,
+                        })
+                      )
+                      formik.setFieldValue("couponEndDate", value);
+                    }}
+                  /> */}
                   {/* Replace it with datepicker of MUI */}
-                  <TextField
+                  {/* <TextField
                     name="couponEndDate"
                     label="End Date"
                     type="text"
                     required
                     value={formik.values.couponEndDate}
                     onChange={(e) => {
-                      setCouponCardsTemplate({
-                        propName: "endDate",
-                        propValue: e.target.value,
-                      });
+                      dispatch(
+                        setCouponCardsTemplate({
+                          propName: "endDate",
+                          propValue: e.target.value,
+                        })
+                      );
                       formik.handleChange(e);
                     }}
                     error={Boolean(formik.errors.couponEndDate)}
@@ -718,7 +869,7 @@ function CreateTemplateForm({
                     sx={{
                       width: "100%",
                     }}
-                  />
+                  /> */}
                 </Stack>
               )}
             </Box>
@@ -728,6 +879,7 @@ function CreateTemplateForm({
         {/* ############ Accordion 2 : Strip area(bgs) ############ */}
         <Accordion
           defaultExpanded
+          elevation={1}
           sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -745,7 +897,7 @@ function CreateTemplateForm({
             </Typography>
             <div className="bgs">
               {bgs.map(({ id, url }) => (
-                <box
+                <Box
                   key={id}
                   flexBasis={"unset !important"}
                   maxWidth={"100%"}
@@ -769,7 +921,7 @@ function CreateTemplateForm({
                       />
                     </div>
                   </div>
-                </box>
+                </Box>
               ))}
               <div
                 className={`card-bg ${
@@ -805,6 +957,7 @@ function CreateTemplateForm({
         {/* ############ Accordion 3 : Design ############ */}
         <Accordion
           defaultExpanded
+          elevation={1}
           sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -855,7 +1008,7 @@ function CreateTemplateForm({
                   </div>
                 </div>
                 {/* Start Features For Normal Cards */}
-                {cardType !== "coupon" && (
+                {cardType.type !== "COUPON" && (
                   <>
                     <Stack
                       direction={{ xs: "column", sm: "row" }}
@@ -866,7 +1019,7 @@ function CreateTemplateForm({
                         label="Brand Name"
                         value={textLogo}
                         onChange={(e) => {
-                          setTextLogo(e.target.value);
+                          // setTextLogo(e.target.value);
                           dispatch(
                             setNormalCardsTemplate({
                               propName: "textLogo",
@@ -984,7 +1137,11 @@ function CreateTemplateForm({
                         label="Header"
                         value={headerFieldLabel}
                         onChange={(e) => {
-                          setHeaderFieldLabel(e.target.value);
+                          // setHeaderFieldLabel(e.target.value);
+                          setSharedProps({
+                            propName: "headerFieldLabel",
+                            propValue: e.target.value,
+                          });
                           formik.setFieldValue(
                             "headerFieldLabel",
                             e.target.value
@@ -1008,7 +1165,11 @@ function CreateTemplateForm({
                         type="text"
                         value={headerFieldValue}
                         onChange={(e) => {
-                          setHeaderFieldValue(e.target.value);
+                          // setHeaderFieldValue(e.target.value);
+                          setSharedProps({
+                            propName: "headerFieldValue",
+                            propValue: e.target.value,
+                          });
                           formik.setFieldValue(
                             "headerFieldValue",
                             e.target.value
@@ -1055,11 +1216,17 @@ function CreateTemplateForm({
                           }`,
                         }}
                         onClick={() => {
-                          setActiveScanType(item);
-                          setBarcode(item.type);
+                          // setActiveScanType(item);
+                          // setBarcode(item.type);
                           dispatch(
                             setSharedProps({
                               propName: "barcode",
+                              propValue: item,
+                            })
+                          );
+                          dispatch(
+                            setSharedProps({
+                              propName: "activeScanType",
                               propValue: item,
                             })
                           );
@@ -1081,6 +1248,7 @@ function CreateTemplateForm({
         {/* ############ Accordion 4 : Colors ############ */}
         <Accordion
           defaultExpanded
+          elevation={1}
           sx={{ background: theme.palette.background.alt }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -1099,7 +1267,7 @@ function CreateTemplateForm({
                   <HexColorPicker
                     color={labelColor}
                     onChange={(newColor) => {
-                      setLabelColor(newColor);
+                      // setLabelColor(newColor);
                       dispatch(
                         setSharedProps({
                           propName: "labelColor",
@@ -1123,7 +1291,7 @@ function CreateTemplateForm({
                   <HexColorPicker
                     color={backgroundColor}
                     onChange={(newColor) => {
-                      setBackgroundColor(newColor);
+                      // setBackgroundColor(newColor);
                       dispatch(
                         setSharedProps({
                           propName: "backgroundColor",
@@ -1148,7 +1316,7 @@ function CreateTemplateForm({
                   <HexColorPicker
                     color={textColor}
                     onChange={(newColor) => {
-                      setTextColor(newColor);
+                      // setTextColor(newColor);
                       dispatch(
                         setSharedProps({
                           propName: "textColor",
