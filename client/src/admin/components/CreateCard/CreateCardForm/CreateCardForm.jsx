@@ -36,8 +36,8 @@ function CreateCardForm() {
       clientPhone: "",
       gender: "",
       // Coupon
-      discountValue: "",
-      discountType: 0,
+      discountValue: 0,
+      discountType: "",
       maxUsage: 0,
     },
     validationSchema: yup.object({
@@ -45,13 +45,25 @@ function CreateCardForm() {
       clientPhone: yup.string().required("Client phone shouldn't be empty"),
       gender: yup.string().required("Gender is required"),
       discountValue: type
-        ? yup.string().required("Discount Value shouldn't be empty")
-        : yup.string(),
-      discountType: type
-        ? yup.number().min(1).required("Discount Type is required")
+        ? yup
+            .number()
+            .min(1, "Discount Value shouldn't be empty")
+            .required("Discount Value shouldn't be empty")
         : yup.number(),
+      discountType: type
+        ? yup
+            .string()
+            .oneOf(
+              ["percentage", "fixed_amount"],
+              "Choose one of these 'percentage', 'fixed_amount'"
+            )
+            .required("Discount Type is required")
+        : yup.string(),
       maxUsage: type
-        ? yup.number().min(1).required("Max Usage is required")
+        ? yup
+            .number()
+            .min(1, "Max Usage is required")
+            .required("Max Usage is required")
         : yup.number(),
     }),
     onSubmit(values) {
@@ -136,35 +148,48 @@ function CreateCardForm() {
                 sx={{ width: "100%" }}
               />
               <BasicSelect
+                name="gender"
+                label="Gender"
                 options={["male", "female"]}
                 value={formik.values.gender}
                 onChange={formik.handleChange}
+                error={Boolean(formik.errors.gender)}
+                helperText={formik.errors.gender}
               />
               {type === "coupon" && (
                 <>
-                  <TextField
-                    name="discountValue"
-                    label="Discount Value"
-                    value={formik.values.discountValue}
-                    onChange={formik.handleChange}
-                    error={Boolean(formik.errors.discountValue)}
-                    helperText={
-                      formik.touched.discountValue &&
-                      formik.errors.discountValue
-                    }
-                    sx={{ width: "100%" }}
-                  />
                   <Stack direction={"row"} spacing={2}>
-                    <TextField
+                    {/* <TextField
                       name="discountType"
                       label="Discount Type"
                       value={formik.values.discountType}
                       onChange={formik.handleChange}
+                      sx={{ width: "100%" }}
+                    /> */}
+                    <BasicSelect
+                      name="discountType"
+                      label="Discount Type"
+                      options={["percentage", "fixed_amount"]}
+                      value={formik.values.discountType}
+                      onChange={formik.handleChange}
                       error={Boolean(formik.errors.discountType)}
                       helperText={formik.errors.discountType}
+                    />
+                    <TextField
+                      type="number"
+                      name="discountValue"
+                      label="Discount Value"
+                      value={formik.values.discountValue}
+                      onChange={formik.handleChange}
+                      error={Boolean(formik.errors.discountValue)}
+                      helperText={
+                        formik.touched.discountValue &&
+                        formik.errors.discountValue
+                      }
                       sx={{ width: "100%" }}
                     />
                     <TextField
+                      type="number"
                       name="maxUsage"
                       label="Max Usage"
                       value={formik.values.maxUsage}
