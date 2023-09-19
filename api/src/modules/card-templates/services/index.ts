@@ -35,12 +35,12 @@ export const createCardTemplate = async (
         const { cardType } = createCardTemplateDto;
 
         // validate Loyalty Card Template Stickers
-        if (cardType === CardType.LOYALTY && createCardTemplateDto.stickers) {
-            // loyalty cards can only have one sticker
-            if (createCardTemplateDto.stickers.length > 1)
-                throw new HttpError(400, 'Loyalty cards can only have one sticker');
-            createCardTemplateDto.stickersCount = 1;
-        }
+        // if (cardType === CardType.LOYALTY && createCardTemplateDto.stickers) {
+        //     // loyalty cards can only have one sticker
+        //     if (createCardTemplateDto.stickers.length > 1)
+        //         throw new HttpError(400, 'Loyalty cards can only have one sticker');
+        //     createCardTemplateDto.stickersCount = 1;
+        // }
 
         // Create a base card template
         cardTemplate = await CardTemplate.create({
