@@ -166,10 +166,12 @@ function CreateTemplateForm({
     onSubmit(values) {
       (async () => {
         let imgs = [];
+        // convert logo from blob to file(backend needs it as file).
         const logoFile = new File([logoImg], "logo.png", {
           type: "image/png",
           lastModified: new Date().getTime(),
         });
+        // if strip is a color so we have to convert it to an image then to a file
         if (stripUrl.type === "color") {
           const canvas = await html2canvas(stripUrl.color, {
             useCORS: true,
@@ -188,25 +190,38 @@ function CreateTemplateForm({
             type: "image/png",
             lastModified: new Date().getTime(),
           });
-          imgs = [file,logoFile];
+          imgs = [
+            { type: "stripUrl", file },
+            { type: "logo", file: logoFile },
+          ];
         } else {
+          // if strip is not a color, so it is an image
+          // 1. Here if user selected one from our bgs, in this case we don't need to send a req to upload the file, it is already uploaded so just send the file
           if (
             stripUrl.url.includes(
               "https://zajil-bucket.s3.me-south-1.amazonaws.com"
             )
           ) {
-            imgs = [logoFile];
+            imgs = [{ type: "logo", file: logoFile }];
           } else {
-            imgs = [stripUrl.url, logoFile];
+            // 2. Here if the user didn't select any of our bgs, so he will upload an image
+            /**
+             * a. in this case we will have to send a req to upload the file first,
+             * b. then dispatch sharedProps action for stripUrl,
+             * c. and finally put strip url in imgs array
+             *  */
+            imgs = [
+              { type: "stripUrl", file: stripUrl.url },
+              { type: "logo", file: logoFile },
+            ];
           }
         }
-        console.log(imgs)
         // upload imgs
         const uploadPromises =
           imgs.length > 0 &&
           imgs?.map(async (img) => {
             const form = new FormData();
-            form.append("file", img);
+            form.append("file", img.file);
 
             const res = await fetch(
               `${import.meta.env.VITE_API_URL}/file-upload`,
@@ -218,23 +233,25 @@ function CreateTemplateForm({
                 body: form,
               }
             );
-            const imgUrl = await res.json();
-            if (img.name === "logoUrl") {
+            const { data } = await res.json();
+            if (img.type === "logo") {
               // setLogoUrl(imgUrl.data.url);
-              setSharedProps({
-                propName: "logoUrl",
-                propValue: imgUrl.data.url,
-              });
-            } else if (img.name === "stripUrl") {
+              dispatch(
+                setSharedProps({
+                  propName: "logoUrl",
+                  propValue: data.url,
+                })
+              );
+            } else if (img.type === "stripUrl") {
               // setStripUrl(imgUrl.data.url);
               dispatch(
                 setSharedProps({
                   propName: "stripUrl",
-                  propValue: { type: stripUrl.type, url: imgUrl.data.url },
+                  propValue: { type: stripUrl.type, url: data.url },
                 })
               );
             }
-            return imgUrl.data.url;
+            return data.url;
           });
         const uploadedImgUrls =
           uploadPromises.length > 0 ? await Promise.all(uploadPromises) : [];
@@ -299,7 +316,7 @@ function CreateTemplateForm({
             occasionName: couponoccasionName,
             logoUrl,
             logoText: "COUPON LOGO",
-            iconUrl: iconUrl || "",
+            iconUrl: logoUrl || "",
             stripUrl: stripUrl.url,
             designType: "coupon",
             qrCodeFormat: barcode.type,
