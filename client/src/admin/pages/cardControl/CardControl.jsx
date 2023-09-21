@@ -3,7 +3,7 @@ import React, { memo, useEffect, useState } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getCardDetails,reset } from "../../../store/CardSlice";
+import { getCardDetails, reset } from "../../../store/CardSlice";
 import { useParams } from "react-router-dom";
 import ShowCard from "../../components/CardControl/ShowCard";
 import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
@@ -28,7 +28,7 @@ function CardControl() {
       dispatch(reset());
     }
   }, [errorMessage]);
-  
+
   return loading ? (
     <>loading</>
   ) : (
@@ -39,25 +39,29 @@ function CardControl() {
         minHeight: "100vh",
       }}>
       <Container>
-        <Grid container>
-          {updating && <BackdropSpinner />}
-          <Grid item xs={12} md={9}>
-            <CardControlForm
-              activeSticker={activeSticker}
-              setActiveSticker={setActiveSticker}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} margin={"auto"}>
-            {card && (
-              <ShowCard
-                control={true}
-                template={card}
+        {card?.cardTemplate?.cardType === "COUPON" ? (
+          <> {card?.cardTemplate?.name} </>
+        ) : (
+          <Grid container>
+            {updating && <BackdropSpinner />}
+            <Grid item xs={12} md={9}>
+              <CardControlForm
                 activeSticker={activeSticker}
                 setActiveSticker={setActiveSticker}
               />
-            )}
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} margin={"auto"}>
+              {card && (
+                <ShowCard
+                  control={true}
+                  template={card}
+                  activeSticker={activeSticker}
+                  setActiveSticker={setActiveSticker}
+                />
+              )}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Container>
     </Box>
   );
