@@ -140,6 +140,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 discountType: createCardDto.discountType,
                 maxUsage: createCardDto.maxUsage,
                 usageCount: 0,
+                couponCardTemplateId: couponCardTemplate.id,
             });
 
             break;

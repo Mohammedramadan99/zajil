@@ -7,12 +7,16 @@ export class CouponCard extends Model {
     public discountType: string; // 'percentage' or 'fixed_amount'
     public maxUsage: number;
     public usageCount: number;
+    public couponCardTemplateId!: number;
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
 
     // Is Expired : this.usageCount >= this.maxUsage and CouponCardTemplate.endDate < currentDate
     public async isExpired(): Promise<boolean> {
         const couponCardTemplate = await CouponCardTemplate.findOne({
             where: {
-                id: this.id,
+                id: this.couponCardTemplateId,
             },
         });
         const currentDate = new Date();
@@ -60,6 +64,10 @@ export const init = (sequelize: Sequelize) =>
                     min: 1,
                 },
             },
+            couponCardTemplateId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
         },
         {
             sequelize,
@@ -76,7 +84,7 @@ export const associate = () => {
 
     // Coupon Card | Coupon Card Template
     CouponCard.belongsTo(CouponCardTemplate, {
-        foreignKey: 'id',
+        foreignKey: 'couponCardTemplateId',
         as: 'couponCardTemplate',
     });
 };
