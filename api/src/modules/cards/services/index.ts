@@ -140,6 +140,7 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 discountType: createCardDto.discountType,
                 maxUsage: createCardDto.maxUsage,
                 usageCount: 0,
+                couponCardTemplateId: couponCardTemplate.id,
             });
 
             break;
@@ -864,6 +865,9 @@ export async function scanCoupon(cardId: number) {
             },
         ],
     });
+
+    console.log(cardId);
+    console.log(couponCard);
 
     // check if expired
     if (await couponCard.isExpired()) throw new HttpError(400, 'Coupon expired');
