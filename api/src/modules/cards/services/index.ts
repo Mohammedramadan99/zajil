@@ -866,9 +866,6 @@ export async function scanCoupon(cardId: number) {
         ],
     });
 
-    console.log(cardId);
-    console.log(couponCard);
-
     // check if expired
     if (await couponCard.isExpired()) throw new HttpError(400, 'Coupon expired');
 
