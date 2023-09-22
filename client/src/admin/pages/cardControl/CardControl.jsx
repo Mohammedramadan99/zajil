@@ -1,4 +1,11 @@
-import { Box, Container, Grid, useTheme } from "@mui/material";
+import {
+  Box,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 import CardControlForm from "../../components/CardControl/CardControlForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +47,28 @@ function CardControl() {
       }}>
       <Container>
         {card?.cardTemplate?.cardType === "COUPON" ? (
-          <> {card?.cardTemplate?.name} </>
+          <Paper
+            sx={{
+              maxWidth: 500,
+              m: {
+                xs: "30px auto",
+                lg: "100px auto auto",
+              },
+              backgroundColor: theme.palette.background.alt,
+              p: "10px 40px 30px",
+              textAlign: "center",
+            }}
+            p={5}
+            borderRadius={5}>
+            <Typography variant="h2" sx={{ fontWeight: 800,color:theme.palette.primary[300] }}>
+              Remaining Coupon Uses
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{ marginBlock: "1rem", fontWeight: 900 }}>
+              21
+            </Typography>
+          </Paper>
         ) : (
           <Grid container>
             {updating && <BackdropSpinner />}
