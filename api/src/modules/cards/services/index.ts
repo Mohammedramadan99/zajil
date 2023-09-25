@@ -875,6 +875,22 @@ export async function scanCoupon(cardId: number) {
     // use coupon
     couponCard.usageCount += 1;
 
+    const data = await couponCard.save();
+
+    const discount =
+        couponCard.discountType === 'percentage' ? `${couponCard.discountValue}%` : `$${couponCard.discountValue}`;
+
+    const availableUses = couponCard.maxUsage - couponCard.usageCount;
+
+    const response = {
+        status: 200,
+        message: 'Coupon Valid',
+        cardType: 'coupon',
+        cardId: data.id,
+        discount,
+        availableUses,
+    };
+
     // return response
-    return couponCard.save();
+    return response;
 }
