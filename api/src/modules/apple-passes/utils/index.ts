@@ -10,6 +10,7 @@ import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
 import { ItemsSubscriptionCard } from '../../cards/models/items-subscription-card.model';
 import { CouponCard } from '../../cards/models/coupon-card.model';
 import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
+import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
 
 interface Cache {
     certificates:
@@ -138,6 +139,11 @@ export const loyaltyGenerateStickersIfPossible = async (
     const cardTemplate = await CardTemplate.findOne({
         where: { id: cardTemplateId },
     });
+
+    // get loyalty card template
+    const loyaltyCardTemplate = await LoyaltyCardTemplate.findOne({
+        where: { id: cardTemplateId },
+    });
     // return if not an items subscription card template
     if (cardTemplate.cardType !== CardType.LOYALTY) return;
 
@@ -149,6 +155,11 @@ export const loyaltyGenerateStickersIfPossible = async (
         where: { id: cardId },
     });
     if (!card) throw new Error('Card not found');
+
+    // loyalty card
+    const loyaltyCard = await LoyaltyCard.findOne({
+        where: { id: cardId },
+    });
 
     const stickersCount = cardTemplate.stickersCount;
 
@@ -181,14 +192,24 @@ export const loyaltyGenerateStickersIfPossible = async (
     const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
     const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
 
+    const numOfColordStickers = loyaltyCard.points / loyaltyCardTemplate.pointsPerVisit;
+
     let stickerToUse: Buffer = (await card.loyaltyCanScan()) ? bwSticker : highlightedSticker;
+
+    // stickers array
+    const stickers: Buffer[] = [];
+
+    for (let i = 0; i < stickersCount; i++) {
+        if (i < numOfColordStickers) stickers.push(highlightedSticker);
+        else stickers.push(bwSticker);
+    }
 
     // composite stickers on the strip
     const compositeOperations: OverlayOptions[] = await compositeStickersOnStrip(
         numberOfRows,
         stickersPerRow,
         stickersCount,
-        [stickerToUse],
+        stickers,
         stickerToUse,
         stripHeight,
         stickerSize,
