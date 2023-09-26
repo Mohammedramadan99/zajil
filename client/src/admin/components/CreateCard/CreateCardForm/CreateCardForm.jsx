@@ -71,13 +71,30 @@ function CreateCardForm() {
     },
   });
   const handleSubmit = async (values) => {
+    const {
+      clientName,
+      clientPhone,
+      gender,
+      discountValue,
+      discountType,
+      maxUsage,
+    } = values;
     const templateIdNumber = +templateId;
-    dispatch(
-      createCard({
-        data: { ...values, templateId: templateIdNumber },
-        params: { businessId },
-      })
-    );
+    const requestData = {
+      data: { templateId: templateIdNumber, clientName, clientPhone, gender },
+      params: { businessId },
+    };
+    console.log({ type });
+    if (type) {
+      requestData.data = {
+        ...requestData.data,
+        discountValue,
+        discountType,
+        maxUsage,
+      };
+    }
+
+    dispatch(createCard(requestData));
   };
 
   useEffect(() => {

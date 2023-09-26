@@ -39,7 +39,7 @@ function ShowCard({
   const tempActiveSticker = activeSticker || [];
   const tempnItems =
     card?.cardTemplate?.itemsSubscriptionCardTemplate?.nItems -
-    card?.chosenStickers?.length || 0;
+      card?.chosenStickers?.length || 0;
 
   // console.log("nitems", +tempnItems);
   // console.log("card", card);
@@ -101,47 +101,58 @@ function ShowCard({
                       backgroundImage: `url(${template.cardTemplate?.stripUrl})`,
                       backgroundPosition: "center",
                       backgroundSize: "cover",
-                      height: "190px",
+                      height: "120px",
                     }
                   : {
                       position: "relative",
                     }
               }>
               {activeImg?.color && (
-                <img src={template.cardTemplate?.stripUrl} alt="stipUrl" />
+                <img src={template.cardTemplate?.stripUrl} alt="stipeUrl" />
               )}
 
-              <div
-                className="stickers"
-                style={
-                  template.itemsSubscriptionCard?.nItems > 7
-                    ? {
-                        gridTemplateColumns: "repeat(auto-fit, 25px)",
-                        gridTemplateRows: "repeat(5, 25px)",
-                        justifyContent: "space-between",
-                        gap: "5px",
-                      }
-                    : template.itemsSubscriptionCard?.nItems > 15
-                    ? {
-                        gridTemplateColumns: "repeat(auto-fit, 25px)",
-                        gridTemplateRows: "repeat(4, 25px)",
-                        justifyContent: "space-between",
-                        gap: "5px",
-                      }
-                    : template.itemsSubscriptionCard?.nItems > 20
-                    ? {
-                        justifyContent: "space-between",
-                      }
-                    : {}
-                }>
-                {card?.chosenStickers?.map((item, i) => (
-                  <div className="sticker flex" key={i}>
-                    <div className="icon flex">
-                      <img src={item?.imageUrl} alt="" width={20} />
+              {card?.cardTemplate?.cardType === "LOYALTY" && (
+                <div
+                  className="stickers"
+                  style={
+                    template.cardTemplate?.stickersCount <= 10
+                      ? {
+                          gridTemplateColumns: "repeat(5, 1fr)",
+                          gridTemplateRows: "repeat(1, 1fr)",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }
+                      : template.cardTemplate?.stickersCount <= 20
+                      ? {
+                          gridTemplateColumns: `repeat(5, ${150 / 5}px)`,
+                          gridTemplateRows: `repeat(4, ${100 / 5}px)`,
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap:"5px"
+                        }
+                      : template.cardTemplate?.stickersCount <= 30
+                      ? {
+                          gridTemplateColumns: `repeat(6, ${150 / 6}px)`,
+                          gridTemplateRows: `repeat(5, ${100 / 5}px)`,
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          height: "100%",
+                          // gap: "10px",
+                        }
+                      : {}
+                  }>
+                  {[...Array(card?.cardTemplate?.stickersCount)].map((_, i) => (
+                    <div className="sticker flex" key={i}>
+                      <div className="icon flex">
+                        <img
+                          src={card?.cardTemplate?.stickers[0]?.imageUrl}
+                          alt="sticker"
+                          width={`100%`}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-                {/* {tempActiveSticker &&
+                  ))}
+                  {/* {tempActiveSticker &&
                   tempActiveSticker?.map((item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">
@@ -149,10 +160,51 @@ function ShowCard({
                       </div>
                     </div>
                   ))} */}
-                {[...Array(tempnItems)].map((item, i) => (
-                  <div className="sticker flex" key={i}>
-                    <div className="icon flex">
-                      {/* <img
+                </div>
+              )}
+              {card.cardTemplate.cardType === "ITEMS_SUBSCRIPTION" && (
+                <div
+                  className="stickers"
+                  style={
+                    template.itemsSubscriptionCard?.nItems > 7
+                      ? {
+                          gridTemplateColumns: "repeat(auto-fit, 25px)",
+                          gridTemplateRows: `repeat(5, ${160 / 5})`,
+                          justifyContent: "space-between",
+                          gap: "5px",
+                        }
+                      : template.itemsSubscriptionCard?.nItems > 15
+                      ? {
+                          gridTemplateColumns: "repeat(auto-fit, 25px)",
+                          gridTemplateRows: "repeat(4, 25px)",
+                          justifyContent: "space-between",
+                          gap: "5px",
+                        }
+                      : template.itemsSubscriptionCard?.nItems > 20
+                      ? {
+                          justifyContent: "space-between",
+                        }
+                      : {}
+                  }>
+                  {card?.chosenStickers?.map((item, i) => (
+                    <div className="sticker flex" key={i}>
+                      <div className="icon flex">
+                        <img src={item?.imageUrl} alt="" width={20} />
+                      </div>
+                    </div>
+                  ))}
+                  {/* {tempActiveSticker &&
+                  tempActiveSticker?.map((item, i) => (
+                    <div className="sticker flex" key={i}>
+                      <div className="icon flex">
+                        <img src={item?.imageUrl} alt="" width={20} />
+                      </div>
+                    </div>
+                  ))} */}
+                  {[...Array(tempnItems)].map((item, i) => (
+                    <div className="sticker flex" key={i}>
+                      <div className="icon flex">
+                        {/* <img
                         src={
                           template.itemsSubscriptionCardTemplate?.stickers[i]
                             .imageUrl
@@ -160,10 +212,11 @@ function ShowCard({
                         alt=""
                         width={20}
                       /> */}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </Stack>
           </Box>
           {/* ###### Name ###### */}
