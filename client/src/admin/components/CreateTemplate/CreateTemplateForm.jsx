@@ -142,16 +142,14 @@ function CreateTemplateForm({
     validationSchema: yup.object({
       cardName: yup.string().required("card name is required"),
       cardType: yup.string().required("card type is required"),
-      couponStartDate: yup.date().when("cardType", {
-        is: "COUPON",
-        // then: yup.date().required('coupon Start Date is required'),
-        otherwise: yup.date(), // Not required when cardType is not 'COUPON'
-      }),
-      couponEndDate: yup.date().when("cardType", {
-        is: "COUPON",
-        // then: yup.date().required('coupon End Date is required'),
-        otherwise: yup.date(), // Not required when cardType is not 'COUPON'
-      }),
+      couponStartDate:
+        cardType === "COUPON"
+          ? yup.date().required("Start Date is required")
+          : yup.date(),
+      couponEndDate:
+        cardType === "COUPON"
+          ? yup.date().required("End Date is required")
+          : yup.date(),
       brandName: yup.string(),
       nItems: yup.number(),
       name: yup.string(),
