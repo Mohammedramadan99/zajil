@@ -273,8 +273,8 @@ function CreateTemplateForm({
             ],
             designType: "storeCard",
             iconUrl: uploadedImgUrls[0] || "",
-            stripUrl: stripUrl || activeImg.url,
-            qrCodeFormat: barcode,
+            stripUrl: stripUrl.url,
+            qrCodeFormat: barcode.type,
             cardProps: {
               backgroundColor: hexToRgb(backgroundColor || "#ffffff"),
               labelColor: hexToRgb(labelColor),
@@ -293,13 +293,13 @@ function CreateTemplateForm({
                   value: "{{clientName}}",
                 },
               ],
-              auxiliaryFields: [
-                {
-                  key: `${Math.floor(Math.random() * 100000000) + 1}`,
-                  label: "",
-                  value: "",
-                },
-              ],
+              // auxiliaryFields: [
+              //   {
+              //     key: `${Math.floor(Math.random() * 100000000) + 1}`,
+              //     label: "",
+              //     value: "",
+              //   },
+              // ],
             },
           },
         };
@@ -314,7 +314,7 @@ function CreateTemplateForm({
             occasionName: couponoccasionName,
             logoUrl,
             logoText: "COUPON LOGO",
-            iconUrl: logoUrl || "",
+            // iconUrl: logoUrl || "",
             stripUrl: stripUrl.url,
             designType: "coupon",
             qrCodeFormat: barcode.type,
@@ -1036,9 +1036,9 @@ function CreateTemplateForm({
                       <TextField
                         name="brandName"
                         label="Brand Name"
-                        value={textLogo}
+                        value={formik.values.brandName}
                         onChange={(e) => {
-                          // setTextLogo(e.target.value);
+                          formik.handleChange(e)
                           dispatch(
                             setNormalCardsTemplate({
                               propName: "textLogo",
