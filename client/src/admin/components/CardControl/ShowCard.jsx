@@ -32,6 +32,10 @@ function ShowCard({
     (state) => state.cards
   );
   const boxRef = useRef(null);
+  const numOfColoredStickers =
+    card?.loyaltyCard?.points /
+    card?.cardTemplate?.loyaltyCardTemplate?.pointsPerVisit;
+  console.log({ numOfColoredStickers });
   useEffect(() => {
     const box = boxRef.current;
     setImgColor && setImgColor(box);
@@ -128,18 +132,25 @@ function ShowCard({
                           gridTemplateRows: `repeat(4, ${100 / 5}px)`,
                           justifyContent: "space-between",
                           alignItems: "center",
-                          gap:"5px"
+                          gap: "5px",
                         }
                       : template.cardTemplate?.stickersCount <= 30
                       ? {
                           gridTemplateColumns: `repeat(6, ${150 / 6}px)`,
-                          gridTemplateRows: `repeat(5, ${100 / 5}px)`,
+                          gridTemplateRows: `repeat(5, ${80 / 5}px)`,
                           justifyContent: "space-between",
                           alignItems: "center",
                           height: "100%",
                           // gap: "10px",
                         }
-                      : {}
+                      : {
+                          gridTemplateColumns: `repeat(6, ${170 / 6}px)`,
+                          gridTemplateRows: `repeat(5, ${50 / 5}px)`,
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          height: "100%",
+                          gap: 5,
+                        }
                   }>
                   {[...Array(card?.cardTemplate?.stickersCount)].map((_, i) => (
                     <div className="sticker flex" key={i}>
@@ -147,7 +158,17 @@ function ShowCard({
                         <img
                           src={card?.cardTemplate?.stickers[0]?.imageUrl}
                           alt="sticker"
-                          width={`100%`}
+                          width={
+                            template.cardTemplate?.stickersCount < 30
+                              ? `100%`
+                              : `70%`
+                          }
+                          style={{
+                            filter:
+                              i < numOfColoredStickers
+                                ? "none"
+                                : "grayscale(100%)",
+                          }}
                         />
                       </div>
                     </div>
