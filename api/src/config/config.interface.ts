@@ -27,4 +27,9 @@ export interface ConfigInterface {
             bucketName: string;
         };
     };
+    cloudinary: {
+        cloudName: string;
+        apiKey: string;
+        apiSecret: string;
+    };
 }

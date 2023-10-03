@@ -10,7 +10,8 @@ import {
 import { IAppleCardProps } from '../../../common/interfaces/apple-card-props';
 import { signApplePassAuthTokens } from '../../auth/services/jwt';
 import config from '../../../config';
-import { getFile, s3LocationToKey } from '../../aws/s3';
+// import { getFile, s3LocationToKey } from '../../aws/s3';
+import { getFile } from '../../aws/s3';
 import { CardTemplate, CardType } from '../../card-templates/models/card-template.model';
 import { Business } from '../../businesses/models/business.model';
 
@@ -27,14 +28,24 @@ export async function generatePass(props: { cardTemplateId: number; cardId: stri
     const appleJSON = cardTemplate.design;
     const [certificates] = await Promise.all([getCertificates()]);
 
-    // get images from the card template folder
+    // get images from the card template folder in aws s3
+    // const [icon, logo, thumbnail, footer, strip, background] = await Promise.all([
+    //     getFile(s3LocationToKey(cardTemplate.iconUrl)),
+    //     getFile(s3LocationToKey(cardTemplate.logoUrl)),
+    //     getFile(s3LocationToKey(cardTemplate.thumbnailUrl)).catch(() => null),
+    //     getFile(s3LocationToKey(cardTemplate.footerUrl)).catch(() => null),
+    //     getFile(s3LocationToKey(cardTemplate.stripUrl)).catch(() => null),
+    //     getFile(s3LocationToKey(cardTemplate.backgroundUrl)).catch(() => null),
+    // ]);
+
+    // get images from the card template folder in cloudinary
     const [icon, logo, thumbnail, footer, strip, background] = await Promise.all([
-        getFile(s3LocationToKey(cardTemplate.iconUrl)),
-        getFile(s3LocationToKey(cardTemplate.logoUrl)),
-        getFile(s3LocationToKey(cardTemplate.thumbnailUrl)).catch(() => null),
-        getFile(s3LocationToKey(cardTemplate.footerUrl)).catch(() => null),
-        getFile(s3LocationToKey(cardTemplate.stripUrl)).catch(() => null),
-        getFile(s3LocationToKey(cardTemplate.backgroundUrl)).catch(() => null),
+        getFile(cardTemplate.iconUrl),
+        getFile(cardTemplate.logoUrl),
+        getFile(cardTemplate.thumbnailUrl).catch(() => null),
+        getFile(cardTemplate.footerUrl).catch(() => null),
+        getFile(cardTemplate.stripUrl).catch(() => null),
+        getFile(cardTemplate.backgroundUrl).catch(() => null),
     ]);
 
     const appleJSONObj: IAppleCardProps = JSON.parse(

@@ -1,12 +1,8 @@
-import * as AWS from 'aws-sdk';
+import cloudinary from 'cloudinary';
 import config from '../../config';
 
-AWS.config.update({
-    secretAccessKey: config.aws.secretAccessKey,
-    accessKeyId: config.aws.accessKeyId,
-    region: config.aws.region,
-    signatureVersion: 'v4', //API version
+export const cloudinaryConfig = cloudinary.v2.config({
+    cloud_name: config.cloudinary.cloudName,
+    api_key: config.cloudinary.apiKey,
+    api_secret: config.cloudinary.apiSecret,
 });
-
-// S3
-export const s3 = new AWS.S3({ signatureVersion: 'v4' });

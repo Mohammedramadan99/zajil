@@ -30,6 +30,11 @@ const config: ConfigInterface = {
             bucketName: process.env.AWS_S3_BUCKET_NAME,
         },
     },
+    cloudinary: {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+    },
 };
 
 export default config;

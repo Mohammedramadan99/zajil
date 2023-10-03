@@ -6,7 +6,8 @@ import { LoyaltyCard } from '../../cards/models/loyalty-card.model';
 import { PKPass } from 'passkit-generator';
 import { ItemsSubscriptionCardTemplate } from '../../card-templates/models/items-subscription-card-template.model';
 import sharp, { OverlayOptions, Sharp } from 'sharp';
-import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
+// import { BUCKET_NAME, getFile, s3LocationToKey } from '../../aws/s3';
+import { getFile } from '../../aws/s3';
 import { ItemsSubscriptionCard } from '../../cards/models/items-subscription-card.model';
 import { CouponCard } from '../../cards/models/coupon-card.model';
 import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
@@ -178,16 +179,19 @@ export const loyaltyGenerateStickersIfPossible = async (
     const stickerCellWidth = innerStripWidth / stickersPerRow;
     const stickerVerticalMargin = 5;
 
-    // get sticker buffer
-    const stickerBuffer = await getFile(
-        cardTemplate.stickers[0].imageUrl.includes(`https://${BUCKET_NAME}.s3`)
-            ? s3LocationToKey(cardTemplate.stickers[0].imageUrl)
-            : `card-templates/${cardTemplateId}/stickers/${cardTemplate.stickers[0].title}.${cardTemplate.stickers[0].imageType}`,
-    )
-        .then((out) => out.Body)
-        .catch((err) => {
-            console.error(err);
-        });
+    // get sticker buffer aws s3
+    // const stickerBuffer = await getFile(
+    //     cardTemplate.stickers[0].imageUrl.includes(`https://${BUCKET_NAME}.s3`)
+    //         ? s3LocationToKey(cardTemplate.stickers[0].imageUrl)
+    //         : `card-templates/${cardTemplateId}/stickers/${cardTemplate.stickers[0].title}.${cardTemplate.stickers[0].imageType}`,
+    // )
+    //     .then((out) => out.Body)
+    //     .catch((err) => {
+    //         console.error(err);
+    //     });
+
+    // get sticker buffer cloudinary
+    const stickerBuffer = (await getFile(cardTemplate.stickers[0].imageUrl)).Body;
 
     const highlightedSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer), stickerSize);
     const bwSticker = await handleStickerSharpToBuffer(sharp(stickerBuffer).grayscale(), stickerSize);
@@ -267,22 +271,33 @@ export const itemsSubGenerateStickersIfPossible = async (
     const stickerCellWidth = innerStripWidth / stickersPerRow;
     const stickerVerticalMargin = 5;
 
-    // find choosen stickers
+    // find choosen stickers aws s3
+    // const choosenStickerBuffers = await Promise.all(
+    //     chosenStickers.map(
+    //         async (sticker) =>
+    //             await handleStickerSharpToBuffer(
+    //                 sharp(
+    //                     await getFile(
+    //                         sticker.imageUrl.includes(`https://${BUCKET_NAME}.s3`)
+    //                             ? s3LocationToKey(sticker.imageUrl)
+    //                             : `card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
+    //                     )
+    //                         .then((out) => out.Body)
+    //                         .catch((err) => {
+    //                             console.error(err);
+    //                         }),
+    //                 ),
+    //                 stickerSize,
+    //             ),
+    //     ),
+    // );
+
+    // find choosen stickers cloudinary
     const choosenStickerBuffers = await Promise.all(
         chosenStickers.map(
             async (sticker) =>
                 await handleStickerSharpToBuffer(
-                    sharp(
-                        await getFile(
-                            sticker.imageUrl.includes(`https://${BUCKET_NAME}.s3`)
-                                ? s3LocationToKey(sticker.imageUrl)
-                                : `card-templates/${cardTemplateId}/stickers/${sticker.title}.${sticker.imageType}`,
-                        )
-                            .then((out) => out.Body)
-                            .catch((err) => {
-                                console.error(err);
-                            }),
-                    ),
+                    sharp((await getFile(sticker.imageUrl)).Body),
                     stickerSize,
                 ),
         ),
