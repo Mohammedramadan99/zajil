@@ -142,14 +142,6 @@ function ShowCard({
                   (item, i) => (
                     <div className="sticker flex" key={i}>
                       <div className="icon flex">
-                        {/* <img
-                        src={
-                          template.itemsSubscriptionstickers[i]
-                            .imageUrl
-                        }
-                        alt=""
-                        width={20}
-                      /> */}
                       </div>
                     </div>
                   )

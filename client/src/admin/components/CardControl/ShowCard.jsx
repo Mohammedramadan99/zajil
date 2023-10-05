@@ -183,7 +183,7 @@ function ShowCard({
                   ))} */}
                 </div>
               )}
-              {card.cardTemplate.cardType === "ITEMS_SUBSCRIPTION" && (
+              {card?.cardTemplate?.cardType === "ITEMS_SUBSCRIPTION" && (
                 <div
                   className="stickers"
                   style={
@@ -251,13 +251,13 @@ function ShowCard({
               <Typography
                 variant={"body2"}
                 fontWeight={600}
-                color={template.cardTempalate?.design.labelColor}>
+                color={template?.cardTempalate?.design.labelColor}>
                 {" "}
                 Name{" "}
               </Typography>
               <Typography
                 variant={"body2"}
-                color={template.cardTemplate?.design.labelColor}>
+                color={template?.cardTemplate?.design.labelColor}>
                 {template?.cardTemplate?.name}
               </Typography>
             </Box>
