@@ -251,13 +251,12 @@ function ShowCard({
               <Typography
                 variant={"body2"}
                 fontWeight={600}
-                color={template?.cardTempalate?.design.labelColor}>
-                {" "}
-                Name{" "}
+                color={template?.cardTemplate?.design.labelColor}>
+                Name
               </Typography>
               <Typography
                 variant={"body2"}
-                color={template?.cardTemplate?.design.labelColor}>
+                color={template?.cardTemplate?.design.foregroundColor}>
                 {template?.cardTemplate?.name}
               </Typography>
             </Box>
