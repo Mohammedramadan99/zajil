@@ -118,7 +118,7 @@ function Card({
                 justifyContent={"space-between"}
                 paddingTop={cardType.type === "COUPON" ? "1rem" : ".5rem"}>
                 {logoImg && (
-                  <img src={logoImg} id="photo" width={30} height={30} />
+                  <img src={logoImg.url} id="photo" width={30} height={30} />
                 )}
                 {/* )} */}
                 {textLogo && (

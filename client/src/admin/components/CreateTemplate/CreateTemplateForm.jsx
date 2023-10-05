@@ -106,7 +106,6 @@ function CreateTemplateForm({
     headerFieldLabel,
     activeImg,
     imgColor,
-    logoUrl,
     imgUrl,
     iconUrl,
     stripUrl,
@@ -117,7 +116,7 @@ function CreateTemplateForm({
   const { user } = useSelector((state) => state.auth);
   const [color, setColor] = useState("#aabbcc");
   const [activeStickers, setActiveStickers] = useState([]);
-  // const [logoUrl, setLogoUrl] = useState(null);
+  // const [logoImg, setlogoImg] = useState(null);
   // const [stripUrl, setStripUrl] = useState(null);
   // const [newStrip, setNewStrip] = useState(null);
   const [uploadStickerLoading, setUploadStickerLoading] = useState(false);
@@ -126,7 +125,7 @@ function CreateTemplateForm({
   const formik = useFormik({
     initialValues: {
       cardName: "",
-      cardType: "",
+      cardtype: "",
       brandName: "",
       stickersNumber,
       name,
@@ -141,7 +140,7 @@ function CreateTemplateForm({
     },
     validationSchema: yup.object({
       cardName: yup.string().required("card name is required"),
-      cardType: yup.string().required("card type is required"),
+      cardtype: yup.string().required("card type is required"),
       couponStartDate:
         cardType === "COUPON"
           ? yup.date().required("Start Date is required")
@@ -162,13 +161,14 @@ function CreateTemplateForm({
       headerFieldValue: yup.string(),
     }),
     onSubmit(values) {
+      // console.log("formik values..",values)
       (async () => {
         let imgs = [];
         // convert logo from blob to file(backend needs it as file).
-        const logoFile = new File([logoImg], "logo.png", {
-          type: "image/png",
-          lastModified: new Date().getTime(),
-        });
+        // const logoFile = new File([logoImg], "logo.png", {
+        //   type: "image/png",
+        //   lastModified: new Date().getTime(),
+        // });
         // if strip is a color so we have to convert it to an image then to a file
         if (stripUrl.type === "color") {
           const canvas = await html2canvas(stripUrl.color, {
@@ -190,18 +190,22 @@ function CreateTemplateForm({
           });
           imgs = [
             { type: "stripUrl", file },
-            { type: "logo", file: logoFile },
+            { type: "logo", file: logoImg.file },
           ];
         } else {
           // if strip is not a color, so it is an image
           // 1. Here if user selected one from our bgs, in this case we don't need to send a req to upload the file, it is already uploaded so just send the file
           if (
             stripUrl.url.includes(
-              "https://zajil-bucket.s3.me-south-1.amazonaws.com"
+              // "https://zajil-bucket.s3.me-south-1.amazonaws.com"
+              "https://res.cloudinary.com"
             )
           ) {
-            imgs = [{ type: "logo", file: logoFile }];
+            console.log("if", stripUrl.url);
+            imgs = [{ type: "logo", file: logoImg.file }];
           } else {
+            console.log("else", stripUrl.url);
+
             // 2. Here if the user didn't select any of our bgs, so he will upload an image
             /**
              * a. in this case we will have to send a req to upload the file first,
@@ -210,10 +214,11 @@ function CreateTemplateForm({
              *  */
             imgs = [
               { type: "stripUrl", file: stripUrl.url },
-              { type: "logo", file: logoFile },
+              { type: "logo", file: logoImg.file },
             ];
           }
         }
+        console.log({ imgs });
         // upload imgs
         const uploadPromises =
           imgs.length > 0 &&
@@ -231,13 +236,18 @@ function CreateTemplateForm({
                 body: form,
               }
             );
+            if (!res.ok) {
+              toast.error(`${res?.data?.message} for: ${img.type}`);
+              console.log("type", img.file);
+              return;
+            }
             const { data } = await res.json();
             if (img.type === "logo") {
-              // setLogoUrl(imgUrl.data.url);
+              // setlogoImg(imgUrl.data.url);
               dispatch(
                 setSharedProps({
-                  propName: "logoUrl",
-                  propValue: data.url,
+                  propName: "logoImg",
+                  propValue: { url: data.url },
                 })
               );
             } else if (img.type === "stripUrl") {
@@ -258,7 +268,7 @@ function CreateTemplateForm({
           data: {
             ...values,
             name: formik.values.cardName,
-            logoUrl,
+            logoUrl: uploadedImgUrls[0] || "",
             logoText: values.brandName,
             nItems: stickersNumber,
             stickersCount: stickersNumber,
@@ -293,13 +303,13 @@ function CreateTemplateForm({
                   value: "{{clientName}}",
                 },
               ],
-              // auxiliaryFields: [
-              //   {
-              //     key: `${Math.floor(Math.random() * 100000000) + 1}`,
-              //     label: "",
-              //     value: "",
-              //   },
-              // ],
+              auxiliaryFields: [
+                {
+                  key: `${Math.floor(Math.random() * 100000000) + 1}`,
+                  label: "",
+                  value: "",
+                },
+              ],
             },
           },
         };
@@ -312,9 +322,10 @@ function CreateTemplateForm({
             startDate: couponstartDate,
             endDate: couponendDate,
             occasionName: couponoccasionName,
-            logoUrl,
+            logoUrl: uploadedImgUrls[0] || "",
+            iconUrl: uploadedImgUrls[0] || "",
             logoText: "COUPON LOGO",
-            // iconUrl: logoUrl || "",
+            // iconUrl: logoImg || "",
             stripUrl: stripUrl.url,
             designType: "coupon",
             qrCodeFormat: barcode.type,
@@ -360,23 +371,23 @@ function CreateTemplateForm({
   const bgs = [
     {
       id: 1,
-      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-1.jpg",
+      url: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696368923/uploads/1/1696368922322-1-bg-1.jpg.jpg",
     },
     {
       id: 2,
-      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-2.jpg",
+      url: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369422/uploads/1/1696369420836-1-bg-2.jpg.jpg",
     },
     {
       id: 3,
-      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-3.jpg",
+      url: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369422/uploads/1/1696369420836-1-bg-2.jpg.jpg",
     },
     {
       id: 4,
-      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-4.jpg",
+      url: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369536/uploads/1/1696369535028-1-bg-4.jpg.jpg",
     },
     {
       id: 5,
-      url: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/strip+background/bg-5.jpg",
+      url: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369556/uploads/1/1696369555212-1-bg-5.jpg.jpg",
     },
   ];
 
@@ -393,23 +404,23 @@ function CreateTemplateForm({
   const [stickersIcons, setStickersIcons] = useState([
     {
       id: 1,
-      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/meat.png",
+      icon: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369687/uploads/1/1696369686368-1-chicken.png.png",
     },
     {
       id: 2,
-      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/fish.png",
+      icon: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369734/uploads/1/1696369733216-1-fish.png.png",
     },
     {
       id: 3,
-      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/chicken.png",
+      icon: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369754/uploads/1/1696369753775-1-meat.png.png",
     },
     {
       id: 4,
-      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-1.png",
+      icon: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369782/uploads/1/1696369781572-1-sweet-1.png.png",
     },
     {
       id: 5,
-      icon: "https://zajil-bucket.s3.me-south-1.amazonaws.com/uploads/Stickers/sweet-2.png",
+      icon: "https://res.cloudinary.com/dpjl1roki/image/upload/v1696369813/uploads/1/1696369812331-1-sweet-2.png.png",
     },
   ]);
 
@@ -434,7 +445,7 @@ function CreateTemplateForm({
   };
 
   const onImageChange = (e) => {
-    console.log(e.target.files);
+    // console.log(e.target.files);
     if (e.target.files.length <= 0) {
       return false;
     }
@@ -456,17 +467,9 @@ function CreateTemplateForm({
     dispatch(
       setSharedProps({
         propName: "logoImg",
-        propValue: url,
+        propValue: { file, url },
       })
     );
-    // dispatch(
-    //   setSharedProps({
-    //     propName: "tempPhoto",
-    //     propValue: file,
-    //   })
-    // );
-    // setLogoImg(url);
-    // setTempPhoto(file);
   };
 
   const onStickerIconChange = async (e) => {
@@ -513,17 +516,17 @@ function CreateTemplateForm({
       );
     } else if (logoImg) {
       // setLogoImg(logoImg);
-      dispatch(
-        setSharedProps({
-          propName: "logoImg",
-          propValue: logoImg,
-        })
-      );
+      // dispatch(
+      //   setSharedProps({
+      //     propName: "logoImg",
+      //     propValue: { url: logoImg },
+      //   })
+      // );
     }
     if (stickersNumber) {
       setStickersNumber(stickersNumber);
     }
-  }, [stickersNumber, textLogo, logoImg]);
+  }, [stickersNumber, textLogo]);
 
   const fileInputClick = (event) => {
     event.target.value = null;
@@ -592,7 +595,6 @@ function CreateTemplateForm({
       navigate("/admin/templates");
     }
   }, [template]);
-
   // Convert the color to an image
   const hexToRgb = (hex) => {
     const r = parseInt(hex.substring(1, 3), 16);
@@ -601,7 +603,6 @@ function CreateTemplateForm({
 
     return `rgb(${r}, ${g}, ${b})`;
   };
-
   return (
     <Box>
       <form onSubmit={formik.handleSubmit}>
@@ -669,7 +670,7 @@ function CreateTemplateForm({
                 <Select
                   name="business"
                   label="Business"
-                  value={formik.values.business}
+                  value={formik.values.business || ""}
                   error={Boolean(formik.errors.business)}
                   onChange={formik.handleChange}>
                   {businesses?.map((item) => (
@@ -685,23 +686,21 @@ function CreateTemplateForm({
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name="cardType"
-                  value={cardType.type}
+                  name="cardtype"
+                  value={cardType.type || ""}
                   label="Card Type"
                   onChange={(e) => {
-                    console.log(e.target.value);
                     const selectedCardType = cardTypes.find(
                       (item) => item.store === e.target.value
                     );
                     dispatch(setCardType(selectedCardType));
                     formik.handleChange(e);
                   }}
-                  error={Boolean(formik.errors.cardType)}>
+                  error={Boolean(formik.errors.cardtype)}>
                   {cardTypes.map((item, i) => (
                     <MenuItem
                       key={i}
                       value={item.store}
-                      cardType={item.type}
                       onClick={() => {
                         if (activeStickers.length > 2) {
                           setActiveStickers([]);
@@ -717,10 +716,10 @@ function CreateTemplateForm({
                 <>
                   <Stack direction={"row"} spacing={2}>
                     <TextField
-                      name="itemsNumber"
+                      name="nItems"
                       label="Items Number"
                       type="number"
-                      value={formik.values.nItems}
+                      value={formik.values.nItems || 0}
                       onChange={formik.handleChange}
                       error={Boolean(formik.errors.nItems)}
                       helperText={formik.errors.nItems}
@@ -732,7 +731,7 @@ function CreateTemplateForm({
                       name="maxDailyUsage"
                       label="Max Daily Usage"
                       type="number"
-                      value={formik.values.maxDailyUsage}
+                      value={formik.values.maxDailyUsage || 0}
                       onChange={formik.handleChange}
                       error={Boolean(formik.errors.maxDailyUsage)}
                       helperText={formik.errors.maxDailyUsage}
@@ -745,7 +744,7 @@ function CreateTemplateForm({
                     name="subscriptionDurationDays"
                     label="subscription Duration Days"
                     type="number"
-                    value={formik.values.subscriptionDurationDays}
+                    value={formik.values.subscriptionDurationDays || 0}
                     onChange={formik.handleChange}
                     error={Boolean(formik.errors.subscriptionDurationDays)}
                     helperText={formik.errors.subscriptionDurationDays}
@@ -1038,7 +1037,7 @@ function CreateTemplateForm({
                         label="Brand Name"
                         value={formik.values.brandName}
                         onChange={(e) => {
-                          formik.handleChange(e)
+                          formik.handleChange(e);
                           dispatch(
                             setNormalCardsTemplate({
                               propName: "textLogo",
@@ -1235,9 +1234,6 @@ function CreateTemplateForm({
                           }`,
                         }}
                         onClick={() => {
-                          // setActiveScanType(item);
-                          // setBarcode(item.type);
-                          console.log(item);
                           dispatch(
                             setSharedProps({
                               propName: "barcode",

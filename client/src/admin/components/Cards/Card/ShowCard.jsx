@@ -62,9 +62,10 @@ function ShowCard({
               direction={"row"}
               spacing={2}
               alignItems={"center"}
+              pl={2}
               justifyContent={"space-between"}>
               <Box>
-                {template.logoUrl && (
+                {template?.logoUrl && (
                   <img
                     src={template?.logoUrl}
                     id="photo"
@@ -167,10 +168,9 @@ function ShowCard({
                 variant={"body2"}
                 fontWeight={600}
                 color={template.design.labelColor}>
-                {" "}
-                Name{" "}
+                Name
               </Typography>
-              <Typography variant={"body2"} color={template.design.labelColor}>
+              <Typography variant={"body2"} color={template.design.foregroundColor}>
                 {template?.name}
               </Typography>
             </Box>

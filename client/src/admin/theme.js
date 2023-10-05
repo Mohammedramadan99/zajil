@@ -72,6 +72,22 @@ export const themeSettings = (mode) => {
     '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
     '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
     // Define shadows for dark mode elevations 4 to 24
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
   ];
 
   const shadowsLight = [
@@ -80,6 +96,18 @@ export const themeSettings = (mode) => {
     '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
     '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
     // Define shadows for light mode elevations 4 to 24
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
+    '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+    '0px 1px 8px 0px rgba(0,0,0,0.2),0px 3px 14px 2px rgba(0,0,0,0.12),0px 3px 5px -1px rgba(0,0,0,0.1)',
+    '0px 3px 14px 2px rgba(0,0,0,0.12),0px 4px 5px -1px rgba(0,0,0,0.1),0px 8px 10px 1px rgba(0,0,0,0.2)',
+    '0px 8px 10px 1px rgba(0,0,0,0.2),0px 4px 5px -1px rgba(0,0,0,0.1),0px 3px 14px 2px rgba(0,0,0,0.12)',
   ];
   return {
     palette: {
@@ -183,21 +211,21 @@ export const themeSettings = (mode) => {
     // shadows: mode === "dark" ? ["0px 2px 8px 10px rgba(0,0,0,0.9)"] : ["0px 2px 8px 10px rgba(0,0,0,0.9)"],
     shadows: mode === 'dark' ? shadowsDark : shadowsLight,
 
-    components: {
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            boxShadow: mode === "dark" ? "rgba(0, 0, 0, 0.2) 0px 0px 2px 0px, rgba(0, 0, 0, 0.12) 0px 12px 24px -4px" : "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
-          },
-        },
-      },
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            boxShadow: mode === "dark" ? "rgba(0, 0, 0, 0.2) 0px 0px 2px 0px, rgba(0, 0, 0, 0.12) 0px 12px 24px -4px" : "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
-          },
-        },
-      },
-    },
+    // components: {
+    //   MuiPaper: {
+    //     styleOverrides: {
+    //       root: {
+    //         boxShadow: mode === "dark" ? "rgba(0, 0, 0, 0.2) 0px 0px 2px 0px, rgba(0, 0, 0, 0.12) 0px 12px 24px -4px" : "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
+    //       },
+    //     },
+    //   },
+    //   MuiButton: {
+    //     styleOverrides: {
+    //       root: {
+    //         boxShadow: mode === "dark" ? "rgba(0, 0, 0, 0.2) 0px 0px 2px 0px, rgba(0, 0, 0, 0.12) 0px 12px 24px -4px" : "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
+    //       },
+    //     },
+    //   },
+    // },
   };
 };
