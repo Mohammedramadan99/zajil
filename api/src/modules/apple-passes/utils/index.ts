@@ -296,10 +296,7 @@ export const itemsSubGenerateStickersIfPossible = async (
     const choosenStickerBuffers = await Promise.all(
         chosenStickers.map(
             async (sticker) =>
-                await handleStickerSharpToBuffer(
-                    sharp((await getFile(sticker.imageUrl)).Body),
-                    stickerSize,
-                ),
+                await handleStickerSharpToBuffer(sharp((await getFile(sticker.imageUrl)).Body), stickerSize),
         ),
     );
 
