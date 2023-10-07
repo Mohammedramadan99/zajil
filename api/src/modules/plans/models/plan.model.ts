@@ -1,5 +1,13 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { Business } from '../../businesses/models/business.model';
+
+export const chartsObj = {
+    getCardStatistics: false,
+    getCardsTotal: false,
+    getCardsChart: false,
+    getCardsRewardsRedeemedChart: false,
+    getActivities: false,
+    getActivitiesChart: false,
+};
 
 export class Plan extends Model {
     public declare id: number;
@@ -16,14 +24,9 @@ export class Plan extends Model {
     public maxEventsCards: number;
     public maxItemSubscriptionTemplates: number;
     public maxItemSubscriptionCards: number;
-    public charts: {
-        getCardStatistics: boolean;
-        getCardsTotal: boolean;
-        getCardsChart: boolean;
-        getCardsRewardsRedeemedChart: boolean;
-        getActivities: boolean;
-        getActivitiesChart: boolean;
-    };
+    public charts: typeof chartsObj;
+    public supPlanId: number;
+    public creatorId: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -51,12 +54,12 @@ export const init = (sequelize: Sequelize) =>
             },
             active: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: false,
+                defaultValue: true,
                 allowNull: false,
             },
             maxBranches: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0,
+                defaultValue: -1,
                 allowNull: false,
             },
             maxCouponTemplates: {
@@ -66,7 +69,7 @@ export const init = (sequelize: Sequelize) =>
             },
             maxCouponCards: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0,
+                defaultValue: -1,
                 allowNull: false,
             },
             maxLoyaltyTemplates: {
@@ -76,7 +79,7 @@ export const init = (sequelize: Sequelize) =>
             },
             maxLoyaltyCards: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0,
+                defaultValue: -1,
                 allowNull: false,
             },
             maxEventsTemplates: {
@@ -86,7 +89,7 @@ export const init = (sequelize: Sequelize) =>
             },
             maxEventsCards: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0,
+                defaultValue: -1,
                 allowNull: false,
             },
             maxItemSubscriptionTemplates: {
@@ -96,18 +99,27 @@ export const init = (sequelize: Sequelize) =>
             },
             maxItemSubscriptionCards: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0,
+                defaultValue: -1,
                 allowNull: false,
             },
             charts: {
                 type: DataTypes.JSONB,
-                defaultValue: {
-                    getCardStatistics: false,
-                    getCardsTotal: false,
-                    getCardsChart: false,
-                    getCardsRewardsRedeemedChart: false,
-                    getActivities: false,
-                    getActivitiesChart: false,
+                defaultValue: chartsObj,
+                allowNull: false,
+            },
+            supPlanId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'plans',
+                    key: 'id',
+                },
+                allowNull: true,
+            },
+            creatorId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'users',
+                    key: 'id',
                 },
                 allowNull: false,
             },
@@ -118,12 +130,4 @@ export const init = (sequelize: Sequelize) =>
         },
     );
 
-export const associate = () => {
-    // Plan | Business
-    Plan.hasMany(Business, {
-        foreignKey: 'planId',
-        as: 'businesses',
-    });
-
-    // Plan | Subscription
-};
+export const associate = () => {};

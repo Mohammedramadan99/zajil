@@ -10,6 +10,7 @@ import { CardController } from '../modules/cards/controllers/Card';
 import fileUploadRouter from './file-upload.router';
 import notificationsRouter from './notifications.router';
 import statisticsRouter from './statistics.router';
+import plansRouter from './plans.router';
 
 const mainRouter = express.Router();
 mainRouter.post('/register', validateMiddleware(CreateUserDto), UsersController.create);
@@ -22,6 +23,7 @@ mainRouter.use('/businesses', businessesRouter);
 mainRouter.use('/branches', branchesRouter);
 mainRouter.use('/notifications', notificationsRouter);
 mainRouter.use('/statistics', statisticsRouter);
+mainRouter.use('/plans', plansRouter);
 
 // Get Card Info by ID
 mainRouter.get('/card-info/:id', CardController.getOne);
