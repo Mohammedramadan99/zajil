@@ -70,9 +70,51 @@ function PlansItems() {
       {plans.map((item) => {
         const { id, name, description, price, active, charts, ...rest } = item;
         const features = [
-          { label: "Max Branches", value: rest.maxBranches },
-          { label: "Max Loyalty Templates", value: rest.maxLoyaltyTemplates },
-          { label: "Max Loyalty Cards", value: rest.maxLoyaltyCards },
+          {
+            label: "Max Branches",
+            value: rest.maxBranches,
+            withPlan: { basic: true, gold: true, platinum: true },
+          },
+          {
+            label: "Max Loyalty Templates",
+            value: rest.maxLoyaltyTemplates,
+            withPlan: { basic: true, gold: true, platinum: true },
+          },
+          {
+            label: "Max Loyalty Cards",
+            value: rest.maxLoyaltyCards,
+            withPlan: { basic: true, gold: true, platinum: true },
+          },
+          {
+            label: "Max Subscription Templates",
+            value: rest.maxItemSubscriptionTemplates,
+            withPlan: { basic: true, gold: true, platinum: true },
+          },
+          {
+            label: "Max Subscription Cards",
+            value: rest.maxItemSubscriptionCards,
+            withPlan: { basic: true, gold: true, platinum: true },
+          },
+          {
+            label: "Max Coupon Templates",
+            value: rest.maxCouponTemplates,
+            withPlan: { basic: false, gold: true, platinum: true },
+          },
+          {
+            label: "Max Coupon Cards",
+            value: rest.maxCouponCards,
+            withPlan: { basic: false, gold: true, platinum: true },
+          },
+          {
+            label: "Max Events Templates",
+            value: rest.maxEventsTemplates,
+            withPlan: { basic: false, gold: false, platinum: false },
+          },
+          {
+            label: "Max Events Cards",
+            value: rest.maxEventsCards,
+            withPlan: { basic: false, gold: false, platinum: false },
+          },
         ];
         return (
           <Grid key={item.id} item xs={12} md={4}>
@@ -105,12 +147,32 @@ function PlansItems() {
                     alignItems={"center"}
                     justifyContent={"center"}
                     gap={1}>
-                    <span>$</span>
+                    <span style={{color:theme.palette.primary[400]}}>$</span>
                     <Typography fontSize={70} fontWeight={600}>
                       {" "}
                       {item.price}{" "}
                     </Typography>
                     <span>/mo</span>
+                  </Stack>
+                  <Stack spacing={4}>
+                    {features.map((feat, i) => (
+                      <div key={i}>
+                        <Grid
+                          container
+                          sx={{
+                            opacity: feat.withPlan[item.name.toLowerCase()]
+                              ? 1
+                              : 0.2,
+                          }}>
+                          <Grid item xs={2} sx={{ textAlign: "center" }}>
+                            <strong>{feat.value}</strong>
+                          </Grid>
+                          <Grid item xs={10}>
+                            {feat.label}
+                          </Grid>
+                        </Grid>
+                      </div>
+                    ))}
                   </Stack>
                 </CardContent>
               </CardActionArea>
