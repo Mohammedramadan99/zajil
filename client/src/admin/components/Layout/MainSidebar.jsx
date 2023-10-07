@@ -29,7 +29,7 @@ function MainSidebar() {
   const location = useLocation();
   const transition = "1s ease";
   // const links = [
-  //   { icon: <HomeOutlined />, text: "home", slug: "/admin" },
+  //   { icon: <HomeOutlined />, text: "home", slug: "/dashboard" },
   //   { icon: <Business />, text: "business", slug: "/business/new" },
   //   { icon: <StyleOutlined />, text: "templates", slug: "/templates" },
   //   { icon: <ViewCarousel />, text: "cards", slug: "/cards" },
@@ -38,36 +38,36 @@ function MainSidebar() {
   //   { icon: <ForumOutlined />, text: "messages", slug: "/messages" },
   // ];
   const links = [
-    { icon: <HomeOutlined />, text: "home", path: "", slug: "admin" },
+    { icon: <HomeOutlined />, text: "home", path: "", slug: "dashboard" },
     {
       icon: <BusinessCenterIcon />,
       text: "business",
-      path: "/admin/business/new",
+      path: "/dashboard/business/new",
       slug: "business/new",
     },
     {
       icon: <Business />,
       text: "branch",
-      path: "/admin/branch/new",
+      path: "/dashboard/branch/new",
       slug: "branch/new",
     },
 
     {
       icon: <StyleOutlined />,
       text: "templates",
-      path: "/admin/templates",
+      path: "/dashboard/templates",
       slug: "templates",
     },
     {
       icon: <ViewCarousel />,
       text: "cards",
-      path: "/admin/cards",
+      path: "/dashboard/cards",
       slug: "cards",
     },
     {
       icon: <LocationOnOutlined />,
       text: "location",
-      // path: "/admin/location",
+      // path: "/dashboard/location",
       path: "#",
       slug: "location",
     },

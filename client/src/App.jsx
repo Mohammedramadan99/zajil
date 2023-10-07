@@ -28,6 +28,7 @@ import Scan from "./admin/pages/Scan/Scan";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Notifications from "./admin/pages/notifications/Notifications";
+import Plans from "./admin/pages/plans/Plans";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -74,16 +75,16 @@ function App() {
       ],
     },
     {
-      path: "/admin",
+      path: "/dashboard",
       element: user ? <DashboardLayout /> : <Navigate to={"/auth/login"} />,
       children: [
         {
-          path: "/admin",
+          path: "/dashboard",
           element:
             businesses?.length > 0 ? (
               <DashboardHome />
             ) : (
-              <Navigate to={"/admin/business/new"} />
+              <Navigate to={"/dashboard/business/new"} />
             ),
         },
         {
@@ -93,6 +94,10 @@ function App() {
         {
           path: "location",
           element: <Location />,
+        },
+        {
+          path: "plans",
+          element: <Plans />,
         },
         {
           path: "business",
@@ -130,6 +135,7 @@ function App() {
           path: "notifications",
           element: <Notifications />,
         },
+        
       ],
     },
   ]);
