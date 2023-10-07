@@ -1,5 +1,6 @@
 import { Box, Container, useTheme } from "@mui/material";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import PlansItems from "../../components/Plans/PlansItems";
 
 function Plans() {
     const theme = useTheme()
@@ -12,6 +13,7 @@ function Plans() {
       }}>
       <Container sx={{ pb: 20 }}>
         <PageHeader title={"Plans"} subTitle={"Our Plans"} />
+        <PlansItems/>
       </Container>
     </Box>
   );
