@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -9,6 +10,10 @@ import {
   useTheme,
 } from "@mui/material";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
 
 function PlansItems() {
   const theme = useTheme();
@@ -118,7 +123,12 @@ function PlansItems() {
         ];
         return (
           <Grid key={item.id} item xs={12} md={4}>
-            <Card>
+            <Card
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+              }}>
               <CardActionArea>
                 <CardContent
                   sx={{
@@ -147,7 +157,7 @@ function PlansItems() {
                     alignItems={"center"}
                     justifyContent={"center"}
                     gap={1}>
-                    <span style={{color:theme.palette.primary[400]}}>$</span>
+                    <span style={{ color: theme.palette.primary[400] }}>$</span>
                     <Typography fontSize={70} fontWeight={600}>
                       {" "}
                       {item.price}{" "}
@@ -165,9 +175,16 @@ function PlansItems() {
                               : 0.2,
                           }}>
                           <Grid item xs={2} sx={{ textAlign: "center" }}>
+                            {feat.withPlan[item.name.toLowerCase()] ? (
+                              <DoneAllIcon />
+                            ) : (
+                                <HistoryToggleOffIcon/>
+                            )}
+                          </Grid>
+                          <Grid item xs={2} sx={{ textAlign: "center" }}>
                             <strong>{feat.value}</strong>
                           </Grid>
-                          <Grid item xs={10}>
+                          <Grid item xs={8}>
                             {feat.label}
                           </Grid>
                         </Grid>
@@ -176,6 +193,10 @@ function PlansItems() {
                   </Stack>
                 </CardContent>
               </CardActionArea>
+              <Button variant="outlined" sx={{ marginBlock: 2 }}>
+                {" "}
+                Purchase Plan{" "}
+              </Button>
             </Card>
           </Grid>
         );
