@@ -6,6 +6,7 @@ export enum SubscriptionStatus {
     ACTIVE = 'active',
     INACTIVE = 'inactive',
     CANCELLED = 'cancelled',
+    UPGRADING = 'upgrading',
 }
 
 export class Subscription extends Model {
@@ -37,8 +38,13 @@ export const init = (sequelize: Sequelize) =>
                 allowNull: false,
             },
             status: {
-                type: DataTypes.ENUM(SubscriptionStatus.TRIAL, SubscriptionStatus.ACTIVE, SubscriptionStatus.INACTIVE, SubscriptionStatus.CANCELLED),
-                defaultValue: SubscriptionStatus.TRIAL,
+                type: DataTypes.ENUM(
+                    SubscriptionStatus.TRIAL,
+                    SubscriptionStatus.ACTIVE,
+                    SubscriptionStatus.INACTIVE,
+                    SubscriptionStatus.CANCELLED,
+                    SubscriptionStatus.UPGRADING,
+                ),
                 allowNull: false,
             },
             startDate: {
@@ -65,4 +71,4 @@ export const associate = () => {
 
     // Subscription | Plan
     
-}
+};
