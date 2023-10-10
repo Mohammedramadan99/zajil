@@ -36,6 +36,38 @@ export const createPlan = createAsyncThunk(
     }
   }
 );
+export const getPlans = createAsyncThunk(
+  "plan/all",
+  async (id, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/plans`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        return rejectWithValue({
+          message: errorData?.data.message || "An unknown error occurred.",
+        });
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
 export const getPlan = createAsyncThunk(
   "plan/details",
   async (id, { rejectWithValue, getState }) => {
@@ -167,6 +199,23 @@ const planSlice = createSlice({
       state.business = action.payload.data;
     });
     builder.addCase(createPlan.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.user = null;
+      state.errorMessage =
+        action.payload.message ||
+        "An unknown error occurred. Please try again later.";
+    });
+    builder.addCase(getPlans.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(getPlans.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.allPlans = action.payload.data;
+    });
+    builder.addCase(getPlans.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;

@@ -12,11 +12,13 @@ import {
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import RemoveIcon from "@mui/icons-material/Remove";
-import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
-import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
+import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
+import { useSelector } from "react-redux";
 
 function PlansItems() {
   const theme = useTheme();
+  const { allPlans } = useSelector((state) => state.plans);
   const plans = [
     {
       id: "1",
@@ -72,7 +74,7 @@ function PlansItems() {
   ];
   return (
     <Grid container spacing={2}>
-      {plans.map((item) => {
+      {plans?.map((item) => {
         const { id, name, description, price, active, charts, ...rest } = item;
         const features = [
           {
@@ -178,7 +180,7 @@ function PlansItems() {
                             {feat.withPlan[item.name.toLowerCase()] ? (
                               <DoneAllIcon />
                             ) : (
-                                <HistoryToggleOffIcon/>
+                              <HistoryToggleOffIcon />
                             )}
                           </Grid>
                           <Grid item xs={2} sx={{ textAlign: "center" }}>
