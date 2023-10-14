@@ -6,6 +6,7 @@ import businessesReducer from "./businessSlice";
 import statsReducer from "./statsSlice";
 import cardsReducer from "./CardSlice";
 import plansReducer from "./PlansSlice";
+import subscriptionsReducer from "./SubscriptionSlice";
 
 export default configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export default configureStore({
     cards: cardsReducer,
     stats: statsReducer,
     plans: plansReducer,
+    subscriptions: subscriptionsReducer,
   },
 });

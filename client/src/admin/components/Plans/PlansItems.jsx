@@ -14,10 +14,12 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createSubscription } from "../../../store/SubscriptionSlice";
 
 function PlansItems() {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const { allPlans } = useSelector((state) => state.plans);
   const plans = [
     {
@@ -72,9 +74,17 @@ function PlansItems() {
       charts: {},
     },
   ];
+  const subscribeHandler = (planId) => {
+    const actionData = {
+      params: { businessId: 1 },
+      data: { planId, numberOfMonths: 2 },
+    };
+    dispatch(createSubscription(actionData));
+  };
+
   return (
     <Grid container spacing={2}>
-      {plans?.map((item) => {
+      {allPlans?.map((item) => {
         const { id, name, description, price, active, charts, ...rest } = item;
         const features = [
           {
@@ -161,8 +171,7 @@ function PlansItems() {
                     gap={1}>
                     <span style={{ color: theme.palette.primary[400] }}>$</span>
                     <Typography fontSize={70} fontWeight={600}>
-                      {" "}
-                      {item.price}{" "}
+                      {item.price}
                     </Typography>
                     <span>/mo</span>
                   </Stack>
@@ -195,9 +204,11 @@ function PlansItems() {
                   </Stack>
                 </CardContent>
               </CardActionArea>
-              <Button variant="outlined" sx={{ marginBlock: 2 }}>
-                {" "}
-                Purchase Plan{" "}
+              <Button
+                variant="outlined"
+                sx={{ marginBlock: 2 }}
+                onClick={() => subscribeHandler(item.id)}>
+                Purchase Plan
               </Button>
             </Card>
           </Grid>
