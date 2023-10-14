@@ -39,6 +39,7 @@ const Plans = lazy(() => import("./admin/pages/plans/Plans"));
 
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { CircularProgress } from "@mui/material";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -167,7 +168,7 @@ function App() {
   }, []);
   return (
     <>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="page-loading"><CircularProgress color="inherit" /></div>}>
         <RouterProvider router={router} />
       </Suspense>
     </>
