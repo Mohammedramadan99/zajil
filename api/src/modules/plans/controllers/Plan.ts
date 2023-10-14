@@ -4,6 +4,8 @@ import { RequestMod } from '../../../common/interfaces/request.mod';
 import ICRUDController from '../../../common/interfaces/crud.controller';
 import { CreatePlanDto } from '../dto/create-plan';
 import { UpdatePlanDto } from '../dto/update-plan';
+import { createSubscribeDto } from '../dto/add-subscribe';
+import { UpdateSubscribeDto } from '../dto/update-subscribe';
 import * as planServices from '../services';
 
 export const PlanController: ICRUDController & {
@@ -13,8 +15,9 @@ export const PlanController: ICRUDController & {
     upgrateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
     updateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
     deleteSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
-    getOneSubscription: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getOneSubscriptionByBusinessId: (req: RequestMod, res: Response, next: NextFunction) => void;
     getAllSubscriptions: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getOneSubscriptionById: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreatePlanDto = req.body;
@@ -98,13 +101,87 @@ export const PlanController: ICRUDController & {
                 else next(new HttpError(500, err.message));
             });
     },
-    // requre validation
-    subscribe: function (req: RequestMod, res: Response, next: NextFunction): void {},
-    // requre validation
-    upgrateSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {},
-    // requre validation
-    updateSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {},
-    deleteSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {},
-    getOneSubscription: function (req: RequestMod, res: Response, next: NextFunction): void {},
-    getAllSubscriptions: function (req: RequestMod, res: Response, next: NextFunction): void {},
+    subscribe: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const body: createSubscribeDto = req.body;
+        const planId = Number(body.planId);
+        const numberOfMonths = Number(body.numberOfMonths);
+        const businessId = Number(req.params.businessId);
+
+        planServices
+            .subscribeToPlan(planId, numberOfMonths, businessId)
+            .then((plan) => res.json(plan))
+            .catch((err) => {
+                console.error(err);
+                if (err instanceof HttpError) next(err);
+                else next(new HttpError(500, err.message));
+            });
+    },
+    upgrateSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const body: createSubscribeDto = req.body;
+        const planId = Number(body.planId);
+        const numberOfMonths = Number(body.numberOfMonths);
+        const businessId = Number(req.params.businessId);
+
+        planServices
+            .upgrateSubscribe(planId, numberOfMonths, businessId)
+            .then((plan) => res.json(plan))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    updateSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const body: UpdateSubscribeDto = req.body;
+        const businessId = Number(req.params.businessId);
+
+        planServices
+            .updateSubscribe(body, businessId)
+            .then((plan) => res.json(plan))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    deleteSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const businessId = Number(req.params.businessId);
+
+        planServices
+            .deleteSubscribe(businessId)
+            .then((plan) => res.json(plan))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    getOneSubscriptionByBusinessId: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const businessId = Number(req.params.businessId);
+
+        planServices
+            .getOneSubscriptionByBusinessId(businessId)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(404, err.message));
+            });
+    },
+    getOneSubscriptionById: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const subscriptionId = Number(req.params.id);
+
+        planServices
+            .getOneSubscriptionById(subscriptionId)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(404, err.message));
+            });
+    },
+    getAllSubscriptions: function (req: RequestMod, res: Response, next: NextFunction): void {
+        planServices
+            .getAllSubscriptions()
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(404, err.message));
+            });
+    },
 };

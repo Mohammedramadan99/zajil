@@ -13,5 +13,12 @@ plansRouter.put('/:id', validateMiddleware(UpdatePlanDto), PlanController.update
 plansRouter.delete('/:id', PlanController.delete);
 plansRouter.post('/add-upgraded-plan/:id', PlanController.addUpgradedPlan);
 plansRouter.get('/get-upgraded-plans/:id', PlanController.getApggradedPlansForPlan);
+plansRouter.post('/subscribe/:businessId', PlanController.subscribe);
+plansRouter.put('/subscribe/upgrade-subscribe/:businessId', PlanController.upgrateSubscribe);
+plansRouter.put('/subscribe/update-subscribe/:businessId', PlanController.updateSubscribe);
+plansRouter.delete('/subscribe/delete-subscribe/:businessId', PlanController.deleteSubscribe);
+plansRouter.get('/subscribe/get-one-subscription/:businessId', PlanController.getOneSubscriptionByBusinessId);
+plansRouter.get('/subscribe/get-one-subscription-by-id/:id', PlanController.getOneSubscriptionById);
+plansRouter.get('/subscribe/get-all-subscriptions', PlanController.getAllSubscriptions);
 
 export default plansRouter;

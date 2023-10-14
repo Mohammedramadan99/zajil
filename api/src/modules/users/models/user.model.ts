@@ -3,6 +3,7 @@ import { Business } from '../../businesses/models/business.model';
 import { Branch } from '../../branches/models/branch.model';
 import { File } from '../../file-upload/models/file.model';
 import { Activity } from '../../businesses/models/activity.model';
+import { Plan } from '../../plans/models/plan.model';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -95,5 +96,11 @@ export const associate = () => {
     User.hasMany(Activity, {
         foreignKey: 'userId',
         as: 'activities',
+    });
+
+    // User | Plan
+    User.hasMany(Plan, {
+        foreignKey: 'creatorId',
+        as: 'plans',
     });
 };
