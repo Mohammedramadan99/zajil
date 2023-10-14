@@ -1,4 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Subscription } from './subscription.model';
+import { User } from '../../users/models/user.model';
 
 export const chartsObj = {
     getCardStatistics: false,
@@ -130,4 +132,16 @@ export const init = (sequelize: Sequelize) =>
         },
     );
 
-export const associate = () => {};
+export const associate = () => {
+    // Plan | Subscription
+    Plan.hasMany(Subscription, {
+        foreignKey: 'planId',
+        as: 'subscriptions',
+    });
+
+    // Plan | User
+    Plan.belongsTo(User, {
+        foreignKey: 'creatorId',
+        as: 'creator',
+    });
+};

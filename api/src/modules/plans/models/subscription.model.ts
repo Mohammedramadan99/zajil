@@ -1,7 +1,8 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { User } from '../../users/models/user.model';
+import { Business } from '../../businesses/models/business.model';
+import { Plan } from './plan.model';
 
-export enum SubscriptionStatus {
+export enum SubscriptionStatusEnum {
     TRIAL = 'trial',
     ACTIVE = 'active',
     INACTIVE = 'inactive',
@@ -11,9 +12,9 @@ export enum SubscriptionStatus {
 
 export class Subscription extends Model {
     public declare id: number;
-    public declare userId: number;
+    public declare businessId: number;
     public declare planId: number;
-    public declare status: SubscriptionStatus;
+    public declare status: SubscriptionStatusEnum;
     public declare startDate: Date;
     public declare endDate: Date;
 
@@ -29,7 +30,7 @@ export const init = (sequelize: Sequelize) =>
                 autoIncrement: true,
                 primaryKey: true,
             },
-            userId: {
+            businessId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -39,12 +40,13 @@ export const init = (sequelize: Sequelize) =>
             },
             status: {
                 type: DataTypes.ENUM(
-                    SubscriptionStatus.TRIAL,
-                    SubscriptionStatus.ACTIVE,
-                    SubscriptionStatus.INACTIVE,
-                    SubscriptionStatus.CANCELLED,
-                    SubscriptionStatus.UPGRADING,
+                    SubscriptionStatusEnum.TRIAL,
+                    SubscriptionStatusEnum.ACTIVE,
+                    SubscriptionStatusEnum.INACTIVE,
+                    SubscriptionStatusEnum.CANCELLED,
+                    SubscriptionStatusEnum.UPGRADING,
                 ),
+                defaultValue: SubscriptionStatusEnum.ACTIVE,
                 allowNull: false,
             },
             startDate: {
@@ -63,12 +65,15 @@ export const init = (sequelize: Sequelize) =>
     );
 
 export const associate = () => {
-    // Subscription | User
-    Subscription.belongsTo(User, {
-        foreignKey: 'userId',
-        as: 'user',
+    // Subscription | Business
+    Subscription.belongsTo(Business, {
+        foreignKey: 'businessId',
+        as: 'business',
     });
 
     // Subscription | Plan
-    
+    Subscription.belongsTo(Plan, {
+        foreignKey: 'planId',
+        as: 'plan',
+    });
 };

@@ -4,6 +4,7 @@ import { Branch } from '../../branches/models/branch.model';
 import { CardTemplate } from '../../card-templates/models/card-template.model';
 import { Activity } from './activity.model';
 import { Event } from '../../events/models/event.model';
+import { Subscription } from '../../plans/models/subscription.model';
 
 export class Business extends Model {
     public declare id: number;
@@ -73,5 +74,11 @@ export const associate = () => {
     Business.hasMany(Event, {
         foreignKey: 'businessId',
         as: 'events',
+    });
+
+    // Business | Subscription
+    Business.hasMany(Subscription, {
+        foreignKey: 'businessId',
+        as: 'subscription',
     });
 };
