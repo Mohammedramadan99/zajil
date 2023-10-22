@@ -21,7 +21,18 @@ export const uploadFile = async (
     fs.writeFileSync(path.join(__dirname, `../../tempFiles/${file.name}`), file.data);
     const tempFilePath = path.join(__dirname, `../../tempFiles/${file.name}`);
 
-    // upload the file to cloudinary if the file is an image or an zip file
+    // the link in cloudinary
+    // https://res.cloudinary.com/dpjl1roki/raw/upload/v1696540246/cards/15.pkpass
+    // https://res.cloudinary.com/dpjl1roki/image/upload/v1696349427/uploads/9/1696349425199-9-icon.png.png
+    const fileUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload/${folder}/${file.name}`;
+
+    // if the file exists in cloudinary remove it
+    const fileExists = await fetch(fileUrl);
+    if (fileExists.status === 200) {
+        await cloudinary.v2.uploader.destroy(file.name);
+    }
+
+    // upload theك file to cloudinary if the file is an image or an z   ip file
     const res = await cloudinary.v2.uploader.upload(tempFilePath, {
         folder,
         resource_type: 'auto',
