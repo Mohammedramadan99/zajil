@@ -7,6 +7,9 @@ import { User } from '../models/user.model';
 import { CreateUserDto } from '../dto/create-user';
 import { UpdateUserDto } from '../dto/update-user';
 import { hashPassword, sendAccountActivationEmail, verifyUserAccountActivationToken } from '../../../helpers';
+import { CardTemplate } from '../../card-templates/models/card-template.model';
+import { Card } from '../../cards/models/card.model';
+import { getOneSubscriptionByBusinessId } from '../../plans/services';
 
 export const createUser = (createUserDto: CreateUserDto): Promise<User> => {
     createUserDto.password = hashPassword(createUserDto.password);
@@ -133,4 +136,135 @@ export const activateAccount = async (token: string) => {
 export async function requestAccountActivation(user: User) {
     await sendAccountActivationEmail(user);
     return { message: 'Account activation email sent successfully' };
+}
+
+export async function getUserProfile(user: User) {
+    let allData = {};
+
+    const userData = await User.findByPk(user.id);
+
+    allData = {
+        ...allData,
+        user: userData,
+    };
+
+    const businesses: any = await Business.findAll({
+        where: {
+            id: {
+                [Op.in]: user.businesses.map((business) => business.id),
+            },
+        },
+        include: [
+            {
+                model: Branch,
+                as: 'branches',
+            },
+        ],
+    });
+
+    const businessesWithBranchesNumber = businesses.map((business) => {
+        return {
+            ...business.toJSON(),
+            branchesNumber: business.branches.length,
+        };
+    });
+
+    const businessesWithPlansAndSubscriptions = await Promise.all(
+        businessesWithBranchesNumber.map(async (business) => {
+            try {
+                const subscriptionAndPlan = await getOneSubscriptionByBusinessId(business.id);
+                return {
+                    ...business,
+                    subscription: subscriptionAndPlan.subscription,
+                    plan: subscriptionAndPlan.plan,
+                };
+            } catch (error) {
+                return {
+                    ...business,
+                    subscription: null,
+                    plan: null,
+                };
+            }
+        }),
+    );
+
+    const businessesWithCardsAndCardTemplates = await Promise.all(
+        businessesWithPlansAndSubscriptions.map(async (business) => {
+            // get all cardTemplates
+            const cardTemplates = await CardTemplate.findAll({
+                where: {
+                    businessId: business.id,
+                },
+            });
+
+            const cardTemplatesByType = cardTemplates.reduce((acc, cardTemplate) => {
+                const cardType = cardTemplate.cardType;
+                if (!acc[cardType]) {
+                    acc[cardType] = 1;
+                } else {
+                    acc[cardType]++;
+                }
+                return acc;
+            }, {});
+
+            let usedCouponCards = 0;
+            let usedLoyaltyCards = 0;
+            let usedEventCards = 0;
+            let usedItemsSubscriptionCards = 0;
+
+            for (const cardTemplate of cardTemplates) {
+                switch (cardTemplate.cardType) {
+                    case 'COUPON':
+                        usedCouponCards += await Card.count({
+                            where: {
+                                templateId: cardTemplate.id,
+                            },
+                        });
+                        break;
+                    case 'LOYALTY':
+                        usedLoyaltyCards += await Card.count({
+                            where: {
+                                templateId: cardTemplate.id,
+                            },
+                        });
+                        break;
+                    case 'EVENT_TICKET':
+                        usedEventCards += await Card.count({
+                            where: {
+                                templateId: cardTemplate.id,
+                            },
+                        });
+                        break;
+                    case 'ITEMS_SUBSCRIPTION':
+                        usedItemsSubscriptionCards += await Card.count({
+                            where: {
+                                templateId: cardTemplate.id,
+                            },
+                        });
+                        break;
+                }
+            }
+
+            return {
+                ...business,
+                usage: {
+                    usedLoyaltyCardTemplates: cardTemplatesByType['LOYALTY'] || 0,
+                    usedCouponCardTemplates: cardTemplatesByType['COUPON'] || 0,
+                    usedEventCardTemplates: cardTemplatesByType['EVENT_TICKET'] || 0,
+                    usedItemsSubscriptionCardTemplates: cardTemplatesByType['ITEMS_SUBSCRIPTION'] || 0,
+                    usedCouponCards,
+                    usedLoyaltyCards,
+                    usedEventCards,
+                    usedItemsSubscriptionCards,
+                },
+            };
+        }),
+    );
+
+    allData = {
+        ...allData,
+        businesses: businessesWithCardsAndCardTemplates,
+    };
+
+    return allData;
 }
