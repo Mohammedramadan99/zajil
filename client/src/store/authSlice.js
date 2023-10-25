@@ -44,7 +44,7 @@ export const registerAction = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return rejectWithValue({
-        message: "An unknown error occurred. Please try again laterrr.",
+        message: "An unknown error occurred. Please try again later.",
       });
     }
   }
@@ -78,7 +78,39 @@ export const loginAction = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return rejectWithValue({
-        message: "An unknown error occurred. Please try again laterrr.",
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
+// Profile
+export const profileAction = createAsyncThunk(
+  "user/profile",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(
+          errorData?.data?.message?.errors
+            ? errorData.data.message.errors
+            : errorData.data.message
+        );
+      }
+      const { data } = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
       });
     }
   }
@@ -97,6 +129,7 @@ export const logoutAction = createAsyncThunk(
 const initialState = {
   // user: JSON.parse(localStorage.getItem("userInfo")),
   user: loggedIn(),
+  profile: null,
   loading: false,
   errors: null,
   errorMessage: null,
@@ -153,8 +186,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.user = null;
       state.errorMessage =
-        action.payload ||
-        "An unknown error occurred. Please try again later.";
+        action.payload || "An unknown error occurred. Please try again later.";
     });
     builder.addCase(logoutAction.pending, (state, action) => {
       state.loading = true;
@@ -170,6 +202,22 @@ const authSlice = createSlice({
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;
+      state.message =
+        action.payload || "An unknown error occurred. Please try again later.";
+    });
+    // Profile
+    builder.addCase(profileAction.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(profileAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.profile = action.payload;
+    });
+    builder.addCase(profileAction.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
       state.message =
         action.payload || "An unknown error occurred. Please try again later.";
     });

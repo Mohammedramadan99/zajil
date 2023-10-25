@@ -1,5 +1,6 @@
 import { useTheme } from "@emotion/react";
 import {
+  Alert,
   Box,
   Button,
   ButtonGroup,
@@ -7,7 +8,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useState } from "react";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +24,8 @@ function Templates() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [subscription, setSubscription] = useState(false);
+  const { profile } = useSelector((state) => state.auth);
   const { businesses } = useSelector((state) => state.businesses);
   const { templates } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
@@ -31,9 +34,11 @@ function Templates() {
     useGetBusinesses();
   // const { error: templetesError, isLoading: templetesLoading } =
   //   useGetTemplates(businesses && businesses[0]?.id);
-useEffect(() => {
-  businesses?.length > 0 && !templates && dispatch(getTemplates(businesses[0]?.id));
-}, [businesses])
+  useEffect(() => {
+    businesses?.length > 0 &&
+      !templates &&
+      dispatch(getTemplates(businesses[0]?.id));
+  }, [businesses]);
 
   return (
     <Box
@@ -41,7 +46,6 @@ useEffect(() => {
         backgroundColor: theme.palette.background.alt,
         minHeight: "100vh",
         paddingBlock: 2,
-        // paddingInline: 2,
       }}>
       <Container sx={{ pb: 20 }}>
         <PageHeader title={"Templates"} subTitle={"All Your Templates"} />
@@ -49,58 +53,72 @@ useEffect(() => {
           <Grid container spacing={2}>
             {/* Tabs */}
             <Grid item xs={12}>
-              <BusinessesTabs />
+              <BusinessesTabs
+                subscription={subscription}
+                setSubscription={setSubscription}
+              />
             </Grid>
             {/* Create Card */}
-            <Grid
-              item
-              lg={3}
-              md={4}
-              sm={6}
-              xs={12}
-              mb={2}
-              mt={2}
-              sx={{
-                ...(isSmallScreen && {
-                  margin: "40px",
-                }),
-              }}>
-              {/* Card */}
-              <Box
-                className="flex"
-                sx={{
-                  width: "100%",
-                  minHeight: "550px",
+            {subscription ? (
+              <>
+                <Grid
+                  item
+                  lg={3}
+                  md={4}
+                  sm={6}
+                  xs={12}
+                  mb={2}
+                  mt={2}
+                  sx={{
+                    ...(isSmallScreen && {
+                      margin: "40px",
+                    }),
+                  }}>
+                  {/* Card */}
+                  <Box
+                    className="flex"
+                    sx={{
+                      width: "100%",
+                      minHeight: "550px",
 
-                  background: theme.palette.grey[800],
-                  color: theme.palette.grey[700],
-                  textTransform: "uppercase",
-                  fontSize: "60px",
-                  fontWeight: 900,
-                  borderRadius: "20px",
-                }}>
-                add
-              </Box>
-              <Typography
-                variant="h4"
-                my={2}
-                textTransform={"capitalize"}
-                textAlign={"center"}
-                fontWeight={600}>
-                create a new template
-              </Typography>
-              <ButtonGroup
-                sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
-                <Button variant="contained">template</Button>
-                <Button onClick={() => navigate("/admin/templates/new")}>
-                  empty
-                </Button>
-              </ButtonGroup>
-            </Grid>
-            <TemplatesList />
-            {/* <Grid item lg={6}>
-            <Visa />
-          </Grid> */}
+                      background: theme.palette.grey[800],
+                      color: theme.palette.grey[700],
+                      textTransform: "uppercase",
+                      fontSize: "60px",
+                      fontWeight: 900,
+                      borderRadius: "20px",
+                    }}>
+                    add
+                  </Box>
+                  <Typography
+                    variant="h4"
+                    my={2}
+                    textTransform={"capitalize"}
+                    textAlign={"center"}
+                    fontWeight={600}>
+                    create a new template
+                  </Typography>
+                  <ButtonGroup
+                    sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
+                    <Button variant="contained">template</Button>
+                    <Button onClick={() => navigate("/admin/templates/new")}>
+                      empty
+                    </Button>
+                  </ButtonGroup>
+                </Grid>
+                <TemplatesList />
+              </>
+            ) : (
+              // if no subscription for the selected business
+              <Grid xs={12} mt={3}>
+                <Alert variant="outlined" severity="error">
+                  This business doesn't have a subscription. let's discover
+                  <Link to="/dashboard/plans">
+                    <strong> Our Plans</strong>
+                  </Link>
+                </Alert>
+              </Grid>
+            )}
           </Grid>
         ) : (
           <Typography

@@ -25,7 +25,7 @@ function CreateBusinessForm() {
     business,
   } = useSelector((state) => state.businesses);
   const { user } = useSelector((state) => state.auth);
-  const subscription = false;
+  
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -77,11 +77,7 @@ function CreateBusinessForm() {
           business
         </span>
       </Typography>
-      {!subscription ? (
-        <Alert variant="outlined" severity="error">
-          Sorry, You have to subscribe first. let's discover <Link to="/dashboard/plans"> <strong>Our Plans</strong> </Link>
-        </Alert>
-      ) : (
+      
         <Box component="form" onSubmit={formik.handleSubmit}>
           {error && (
             <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
@@ -115,7 +111,6 @@ function CreateBusinessForm() {
             means you cannot create a branch if you don't have a business.
           </Typography>
         </Box>
-      )}
     </Paper>
   );
 }

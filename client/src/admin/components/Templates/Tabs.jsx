@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTemplates } from "./../../../store/TemplateSlice";
 import BackdropSpinner from "./../../../components/Loading/BackdropSpinner";
 import { useTheme } from "@mui/material";
-export default function BusinessesTabs() {
+export default function BusinessesTabs({ subscription, setSubscription }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
+  const { profile } = useSelector((state) => state.auth);
   const { businesses, loading } = useSelector((state) => state.businesses);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -18,6 +19,14 @@ export default function BusinessesTabs() {
   //   fetch Here according to the active tab
   const templatesHandler = (id) => {
     dispatch(getTemplates(id));
+    const isSubscribed = profile?.businesses
+      ?.filter((item) => item.subscription)
+      .find((item) => item.id === id);
+    if (isSubscribed) {
+      setSubscription(true);
+    } else {
+      setSubscription(false);
+    }
   };
   return (
     <Box sx={{ maxWidth: { xs: 320, sm: 480, lg: "100%" }, mt: 2 }}>
@@ -28,8 +37,7 @@ export default function BusinessesTabs() {
         scrollButtons="auto"
         indicatorColor="primary"
         textColor="primary"
-        aria-label="scrollable auto tabs example"
-      >
+        aria-label="scrollable auto tabs example">
         {businesses &&
           businesses?.map((item, i) => (
             <Tab
