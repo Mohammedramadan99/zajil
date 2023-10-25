@@ -28,9 +28,41 @@ export const createPlan = (createPlanDto: CreatePlanDto, req: RequestMod): Promi
     return Plan.create(data);
 };
 
-export const getOnePlanById = async (planId: number): Promise<Plan> => {
+export const getOnePlanById = async (planId: number): Promise<any> => {
     const plan = await Plan.findOne({ where: { id: planId } });
-    return plan;
+
+    const planNewFormat = {
+        id: plan.id,
+        name: plan.name,
+        description: plan.description,
+        price: plan.price,
+        active: plan.active,
+        allActivetie: {
+            maxBranches: plan.maxBranches,
+            maxCouponTemplates: plan.maxCouponTemplates,
+            maxLoyaltyTemplates: plan.maxLoyaltyTemplates,
+            maxEventsTemplates: plan.maxEventsTemplates,
+            maxItemSubscriptionTemplates: plan.maxItemSubscriptionTemplates,
+            maxCouponCards: plan.maxCouponCards,
+            maxLoyaltyCards: plan.maxLoyaltyCards,
+            maxEventsCards: plan.maxEventsCards,
+            maxItemSubscriptionCards: plan.maxItemSubscriptionCards,
+        },
+        charts: {
+            getActivities: plan.charts.getActivities,
+            getCardsChart: plan.charts.getCardsChart,
+            getCardsTotal: plan.charts.getCardsTotal,
+            getCardStatistics: plan.charts.getCardStatistics,
+            getActivitiesChart: plan.charts.getActivitiesChart,
+            getCardsRewardsRedeemedChart: plan.charts.getCardsRewardsRedeemedChart,
+        },
+        supPlanId: plan.supPlanId,
+        creatorId: plan.creatorId,
+        createdAt: plan.createdAt,
+        updatedAt: plan.updatedAt,
+    };
+
+    return planNewFormat;
 };
 
 export const getAllPlans = async (): Promise<Plan[]> => {
@@ -255,3 +287,7 @@ export const upgrateSubscribe = async (
 
     return await Subscription.create(newData);
 };
+
+const reformatPlanData = (plan: Plan) => {
+    
+}

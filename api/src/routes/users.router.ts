@@ -9,6 +9,7 @@ const usersRouter = express.Router();
 // CRUD routes
 usersRouter.post('/', validateMiddleware(CreateUserDto), UsersController.create);
 usersRouter.get('/', UsersController.getAll);
+usersRouter.get('/profile', UsersController.getUserProfile);
 usersRouter.get('/' + ':id', UsersController.getOne);
 usersRouter.patch('/' + ':id', validateMiddleware(UpdateUserDto), UsersController.update);
 usersRouter.delete('/' + ':id', UsersController.delete);
