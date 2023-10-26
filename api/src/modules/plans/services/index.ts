@@ -7,30 +7,7 @@ import { UpdateSubscribeDto } from '../dto/update-subscribe';
 import { Plan, chartsObj } from '../models/plan.model';
 import { Subscription } from '../models/subscription.model';
 
-export const createPlan = (createPlanDto: CreatePlanDto, req: RequestMod): Promise<Plan> => {
-    const { charts } = createPlanDto;
-    let newCharts = chartsObj;
-
-    if (charts) {
-        for (const key in newCharts) {
-            if (charts[key]) {
-                newCharts[key] = charts[key];
-            }
-        }
-    }
-
-    const data = {
-        ...createPlanDto,
-        charts: newCharts,
-        creatorId: req.user.id,
-    };
-
-    return Plan.create(data);
-};
-
-export const getOnePlanById = async (planId: number): Promise<any> => {
-    const plan = await Plan.findOne({ where: { id: planId } });
-
+const reformatPlan = (plan: Plan) => {
     const planNewFormat = {
         id: plan.id,
         name: plan.name,
@@ -65,12 +42,52 @@ export const getOnePlanById = async (planId: number): Promise<any> => {
     return planNewFormat;
 };
 
-export const getAllPlans = async (): Promise<Plan[]> => {
-    const plans = await Plan.findAll();
-    return plans;
+export const createPlan = async (createPlanDto: CreatePlanDto, req: RequestMod): Promise<any> => {
+    const { charts } = createPlanDto;
+    let newCharts = chartsObj;
+
+    if (charts) {
+        for (const key in newCharts) {
+            if (charts[key]) {
+                newCharts[key] = charts[key];
+            }
+        }
+    }
+
+    const reqData = {
+        ...createPlanDto,
+        charts: newCharts,
+        creatorId: req.user.id,
+    };
+
+    const plan = await Plan.create(reqData);
+
+    const data = reformatPlan(plan);
+
+    return data;
 };
 
-export const updatePlanById = async (planId: number, updatePlanDto: UpdatePlanDto): Promise<Plan> => {
+export const getOnePlanById = async (planId: number): Promise<any> => {
+    const plan = await Plan.findOne({ where: { id: planId } });
+
+    if (!plan) {
+        throw new HttpError(404, 'Plan not found');
+    }
+
+    const planNewFormat = reformatPlan(plan);
+
+    return planNewFormat;
+};
+
+export const getAllPlans = async (): Promise<any[]> => {
+    const plans = await Plan.findAll();
+
+    const formattedPlans = plans.map((plan) => reformatPlan(plan));
+
+    return formattedPlans;
+};
+
+export const updatePlanById = async (planId: number, updatePlanDto: UpdatePlanDto): Promise<any> => {
     const plan = await getOnePlanById(planId);
 
     if (!plan) {
@@ -93,7 +110,11 @@ export const updatePlanById = async (planId: number, updatePlanDto: UpdatePlanDt
         charts: newCharts,
     };
 
-    return await plan.update(data);
+    const updatedPlan = await plan.update(data);
+
+    const planNewFormat = reformatPlan(updatedPlan);
+
+    return planNewFormat;
 };
 
 export const deletePlanById = async (planId: number): Promise<void> => {
@@ -106,7 +127,7 @@ export const deletePlanById = async (planId: number): Promise<void> => {
     return await plan.destroy();
 };
 
-export const addUpgradedPlan = async (createPlanDto: CreatePlanDto, planId: number, req: RequestMod): Promise<Plan> => {
+export const addUpgradedPlan = async (createPlanDto: CreatePlanDto, planId: number, req: RequestMod): Promise<any> => {
     const oldPlan = await getOnePlanById(planId);
 
     if (!oldPlan) {
@@ -131,12 +152,19 @@ export const addUpgradedPlan = async (createPlanDto: CreatePlanDto, planId: numb
         supPlanId: planId,
     };
 
-    return await Plan.create(data);
+    const plan = await Plan.create(data);
+
+    const planNewFormat = reformatPlan(plan);
+
+    return planNewFormat;
 };
 
-export const getApggradedPlansForPlan = async (planId: number): Promise<Plan[]> => {
+export const getApggradedPlansForPlan = async (planId: number): Promise<any[]> => {
     const plans = await Plan.findAll({ where: { supPlanId: planId } });
-    return plans;
+
+    const plansNewFormat = plans.map((plan) => reformatPlan(plan));
+
+    return plansNewFormat;
 };
 
 export const subscribeToPlan = async (
@@ -220,6 +248,10 @@ export const getOneSubscriptionByBusinessId = async (businessId: number): Promis
 
     const plan = await getOnePlanById(subscription.planId);
 
+    if (!plan) {
+        throw new HttpError(404, 'Plan not found');
+    }
+
     const data = {
         subscription: subscription,
         plan: plan,
@@ -287,7 +319,3 @@ export const upgrateSubscribe = async (
 
     return await Subscription.create(newData);
 };
-
-const reformatPlanData = (plan: Plan) => {
-    
-}
