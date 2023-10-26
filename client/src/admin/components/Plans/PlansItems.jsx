@@ -15,206 +15,151 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
 import { useDispatch, useSelector } from "react-redux";
-import { createSubscription } from "../../../store/SubscriptionSlice";
+import { createSubscription, reset } from "../../../store/SubscriptionSlice";
+import { useEffect, useState } from "react";
+import BusinessesDialog from "../common/BusinessesDialog";
+import { toast } from "react-toastify";
 
 function PlansItems() {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
+  const [selectedPlan, setSelectedPlan] = useState();
   const { allPlans } = useSelector((state) => state.plans);
-  const plans = [
-    {
-      id: "1",
-      name: "Basic",
-      description: "Basic Plan with some features",
-      price: 90,
-      active: false,
-      maxBranches: 1,
-      maxCouponTemplates: 0,
-      maxCouponCards: 0,
-      maxLoyaltyTemplates: 1,
-      maxLoyaltyCards: 100,
-      maxEventsTemplates: 0,
-      maxEventsCards: 0,
-      maxItemSubscriptionTemplates: 1,
-      maxItemSubscriptionCards: 100,
-      charts: {},
-    },
-    {
-      id: "2",
-      name: "Gold",
-      description: "Gold Plan with more features",
-      price: 90,
-      active: false,
-      maxBranches: 1,
-      maxCouponTemplates: 0,
-      maxCouponCards: 0,
-      maxLoyaltyTemplates: 1,
-      maxLoyaltyCards: 100,
-      maxEventsTemplates: 0,
-      maxEventsCards: 0,
-      maxItemSubscriptionTemplates: 1,
-      maxItemSubscriptionCards: 100,
-      charts: {},
-    },
-    {
-      id: "3",
-      name: "Platinum",
-      description: "Basic Plan with a lot of features",
-      price: 90,
-      active: false,
-      maxBranches: 1,
-      maxCouponTemplates: 0,
-      maxCouponCards: 0,
-      maxLoyaltyTemplates: 1,
-      maxLoyaltyCards: 100,
-      maxEventsTemplates: 0,
-      maxEventsCards: 0,
-      maxItemSubscriptionTemplates: 1,
-      maxItemSubscriptionCards: 100,
-      charts: {},
-    },
-  ];
-  const subscribeHandler = (planId) => {
-    const actionData = {
-      params: { businessId: 1 },
-      data: { planId, numberOfMonths: 2 },
-    };
-    dispatch(createSubscription(actionData));
+  const { success } = useSelector((state) => state.subscriptions);
+  const handleClickListItem = (planId) => {
+    setOpen(true);
+    setSelectedPlan(planId)
   };
+  const handleClose = (newValue) => {
+    setOpen(false);
 
+    if (newValue) {
+      const actionData = {
+        params: { businessId: newValue },
+        data: { planId:selectedPlan, numberOfMonths: 2 },
+      };
+      dispatch(createSubscription(actionData));
+    }
+  };
+  useEffect(() => {
+    if (success) {
+      toast.success("Subscribed Successfully")
+      dispatch(reset())
+    }
+  }, [success])
+  
   return (
-    <Grid container spacing={2}>
-      {allPlans?.map((item) => {
-        const { id, name, description, price, active, charts, ...rest } = item;
-        const features = [
-          {
-            label: "Max Branches",
-            value: rest.maxBranches,
-            withPlan: { basic: true, gold: true, platinum: true },
-          },
-          {
-            label: "Max Loyalty Templates",
-            value: rest.maxLoyaltyTemplates,
-            withPlan: { basic: true, gold: true, platinum: true },
-          },
-          {
-            label: "Max Loyalty Cards",
-            value: rest.maxLoyaltyCards,
-            withPlan: { basic: true, gold: true, platinum: true },
-          },
-          {
-            label: "Max Subscription Templates",
-            value: rest.maxItemSubscriptionTemplates,
-            withPlan: { basic: true, gold: true, platinum: true },
-          },
-          {
-            label: "Max Subscription Cards",
-            value: rest.maxItemSubscriptionCards,
-            withPlan: { basic: true, gold: true, platinum: true },
-          },
-          {
-            label: "Max Coupon Templates",
-            value: rest.maxCouponTemplates,
-            withPlan: { basic: false, gold: true, platinum: true },
-          },
-          {
-            label: "Max Coupon Cards",
-            value: rest.maxCouponCards,
-            withPlan: { basic: false, gold: true, platinum: true },
-          },
-          {
-            label: "Max Events Templates",
-            value: rest.maxEventsTemplates,
-            withPlan: { basic: false, gold: false, platinum: false },
-          },
-          {
-            label: "Max Events Cards",
-            value: rest.maxEventsCards,
-            withPlan: { basic: false, gold: false, platinum: false },
-          },
-        ];
-        return (
-          <Grid key={item.id} item xs={12} md={4}>
-            <Card
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-              }}>
-              <CardActionArea>
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}>
-                  <Stack
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    spacing={2}>
-                    <AcUnitIcon
-                      sx={{ fontSize: 40, color: theme.palette.primary[500] }}
-                    />
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        textAlign: "center",
-                        fontWeight: "600",
-                      }}>
-                      {item.name} Plan
-                    </Typography>
-                  </Stack>
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    gap={1}>
-                    <span style={{ color: theme.palette.primary[400] }}>$</span>
-                    <Typography fontSize={70} fontWeight={600}>
-                      {item.price}
-                    </Typography>
-                    <span>/mo</span>
-                  </Stack>
-                  <Stack spacing={4}>
-                    {features.map((feat, i) => (
-                      <div key={i}>
-                        <Grid
-                          container
-                          sx={{
-                            opacity: feat.withPlan[item.name.toLowerCase()]
-                              ? 1
-                              : 0.2,
-                          }}>
-                          <Grid item xs={2} sx={{ textAlign: "center" }}>
-                            {feat.withPlan[item.name.toLowerCase()] ? (
-                              <DoneAllIcon />
-                            ) : (
-                              <HistoryToggleOffIcon />
-                            )}
+    <>
+      <Grid container spacing={2}>
+        {allPlans?.map((item) => {
+          const {
+            id,
+            name,
+            description,
+            price,
+            active,
+            allActivetie,
+            charts,
+            ...rest
+          } = item;
+          const allActivitiesArr = Object.keys(allActivetie).map((key) => {
+            return { label: key, value: allActivetie[key] };
+          });
+          return (
+            <Grid key={item.id} item xs={12} md={4}>
+              <Card
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}>
+                <CardActionArea>
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                    }}>
+                    <Stack
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      spacing={2}>
+                      <AcUnitIcon
+                        sx={{ fontSize: 40, color: theme.palette.primary[500] }}
+                      />
+                      <Typography
+                        variant="h3"
+                        sx={{
+                          textAlign: "center",
+                          fontWeight: "600",
+                        }}>
+                        {item.name} Plan
+                      </Typography>
+                    </Stack>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      gap={1}>
+                      <span style={{ color: theme.palette.primary[400] }}>
+                        $
+                      </span>
+                      <Typography fontSize={70} fontWeight={600}>
+                        {item.price}
+                      </Typography>
+                      <span>/mo</span>
+                    </Stack>
+                    <Stack spacing={4}>
+                      {allActivitiesArr?.map((feat, i) => (
+                        <div key={i}>
+                          <Grid
+                            container
+                            sx={{
+                              opacity: feat.value > 0 ? 1 : 0.2,
+                            }}>
+                            <Grid item xs={2} sx={{ textAlign: "center" }}>
+                              {feat.value > 0 ? (
+                                <DoneAllIcon />
+                              ) : (
+                                <HistoryToggleOffIcon />
+                              )}
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: "center" }}>
+                              <strong>{feat.value > 0 ? feat.value : 0}</strong>
+                            </Grid>
+                            <Grid item xs={8}>
+                              {feat.label}
+                            </Grid>
                           </Grid>
-                          <Grid item xs={2} sx={{ textAlign: "center" }}>
-                            <strong>{feat.value}</strong>
-                          </Grid>
-                          <Grid item xs={8}>
-                            {feat.label}
-                          </Grid>
-                        </Grid>
-                      </div>
-                    ))}
-                  </Stack>
-                </CardContent>
-              </CardActionArea>
-              <Button
-                variant="outlined"
-                sx={{ marginBlock: 2 }}
-                onClick={() => subscribeHandler(item.id)}>
-                Purchase Plan
-              </Button>
-            </Card>
-          </Grid>
-        );
-      })}
-    </Grid>
+                        </div>
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </CardActionArea>
+                <Button
+                  variant="outlined"
+                  sx={{ marginBlock: 2 }}
+                  // onClick={() => subscribeHandler(item.id)}
+                  onClick={() => handleClickListItem(id)}
+                >
+                  Purchase Plan
+                </Button>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+      <BusinessesDialog
+        id="ringtone-menu"
+        keepMounted
+        open={open}
+        setOpen={setOpen}
+        onClose={handleClose}
+        value={value}
+      />
+    </>
   );
 }
 

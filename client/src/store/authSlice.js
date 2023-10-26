@@ -149,6 +149,9 @@ const authSlice = createSlice({
       state.successMessage = null;
       state.errors = null;
     },
+    updateBusinesses: (state,{payload}) => {
+      state.profile.businesses.push(payload)
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(registerAction.pending, (state, action) => {
@@ -224,6 +227,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset,updateBusinesses } = authSlice.actions;
 
 export default authSlice.reducer;

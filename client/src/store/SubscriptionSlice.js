@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { updateBusinesses } from "./authSlice";
 
 export const createSubscription = createAsyncThunk(
   "subscription/create",
-  async (actionData, { rejectWithValue, getState }) => {
+  async (actionData, { rejectWithValue, getState, dispatch }) => {
     try {
       const { auth } = getState();
       const { user } = auth;
@@ -11,14 +12,19 @@ export const createSubscription = createAsyncThunk(
       //     form.append(key, values[key]);
       //   });
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/plans/subscribe/${actionData.params.businessId}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(actionData.data),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/plans/subscribe/${
+          actionData.params.businessId
+        }`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(actionData.data),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
 
@@ -27,6 +33,7 @@ export const createSubscription = createAsyncThunk(
         });
       }
       const data = await response.json();
+      dispatch(updateBusinesses(data.data));
       return data;
     } catch (error) {
       console.error(error);
@@ -171,6 +178,7 @@ const initialState = {
   subscriptionDetails: null,
   deleted: false,
   updated: false,
+  success: false,
   loading: false,
   errors: null,
 };
@@ -181,7 +189,7 @@ const SubscriptionSlice = createSlice({
     reset: (state) => {
       state.errors = null;
       state.errorMessage = null;
-      state.successMessage = null;
+      state.success = false;
       state.errors = null;
       state.deleted = false;
       state.updated = false;
@@ -196,6 +204,7 @@ const SubscriptionSlice = createSlice({
       state.loading = false;
       state.errors = null;
       state.subscriptionDetails = action.payload.data;
+      state.success = true;
     });
     builder.addCase(createSubscription.rejected, (state, action) => {
       state.loading = false;

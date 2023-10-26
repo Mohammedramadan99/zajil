@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  CircularProgress,
   Container,
   Grid,
   Typography,
@@ -24,21 +25,20 @@ function Templates() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [subscription, setSubscription] = useState(false);
   const { profile } = useSelector((state) => state.auth);
+  const [subscription, setSubscription] = useState(profile?.businesses[0]?.subscription ? true : false);
   const { businesses } = useSelector((state) => state.businesses);
-  const { templates } = useSelector((state) => state.templates);
+  const { templates, loading } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
 
-  const { error: businessesError, isLoading: businessesLoading } =
-    useGetBusinesses();
   // const { error: templetesError, isLoading: templetesLoading } =
   //   useGetTemplates(businesses && businesses[0]?.id);
   useEffect(() => {
-    businesses?.length > 0 &&
-      !templates &&
-      dispatch(getTemplates(businesses[0]?.id));
-  }, [businesses]);
+    if (profile?.businesses[0]?.id) {
+      dispatch(getTemplates(profile?.businesses[0]?.id));
+      setSubscription(profile?.businesses[0]?.subscription ? true : false);
+    }
+  }, [profile?.businesses]);
 
   return (
     <Box
@@ -49,100 +49,103 @@ function Templates() {
       }}>
       <Container sx={{ pb: 20 }}>
         <PageHeader title={"Templates"} subTitle={"All Your Templates"} />
-        {businesses?.length > 0 ? (
-          <Grid container spacing={2}>
-            {/* Tabs */}
-            <Grid item xs={12}>
-              <BusinessesTabs
-                subscription={subscription}
-                setSubscription={setSubscription}
-              />
-            </Grid>
-            {/* Create Card */}
-            {subscription ? (
-              <>
-                <Grid
-                  item
-                  lg={3}
-                  md={4}
-                  sm={6}
-                  xs={12}
-                  mb={2}
-                  mt={2}
-                  sx={{
-                    ...(isSmallScreen && {
-                      margin: "40px",
-                    }),
-                  }}>
-                  {/* Card */}
-                  <Box
-                    className="flex"
-                    sx={{
-                      width: "100%",
-                      minHeight: "550px",
-
-                      background: theme.palette.grey[800],
-                      color: theme.palette.grey[700],
-                      textTransform: "uppercase",
-                      fontSize: "60px",
-                      fontWeight: 900,
-                      borderRadius: "20px",
-                    }}>
-                    add
-                  </Box>
-                  <Typography
-                    variant="h4"
-                    my={2}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                    fontWeight={600}>
-                    create a new template
-                  </Typography>
-                  <ButtonGroup
-                    sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
-                    <Button variant="contained">template</Button>
-                    <Button onClick={() => navigate("/admin/templates/new")}>
-                      empty
-                    </Button>
-                  </ButtonGroup>
-                </Grid>
-                <TemplatesList />
-              </>
-            ) : (
-              // if no subscription for the selected business
-              <Grid xs={12} mt={3}>
-                <Alert variant="outlined" severity="error">
-                  This business doesn't have a subscription. let's discover
-                  <Link to="/dashboard/plans">
-                    <strong> Our Plans</strong>
-                  </Link>
-                </Alert>
-              </Grid>
-            )}
+        <Grid container spacing={2}>
+          {/* Tabs */}
+          <Grid item xs={12}>
+            <BusinessesTabs
+              subscription={subscription}
+              setSubscription={setSubscription}
+            />
           </Grid>
-        ) : (
-          <Typography
-            variant="h3"
-            display={"flex"}
-            flexDirection={"column"}
-            justifyItems={"center"}
-            alignItems={"center"}
-            textTransform={"capitalize"}
-            marginTop={30}>
-            create a business to create a template
-            <Button variant="contained" sx={{ display: "block", mt: 2 }}>
-              <Link
-                to="/admin/business/new"
-                style={
-                  {
-                    // color: theme.palette.primary[500],
-                  }
-                }>
-                create business
-              </Link>
-            </Button>
-          </Typography>
-        )}
+
+          {/* Create Card */}
+          {loading ? (
+            <CircularProgress />
+          ) : profile?.businesses?.length === 0 ? (
+            <Grid xs={12}>
+              <Typography
+                variant="h3"
+                display={"flex"}
+                flexDirection={"column"}
+                justifyItems={"center"}
+                alignItems={"center"}
+                textTransform={"capitalize"}
+                marginTop={30}>
+                create a business to create a template
+                <Button variant="contained" sx={{ display: "block", mt: 2 }}>
+                  <Link
+                    to="/admin/business/new"
+                    style={
+                      {
+                        // color: theme.palette.primary[500],
+                      }
+                    }>
+                    create business
+                  </Link>
+                </Button>
+              </Typography>
+            </Grid>
+          ) : subscription ? (
+            <>
+              <Grid
+                item
+                lg={3}
+                md={4}
+                sm={6}
+                xs={12}
+                mb={2}
+                mt={2}
+                sx={{
+                  ...(isSmallScreen && {
+                    margin: "40px",
+                  }),
+                }}>
+                {/* Card */}
+                <Box
+                  className="flex"
+                  sx={{
+                    width: "100%",
+                    minHeight: "550px",
+
+                    background: theme.palette.grey[800],
+                    color: theme.palette.grey[700],
+                    textTransform: "uppercase",
+                    fontSize: "60px",
+                    fontWeight: 900,
+                    borderRadius: "20px",
+                  }}>
+                  add
+                </Box>
+                <Typography
+                  variant="h4"
+                  my={2}
+                  textTransform={"capitalize"}
+                  textAlign={"center"}
+                  fontWeight={600}>
+                  create a new template
+                </Typography>
+                <ButtonGroup
+                  sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
+                  <Button variant="contained">template</Button>
+                  <Button onClick={() => navigate("/admin/templates/new")}>
+                    empty
+                  </Button>
+                </ButtonGroup>
+              </Grid>
+              <TemplatesList />
+            </>
+          ) : (
+            // if no subscription for the selected business
+            <Grid xs={12} mt={3}>
+              <Alert variant="outlined" severity="error">
+                This business doesn't have a subscription. let's discover
+                <Link to="/dashboard/plans">
+                  <strong> Our Plans</strong>
+                </Link>
+              </Alert>
+            </Grid>
+          )}
+        </Grid>
       </Container>
     </Box>
   );

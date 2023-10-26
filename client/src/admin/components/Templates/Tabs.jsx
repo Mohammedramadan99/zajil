@@ -6,12 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTemplates } from "./../../../store/TemplateSlice";
 import BackdropSpinner from "./../../../components/Loading/BackdropSpinner";
 import { useTheme } from "@mui/material";
+import { useGetBusinesses } from "../../hooks/Businesses";
 export default function BusinessesTabs({ subscription, setSubscription }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const { profile } = useSelector((state) => state.auth);
   const { businesses, loading } = useSelector((state) => state.businesses);
+  const {isLoading} = useGetBusinesses()
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
