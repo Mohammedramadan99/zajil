@@ -12,6 +12,9 @@ import { ItemsSubscriptionCard } from '../../cards/models/items-subscription-car
 import { CouponCard } from '../../cards/models/coupon-card.model';
 import { CouponCardTemplate } from '../../card-templates/models/coupon-card-template.model';
 import { LoyaltyCardTemplate } from '../../card-templates/models/loyalty-card-template.model';
+import { EventCard } from '../../cards/models/event-card.model';
+import { EventTicketTemplate } from '../../card-templates/models/event-ticket-template.model';
+import { Event } from '../../events/models/event.model';
 
 interface Cache {
     certificates:
@@ -80,6 +83,32 @@ export const populateVariables = async (str: string, cardId: number) => {
 
             // replace {{points}} with loyalty points
             str = str.replace(/{{points}}/g, loyaltyCard.points.toString());
+            break;
+
+        case CardType.EVENT_TICKET:
+            const eventTicketCard = await EventCard.findOne({
+                where: { id: cardId },
+            });
+            // {{seat}} eventTicketCard.seat
+            str = str.replace(/{{seat}}/g, eventTicketCard.seatId);
+
+            const eventTicketCardTemplate = await EventTicketTemplate.findOne({
+                where: { id: eventTicketCard.eventTicketTemplateId },
+            });
+
+            const event = await Event.findOne({
+                where: { id: eventTicketCardTemplate.eventId },
+            });
+
+            // {{ eventName }} event.name
+            str = str.replace(/{{eventName}}/g, event.title);
+
+            // data in the form of "dd/mm/yyyy"
+            const date = event.startDate.toDateString().split(' ');
+
+            // {{ startDate }} event.startDate
+            str = str.replace(/{{startDate}}/g, `${date[2]}/${date[1]}/${date[3]}`);
+
             break;
 
         case CardType.ITEMS_SUBSCRIPTION:
