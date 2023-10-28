@@ -14,35 +14,37 @@ export const createEvent = (createEventDto: CreateEventDto, businessId: number):
     if (createEventDto.room) {
         const room = createEventDto.room;
 
-        
         // validate that all the rows have the same length
         const rowLength = room[0].length;
         if (!room.every((row) => row.length === rowLength))
-        throw new HttpError(400, 'room must be a matrix with equal row lengths');
-        
+            throw new HttpError(400, 'room must be a matrix with equal row lengths');
+
         // validate values
-        const allowedSeatTypes = [
-            SeatType.NONE,
-            SeatType.THEATER,
-            SeatType.AVAILABILE_SEAT,
-        ]
+        const allowedSeatTypes = [SeatType.NONE, SeatType.THEATER, SeatType.AVAILABILE_SEAT, SeatType.UNAVAILABLE_SEAT];
+        // validate that all the values are allowed
         if (!room.every((row) => row.every((seat) => allowedSeatTypes.includes(seat))))
-            throw new HttpError(400, `allowed seat types are ${allowedSeatTypes.join(', ')}`); 
+            throw new HttpError(400, `allowed seat types are ${allowedSeatTypes.join(', ')}`);
 
         // validate number of available seats with the limitedAmount if it exists
+        // counts the number of available seats in the room
         const availableSeats = room.reduce(
             (acc, row) => acc + row.filter((seat) => seat === SeatType.AVAILABILE_SEAT).length,
             0,
         );
 
-        if (createEventDto.limitedAmount && availableSeats < createEventDto.limitedAmount)
-            throw new HttpError(400, 'limitedAmount must be less than or equal to the number of available seats');
-
-        // if the limitedAmount is not provided, set it to the number of available seats
-        if (!createEventDto.limitedAmount) createEventDto.limitedAmount = availableSeats;
+        if (createEventDto.limitedAmount) {
+            // if the limitedAmount is provided, validate that it is less than or equal to the number of available seats
+            if (createEventDto.limitedAmount && availableSeats < createEventDto.limitedAmount)
+                throw new HttpError(400, 'limitedAmount must be less than or equal to the number of available seats');
+        } else {
+            // if the limitedAmount is not provided, set it to the number of available seats
+            if (!createEventDto.limitedAmount) createEventDto.limitedAmount = availableSeats;
+        }
     }
 
     const event = new Event({ ...createEventDto, businessId: businessId });
+    console.log(event);
+    console.log('Room: ', event.room);
     return event.save();
 };
 
