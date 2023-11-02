@@ -248,14 +248,17 @@ export async function getUserProfile(user: User) {
             return {
                 ...business,
                 usage: {
-                    usedLoyaltyCardTemplates: cardTemplatesByType['LOYALTY'] || 0,
-                    usedCouponCardTemplates: cardTemplatesByType['COUPON'] || 0,
-                    usedEventCardTemplates: cardTemplatesByType['EVENT_TICKET'] || 0,
-                    usedItemsSubscriptionCardTemplates: cardTemplatesByType['ITEMS_SUBSCRIPTION'] || 0,
-                    usedCouponCards,
-                    usedLoyaltyCards,
-                    usedEventCards,
-                    usedItemsSubscriptionCards,
+                    Loyalty_Templates: { type: 'loyalty', templates: cardTemplatesByType['LOYALTY'] || 0 },
+                    Coupon_Templates: { type: 'coupon', templates: cardTemplatesByType['COUPON'] || 0 },
+                    Event_Templates: { type: 'events', templates: cardTemplatesByType['EVENT_TICKET'] || 0 },
+                    Subscription_Templates: {
+                        type: 'subscription',
+                        templates: cardTemplatesByType['ITEMS_SUBSCRIPTION'] || 0,
+                    },
+                    Coupon_Cards: { type: 'loyalty', cards: usedCouponCards },
+                    Loyalty_Cards: { type: 'coupon', cards: usedLoyaltyCards },
+                    Event_Cards: { type: 'events', cards: usedEventCards },
+                    Subscription_Cards: { type: 'subscription', cards: usedItemsSubscriptionCards },
                 },
             };
         }),
