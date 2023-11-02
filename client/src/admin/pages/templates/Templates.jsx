@@ -17,16 +17,17 @@ import { useDispatch, useSelector } from "react-redux";
 import BusinessesTabs from "../../components/Templates/Tabs";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import TemplatesList from "../../components/Templates/TemplatesList";
-import { useGetBusinesses } from "../../hooks/Businesses";
-import { useGetTemplates } from "../../hooks/Templates";
 import { getTemplates } from "../../../store/TemplateSlice";
+import NoDataMsg from "../../../components/common/NoDataMsg/NoDataMsg";
 
 function Templates() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { profile } = useSelector((state) => state.auth);
-  const [subscription, setSubscription] = useState(profile?.businesses[0]?.subscription ? true : false);
+  const [subscription, setSubscription] = useState(
+    profile?.businesses[0]?.subscription ? true : false
+  );
   const { businesses } = useSelector((state) => state.businesses);
   const { templates, loading } = useSelector((state) => state.templates);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("450", "600"));
@@ -60,8 +61,10 @@ function Templates() {
 
           {/* Create Card */}
           {loading ? (
-            <CircularProgress />
-          ) : profile?.businesses?.length === 0 ? (
+            <Box sx={{ height: "70vh", width: "100%" }} className="flex">
+              <CircularProgress />
+            </Box>
+          ) : profile?.businesses?.length < 1 ? (
             <Grid xs={12}>
               <Typography
                 variant="h3"
@@ -71,10 +74,10 @@ function Templates() {
                 alignItems={"center"}
                 textTransform={"capitalize"}
                 marginTop={30}>
-                create a business to create a template
+                <NoDataMsg msg="Please create at lease one business" />
                 <Button variant="contained" sx={{ display: "block", mt: 2 }}>
                   <Link
-                    to="/admin/business/new"
+                    to="/dashboard/business/new"
                     style={
                       {
                         // color: theme.palette.primary[500],
@@ -127,7 +130,7 @@ function Templates() {
                 <ButtonGroup
                   sx={{ flexDirection: "column", gap: 1, width: "100%" }}>
                   <Button variant="contained">template</Button>
-                  <Button onClick={() => navigate("/admin/templates/new")}>
+                  <Button onClick={() => navigate("/dashboard/templates/new")}>
                     empty
                   </Button>
                 </ButtonGroup>

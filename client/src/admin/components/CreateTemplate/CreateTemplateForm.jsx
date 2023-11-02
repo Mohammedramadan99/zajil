@@ -47,38 +47,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function CreateTemplateForm({
-  stickersNumber,
-  setStickersNumber,
-  name,
-  // tempPhoto,
-  // setTempPhoto,
-  // activeImg,
-  // setActiveImg,
-  // logoImg,
-  // setLogoImg,
-  // textLogo,
-  // setTextLogo,
-  // activeIcon,
-  // setActiveIcon,
-  // setName,
-  // activeScanType,
-  // setActiveScanType,
-  // imgColor,
-  // setImgColor,
-  // barcode,
-  // setBarcode,
-  // labelColor,
-  // setLabelColor,
-  // backgroundColor,
-  // setBackgroundColor,
-  // headerFieldValue,
-  // setHeaderFieldValue,
-  // headerFieldLabel,
-  // setHeaderFieldLabel,
-  // textColor,
-  // setTextColor,
-}) {
+function CreateTemplateForm({ stickersNumber, setStickersNumber, name }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -90,6 +59,9 @@ function CreateTemplateForm({
     errors,
     loading,
   } = useSelector((state) => state.templates);
+  const { profile } = useSelector((state) => state.auth);
+  const availableBusiness = profile?.businesses?.filter(item => item.subscription)
+  const availableCards = []
   const {
     name: couponname,
     startDate: couponstartDate,
@@ -125,7 +97,7 @@ function CreateTemplateForm({
   const formik = useFormik({
     initialValues: {
       cardName: "",
-      cardtype: "",
+      cardType: "",
       brandName: "",
       stickersNumber,
       name,
@@ -140,7 +112,7 @@ function CreateTemplateForm({
     },
     validationSchema: yup.object({
       cardName: yup.string().required("card name is required"),
-      cardtype: yup.string().required("card type is required"),
+      cardType: yup.string().required("card type is required"),
       couponStartDate:
         cardType === "COUPON"
           ? yup.date().required("Start Date is required")
@@ -201,7 +173,6 @@ function CreateTemplateForm({
               "https://res.cloudinary.com"
             )
           ) {
-            console.log("if", stripUrl.url);
             imgs = [{ type: "logo", file: logoImg.file }];
           } else {
             console.log("else", stripUrl.url);
@@ -218,7 +189,6 @@ function CreateTemplateForm({
             ];
           }
         }
-        console.log({ imgs });
         // upload imgs
         const uploadPromises =
           imgs.length > 0 &&
@@ -592,7 +562,7 @@ function CreateTemplateForm({
     if (template) {
       dispatch(reset());
 
-      navigate("/admin/templates");
+      navigate("/dashboard/templates");
     }
   }, [template]);
   // Convert the color to an image
@@ -686,7 +656,7 @@ function CreateTemplateForm({
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name="cardtype"
+                  name="cardType"
                   value={cardType.type || ""}
                   label="Card Type"
                   onChange={(e) => {
@@ -696,11 +666,12 @@ function CreateTemplateForm({
                     dispatch(setCardType(selectedCardType));
                     formik.handleChange(e);
                   }}
-                  error={Boolean(formik.errors.cardtype)}>
+                  error={Boolean(formik.errors.cardType)}>
                   {cardTypes.map((item, i) => (
                     <MenuItem
                       key={i}
                       value={item.store}
+                      disabled={availableCards.find(type => type.name !== item.store)}
                       onClick={() => {
                         if (activeStickers.length > 2) {
                           setActiveStickers([]);

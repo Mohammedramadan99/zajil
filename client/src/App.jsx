@@ -36,6 +36,8 @@ const Notifications = lazy(() =>
   import("./admin/pages/notifications/Notifications")
 );
 const Plans = lazy(() => import("./admin/pages/plans/Plans"));
+const Tickets = lazy(() => import("./dashboard/pages/Tickets/Tickets"));
+const Ticket = lazy(() => import("./dashboard/pages/Ticket/Ticket"));
 
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -101,6 +103,14 @@ function App() {
         {
           path: "templates",
           element: <Templates />,
+        },
+        {
+          path: "tickets",
+          element: <Tickets />,
+        },
+        {
+          path: "ticket",
+          element: <Ticket />,
         },
         {
           path: "location",
