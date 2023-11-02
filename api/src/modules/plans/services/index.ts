@@ -8,6 +8,8 @@ import { Plan, chartsObj } from '../models/plan.model';
 import { Subscription } from '../models/subscription.model';
 
 const reformatPlan = (plan: Plan) => {
+    // Coupon_Templates : {type: "coupon", templates: n }
+    // maxItemSubscriptionCards => Subscription_Cards : {type: "subscription", cards: n }
     const planNewFormat = {
         id: plan.id,
         name: plan.name,
@@ -15,15 +17,15 @@ const reformatPlan = (plan: Plan) => {
         price: plan.price,
         active: plan.active,
         allActivetie: {
-            maxBranches: plan.maxBranches,
-            maxCouponTemplates: plan.maxCouponTemplates,
-            maxLoyaltyTemplates: plan.maxLoyaltyTemplates,
-            maxEventsTemplates: plan.maxEventsTemplates,
-            maxItemSubscriptionTemplates: plan.maxItemSubscriptionTemplates,
-            maxCouponCards: plan.maxCouponCards,
-            maxLoyaltyCards: plan.maxLoyaltyCards,
-            maxEventsCards: plan.maxEventsCards,
-            maxItemSubscriptionCards: plan.maxItemSubscriptionCards,
+            Branches: plan.maxBranches,
+            Coupon_Templates: { type: 'coupon', templates: plan.maxCouponTemplates },
+            Loyalty_Templates: { type: 'loyalty', templates: plan.maxLoyaltyTemplates },
+            Events_Templates: { type: 'events', templates: plan.maxEventsTemplates },
+            Subscription_Templates: { type: 'subscription', templates: plan.maxItemSubscriptionTemplates },
+            Coupon_Cards: { type: 'coupon', cards: plan.maxCouponCards },
+            Loyalty_Cards: { type: 'loyalty', cards: plan.maxLoyaltyCards },
+            Events_Cards: { type: 'events', cards: plan.maxEventsCards },
+            Subscription_Cards: { type: 'subscription', cards: plan.maxItemSubscriptionCards },
         },
         charts: {
             getActivities: plan.charts.getActivities,

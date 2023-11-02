@@ -94,12 +94,14 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 if (nTickets >= eventTicketTemplate.event.limitedAmount)
                     throw new HttpError(400, 'Event reached its limited amount');
             }
-
+            console.log('seat', createCardDto.seat);
             // if it has seats, validate the seats
             if ((eventTicketTemplate.type = EventTicketType.SEAT)) {
                 if (!createCardDto.seat) throw new HttpError(400, '`seat` is required');
                 await validateAndChooseSeat(eventTicketTemplate.event, createCardDto.seat);
             }
+
+            console.log('Seat valid and chosen');
 
             // create event card
             subCard = await EventCard.create({
@@ -107,6 +109,8 @@ export const createCard = async (createCardDto: CreateCardDto, req: Request): Pr
                 eventTicketTemplateId: eventTicketTemplate.id,
                 seatId: createCardDto.seat,
             });
+
+            console.log('Event card created');
             break;
 
         case CardType.COUPON:
@@ -770,11 +774,17 @@ export function loyaltyUpdatePoints(cardId: number, points: number, user: User) 
 }
 
 async function validateAndChooseSeat(event: Event, seat: string) {
-    // extrct the alhabets from the seat
+    // explain: convert seat to row and column index
+    // setColumn is the letters in the seat
     const seatColumn = seat.replace(/\d/g, '').toUpperCase();
 
-    // extract the numbers from the seat
+    // seatRow is the numbers in the seat
     const seatRow = parseInt(seat.replace(/\D/g, ''));
+
+    console.log('room', event.room);
+
+    console.log('column', seatColumn);
+    console.log('row', seatRow);
 
     // turn seat column into colum index (A=1) (AA=27)
     const seatColumnIndex = seatColumn
