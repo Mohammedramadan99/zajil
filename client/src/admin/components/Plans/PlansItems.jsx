@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import AllInclusiveIcon from "@mui/icons-material/AllInclusive";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
@@ -30,7 +31,7 @@ function PlansItems() {
   const { success } = useSelector((state) => state.subscriptions);
   const handleClickListItem = (planId) => {
     setOpen(true);
-    setSelectedPlan(planId)
+    setSelectedPlan(planId);
   };
   const handleClose = (newValue) => {
     setOpen(false);
@@ -38,18 +39,18 @@ function PlansItems() {
     if (newValue) {
       const actionData = {
         params: { businessId: newValue },
-        data: { planId:selectedPlan, numberOfMonths: 2 },
+        data: { planId: selectedPlan, numberOfMonths: 2 },
       };
       dispatch(createSubscription(actionData));
     }
   };
   useEffect(() => {
     if (success) {
-      toast.success("Subscribed Successfully")
-      dispatch(reset())
+      toast.success("Subscribed Successfully");
+      dispatch(reset());
     }
-  }, [success])
-  
+  }, [success]);
+
   return (
     <>
       <Grid container spacing={2}>
@@ -65,8 +66,9 @@ function PlansItems() {
             ...rest
           } = item;
           const allActivitiesArr = Object.keys(allActivetie).map((key) => {
-            return { label: key, value: allActivetie[key] };
+            return { label: key.replace("_", " "), value: allActivetie[key] };
           });
+          console.log(allActivitiesArr);
           return (
             <Grid key={item.id} item xs={12} md={4}>
               <Card
@@ -112,29 +114,52 @@ function PlansItems() {
                       <span>/mo</span>
                     </Stack>
                     <Stack spacing={4}>
-                      {allActivitiesArr?.map((feat, i) => (
-                        <div key={i}>
-                          <Grid
-                            container
-                            sx={{
-                              opacity: feat.value > 0 ? 1 : 0.2,
-                            }}>
-                            <Grid item xs={2} sx={{ textAlign: "center" }}>
-                              {feat.value > 0 ? (
-                                <DoneAllIcon />
-                              ) : (
-                                <HistoryToggleOffIcon />
-                              )}
+                      {allActivitiesArr?.map((feat, i) => {
+                        console.log("feat", feat);
+                        return feat.label !== "Branches" && (
+                          <div key={i}>
+                            <Grid
+                              container
+                              sx={{
+                                opacity:
+                                  feat.value.cards < 0 ||
+                                  feat.value.templates > 0
+                                    ? 1
+                                    : 0.2,
+                              }}>
+                              <Grid item xs={2} sx={{ textAlign: "center" }}>
+                                {feat.value.cards < 0 ||
+                                feat.value.templates > 0 ? (
+                                  <DoneAllIcon />
+                                ) : (
+                                  <HistoryToggleOffIcon />
+                                )}
+                              </Grid>
+                              <Grid item xs={2} sx={{ textAlign: "center" }}>
+                                {feat.value.templates && (
+                                  <strong>
+                                    {feat.value.templates > 0
+                                      ? feat.value.templates
+                                      : 0}
+                                  </strong>
+                                )}
+                                {feat.value.cards && (
+                                  <strong>
+                                    {feat.value.cards === -1 ? (
+                                      <AllInclusiveIcon />
+                                    ) : (
+                                      0
+                                    )}
+                                  </strong>
+                                )}
+                              </Grid>
+                              <Grid item xs={8}>
+                                {feat.label}
+                              </Grid>
                             </Grid>
-                            <Grid item xs={2} sx={{ textAlign: "center" }}>
-                              <strong>{feat.value > 0 ? feat.value : 0}</strong>
-                            </Grid>
-                            <Grid item xs={8}>
-                              {feat.label}
-                            </Grid>
-                          </Grid>
-                        </div>
-                      ))}
+                          </div>
+                        );
+                      })}
                     </Stack>
                   </CardContent>
                 </CardActionArea>
@@ -142,8 +167,7 @@ function PlansItems() {
                   variant="outlined"
                   sx={{ marginBlock: 2 }}
                   // onClick={() => subscribeHandler(item.id)}
-                  onClick={() => handleClickListItem(id)}
-                >
+                  onClick={() => handleClickListItem(id)}>
                   Purchase Plan
                 </Button>
               </Card>
