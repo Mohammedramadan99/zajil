@@ -9,6 +9,7 @@ import { UpdateBusinessDto } from '../dto/update-business';
 export const BusinessController: ICRUDController = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateBusinessDto = req.body;
+        console.log('createBusinessDto', body);
         businessServices
             .createBusiness(body, req)
             .then((business) => res.status(201).json(business))

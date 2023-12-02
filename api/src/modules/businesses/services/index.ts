@@ -6,6 +6,8 @@ import { CreateBusinessDto } from '../dto/create-business';
 import { UpdateBusinessDto } from '../dto/update-business';
 
 export const createBusiness = (createBusinessDto: CreateBusinessDto, req: RequestMod): Promise<Business> => {
+    console.log('createBusinessDto', createBusinessDto);
+
     const user = new Business({ ...createBusinessDto, ownerId: req.user.id });
     return user.save();
 };

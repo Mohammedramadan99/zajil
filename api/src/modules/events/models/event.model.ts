@@ -64,7 +64,7 @@ export const init = (sequelize: Sequelize) =>
         {
             sequelize,
             tableName: 'events',
-        },
+        }, 
     );
 
 export const associate = () => {
