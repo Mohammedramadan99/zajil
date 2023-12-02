@@ -15,6 +15,7 @@ export class Business extends Model {
     public declare id: number;
     public name!: string;
     public ownerId!: number;
+    public type!: BusinessType;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
