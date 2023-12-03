@@ -10,9 +10,10 @@ import { Business } from '../../businesses/models/business.model';
 import { EventPlan } from '../models/eventPlan.model';
 import { EventSubscription } from '../models/eventSubscription.model';
 import { CreateEventPlanDto } from '../dto/create-event-plan';
-import { UpdateEventPlanDto } from '../dto/update-event-plan'; 
+import { UpdateEventPlanDto } from '../dto/update-event-plan';
 import { CreateEventSubscriptionDto } from '../dto/create-envet-subscription';
 import { UpdateEventSubscriptionDto } from '../dto/update-envet-subscription';
+import { Op } from 'sequelize';
 
 const reformatPlan = (plan: Plan) => {
     // Coupon_Templates : {type: "coupon", templates: n }
@@ -343,4 +344,46 @@ export const upgrateSubscribe = async (
     };
 
     return await Subscription.create(newData);
+};
+
+export const createEventPlan = async (createEventPlanDto: CreateEventPlanDto, req: RequestMod): Promise<any> => {
+    const creatorId = req.user.id;
+    const minCards = createEventPlanDto.minCards;
+    const maxCards = createEventPlanDto.maxCards;
+
+    // // find all palns and delete all
+    // const eventPlans = await EventPlan.findAll();
+
+    // // delete all event plans
+    // for (const eventPlan of eventPlans) {
+    //     await eventPlan.destroy();
+    // }
+
+    // console.log('all deleted successfully !!');
+
+    // return;
+
+    if (minCards >= maxCards) {
+        throw new Error('Cannot add event plan with minCards >= maxCards');
+    }
+
+    // Check if there is an existing event plan with overlapping card ranges
+    const overlappingEventPlan = await EventPlan.findOne({
+        where: {
+            [Op.and]: [{ minCards: { [Op.lt]: maxCards } }, { maxCards: { [Op.gte]: minCards } }],
+        },
+    });
+
+    if (overlappingEventPlan) {
+        throw new Error('Cannot add event plan with overlapping card ranges');
+    }
+
+    const data = {
+        ...createEventPlanDto,
+        creatorId,
+    };
+
+    const eventPlan = await EventPlan.create(data);
+
+    return eventPlan;
 };

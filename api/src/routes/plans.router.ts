@@ -20,5 +20,6 @@ plansRouter.delete('/subscribe/delete-subscribe/:businessId', PlanController.del
 plansRouter.get('/subscribe/get-one-subscription/:businessId', PlanController.getOneSubscriptionByBusinessId);
 plansRouter.get('/subscribe/get-one-subscription-by-id/:id', PlanController.getOneSubscriptionById);
 plansRouter.get('/subscribe/get-all-subscriptions', PlanController.getAllSubscriptions);
+plansRouter.post('/create-event-plan', PlanController.createEventPlan);
 
 export default plansRouter;

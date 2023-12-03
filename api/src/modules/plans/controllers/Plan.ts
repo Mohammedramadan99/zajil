@@ -23,13 +23,13 @@ export const PlanController: ICRUDController & {
     getAllSubscriptions: (req: RequestMod, res: Response, next: NextFunction) => void;
     getOneSubscriptionById: (req: RequestMod, res: Response, next: NextFunction) => void;
     createEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    getOneEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    getAllEventPlans: (req: RequestMod, res: Response, next: NextFunction) => void;
-    updateEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    deleteEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    eventSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
-    eventUpgrateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
-    eventDeleteSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // getOneEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // getAllEventPlans: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // updateEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // deleteEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // eventSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // eventUpdateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
+    // eventDeleteSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreatePlanDto = req.body;
@@ -194,6 +194,17 @@ export const PlanController: ICRUDController & {
             .catch((err) => {
                 console.error(err);
                 next(new HttpError(404, err.message));
+            });
+    },
+    createEventPlan: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const body: CreateEventPlanDto = req.body;
+
+        planServices
+            .createEventPlan(body, req)
+            .then((data) => res.status(201).json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
             });
     },
 };
