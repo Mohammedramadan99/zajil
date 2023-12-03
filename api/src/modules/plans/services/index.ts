@@ -7,6 +7,12 @@ import { UpdateSubscribeDto } from '../dto/update-subscribe';
 import { Plan, chartsObj } from '../models/plan.model';
 import { Subscription } from '../models/subscription.model';
 import { Business } from '../../businesses/models/business.model';
+import { EventPlan } from '../models/eventPlan.model';
+import { EventSubscription } from '../models/eventSubscription.model';
+import { CreateEventPlanDto } from '../dto/create-event-plan';
+import { UpdateEventPlanDto } from '../dto/update-event-plan'; 
+import { CreateEventSubscriptionDto } from '../dto/create-envet-subscription';
+import { UpdateEventSubscriptionDto } from '../dto/update-envet-subscription';
 
 const reformatPlan = (plan: Plan) => {
     const planNewFormat = {
