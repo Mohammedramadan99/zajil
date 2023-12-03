@@ -6,6 +6,7 @@ import { createSubscribeDto } from '../dto/add-subscribe';
 import { UpdateSubscribeDto } from '../dto/update-subscribe';
 import { Plan, chartsObj } from '../models/plan.model';
 import { Subscription } from '../models/subscription.model';
+import { Business } from '../../businesses/models/business.model';
 
 const reformatPlan = (plan: Plan) => {
     // Coupon_Templates : {type: "coupon", templates: n }
@@ -20,11 +21,9 @@ const reformatPlan = (plan: Plan) => {
             Branches: plan.maxBranches,
             Coupon_Templates: { type: 'coupon', templates: plan.maxCouponTemplates },
             Loyalty_Templates: { type: 'loyalty', templates: plan.maxLoyaltyTemplates },
-            Events_Templates: { type: 'events', templates: plan.maxEventsTemplates },
             Subscription_Templates: { type: 'subscription', templates: plan.maxItemSubscriptionTemplates },
             Coupon_Cards: { type: 'coupon', cards: plan.maxCouponCards },
             Loyalty_Cards: { type: 'loyalty', cards: plan.maxLoyaltyCards },
-            Events_Cards: { type: 'events', cards: plan.maxEventsCards },
             Subscription_Cards: { type: 'subscription', cards: plan.maxItemSubscriptionCards },
         },
         charts: {
@@ -174,6 +173,12 @@ export const subscribeToPlan = async (
     numberOfMonths: number,
     businessId: number,
 ): Promise<Subscription> => {
+    const business = await Business.findOne({ where: { id: businessId } });
+
+    if (business.type === 'CARD') {
+        throw new HttpError(400, 'You can not subscribe to a plan with a CARD business');
+    }
+
     const plan = await getOnePlanById(planId);
 
     if (!plan || plan.active === false) {
@@ -205,6 +210,12 @@ export const updateSubscribe = async (
     updateSubscribeDto: UpdateSubscribeDto,
     businessId: number,
 ): Promise<Subscription> => {
+    const business = await Business.findOne({ where: { id: businessId } });
+
+    if (business.type === 'CARD') {
+        throw new HttpError(400, 'You can not subscribe to a plan with a CARD business');
+    }
+
     const subscription = await Subscription.findOne({ where: { businessId } });
 
     if (!subscription) {
@@ -282,6 +293,12 @@ export const upgrateSubscribe = async (
     numberOfMonths: number,
     businessId: number,
 ): Promise<Subscription> => {
+    const business = await Business.findOne({ where: { id: businessId } });
+
+    if (business.type === 'CARD') {
+        throw new HttpError(400, 'You can not subscribe to a plan with a CARD business');
+    }
+
     const subscription = await Subscription.findOne({ where: { businessId, status: 'active' } });
 
     if (!subscription) {

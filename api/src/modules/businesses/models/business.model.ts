@@ -6,10 +6,16 @@ import { Activity } from './activity.model';
 import { Event } from '../../events/models/event.model';
 import { Subscription } from '../../plans/models/subscription.model';
 
+const enum BusinessType {
+    EVENT = 'EVENT',
+    CARD = 'CARD',
+}
+
 export class Business extends Model {
     public declare id: number;
     public name!: string;
     public ownerId!: number;
+    public type!: BusinessType;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -29,6 +35,10 @@ export const init = (sequelize: Sequelize) =>
             },
             ownerId: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            type: {
+                type: DataTypes.ENUM(BusinessType.EVENT, BusinessType.CARD),
                 allowNull: false,
             },
         },

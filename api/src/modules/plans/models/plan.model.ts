@@ -22,8 +22,6 @@ export class Plan extends Model {
     public maxCouponCards: number;
     public maxLoyaltyTemplates: number;
     public maxLoyaltyCards: number;
-    public maxEventsTemplates: number;
-    public maxEventsCards: number;
     public maxItemSubscriptionTemplates: number;
     public maxItemSubscriptionCards: number;
     public charts: typeof chartsObj;
@@ -80,16 +78,6 @@ export const init = (sequelize: Sequelize) =>
                 allowNull: false,
             },
             maxLoyaltyCards: {
-                type: DataTypes.INTEGER,
-                defaultValue: -1,
-                allowNull: false,
-            },
-            maxEventsTemplates: {
-                type: DataTypes.INTEGER,
-                defaultValue: 0,
-                allowNull: false,
-            },
-            maxEventsCards: {
                 type: DataTypes.INTEGER,
                 defaultValue: -1,
                 allowNull: false,

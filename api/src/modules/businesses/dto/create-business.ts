@@ -4,4 +4,8 @@ export class CreateBusinessDto {
     @IsNotEmpty()
     @IsString()
     name: string;
+
+    @IsNotEmpty()
+    @IsString()
+    type: string;
 }
