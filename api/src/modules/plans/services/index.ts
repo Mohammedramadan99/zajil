@@ -445,3 +445,108 @@ export const deleteEventPlan = async (eventPlanId: number): Promise<void> => {
 
     return await eventPlan.destroy();
 };
+
+export const eventSubscribe = async (
+    businessId: number,
+    eventPlanId: number,
+    createEventSubscriptionDto: CreateEventSubscriptionDto,
+): Promise<any> => {
+    const eventPlan = await getOneEventPlan(eventPlanId);
+
+    const business = await Business.findOne({ where: { id: businessId } });
+
+    if (business.type != 'EVENT') {
+        throw new HttpError(400, 'You can not subscribe to an event plan with a non-event business');
+    }
+
+    if (!eventPlan || eventPlan.active === false) {
+        throw new HttpError(404, 'Event plan not found or not active');
+    }
+
+    const eventSubscription = await EventSubscription.findOne({ where: { businessId } });
+
+    if (eventSubscription) {
+        throw new HttpError(400, 'You are already subscribed to an event plan');
+    }
+
+    const totalCards =
+        createEventSubscriptionDto.basicCards +
+        createEventSubscriptionDto.vipCards +
+        createEventSubscriptionDto.vvipCards;
+
+    const totalPriceBasics = createEventSubscriptionDto.basicCards * eventPlan.basicPrice;
+    const totalPriceVips = createEventSubscriptionDto.vipCards * eventPlan.vipPrice;
+    const totalPriceVvips = createEventSubscriptionDto.vvipCards * eventPlan.vvipPrice;
+
+    const totalPrice =
+        totalPriceBasics * (eventPlan.basicPresintage / 100) +
+        totalPriceVips * (eventPlan.vipPresintage / 100) +
+        totalPriceVvips * (eventPlan.vvipPresintage / 100);
+
+    const data = {
+        ...createEventSubscriptionDto,
+        totalCards,
+        totalPrice,
+        businessId,
+        eventPlanId,
+    };
+
+    return await EventSubscription.create(data);
+};
+
+export const eventUpdateSubscribe = async (
+    eventSubscriptionId: number,
+    updateEventSubscriptionDto: UpdateEventSubscriptionDto,
+): Promise<any> => {
+    const eventSubscription = await EventSubscription.findOne({ where: { id: eventSubscriptionId } });
+
+    if (!eventSubscription) {
+        throw new HttpError(404, 'Event subscription not found');
+    }
+
+    const eventPlan = await getOneEventPlan(eventSubscription.eventPlanId);
+
+    if (!eventPlan || eventPlan.active === false) {
+        throw new HttpError(404, 'Event plan not found or not active');
+    }
+
+    if (
+        updateEventSubscriptionDto.basicCards ||
+        updateEventSubscriptionDto.vipCards ||
+        updateEventSubscriptionDto.vvipCards
+    ) {
+        const totalCards =
+            updateEventSubscriptionDto.basicCards +
+            updateEventSubscriptionDto.vipCards +
+            updateEventSubscriptionDto.vvipCards;
+
+        const totalPriceBasics = updateEventSubscriptionDto.basicCards * eventPlan.basicPrice;
+        const totalPriceVips = updateEventSubscriptionDto.vipCards * eventPlan.vipPrice;
+        const totalPriceVvips = updateEventSubscriptionDto.vvipCards * eventPlan.vvipPrice;
+
+        const totalPrice =
+            totalPriceBasics * (eventPlan.basicPresintage / 100) +
+            totalPriceVips * (eventPlan.vipPresintage / 100) +
+            totalPriceVvips * (eventPlan.vvipPresintage / 100);
+
+        const data = {
+            ...updateEventSubscriptionDto,
+            totalCards,
+            totalPrice,
+        };
+
+        return await eventSubscription.update(data);
+    } else {
+        return await eventSubscription.update(updateEventSubscriptionDto);
+    }
+};
+
+export const eventDeleteSubscribe = async (eventSubscriptionId: number): Promise<any> => {
+    const eventSubscription = await EventSubscription.findOne({ where: { id: eventSubscriptionId } });
+
+    if (!eventSubscription) {
+        throw new HttpError(404, 'Event subscription not found');
+    }
+
+    return await eventSubscription.destroy();
+};

@@ -4,7 +4,7 @@ import { EventPlan } from './eventPlan.model';
 
 export class EventSubscription extends Model {
     public declare id: number;
-    public planId: number;
+    public eventPlanId: number;
     public businessId: number;
     public totalCards: number;
     public basicCards: number;
