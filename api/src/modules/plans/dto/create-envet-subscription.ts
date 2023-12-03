@@ -7,7 +7,7 @@ import {
 export class CreateEventSubscriptionDto {
     @IsNumber()
     @IsNotEmpty()
-    planId: number;
+    eventPlanId: number;
 
     @IsNumber()
     @IsNotEmpty()
@@ -37,11 +37,11 @@ export class CreateEventSubscriptionDto {
     @IsNotEmpty()
     vvipPrice: number;
 
-    @IsNumber()
-    @IsOptional()
-    totalCards: number;
+    // @IsNumber()
+    // @IsOptional()
+    // totalCards: number;
 
-    @IsNumber()
-    @IsOptional()
-    totalPrice: number;
+    // @IsNumber()
+    // @IsOptional()
+    // totalPrice: number;
 }
