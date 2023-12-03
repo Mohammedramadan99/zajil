@@ -23,10 +23,11 @@ export const PlanController: ICRUDController & {
     getAllSubscriptions: (req: RequestMod, res: Response, next: NextFunction) => void;
     getOneSubscriptionById: (req: RequestMod, res: Response, next: NextFunction) => void;
     createEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    // getOneEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    // getAllEventPlans: (req: RequestMod, res: Response, next: NextFunction) => void;
-    // updateEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
-    // deleteEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getOneEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getAllEventPlans: (req: RequestMod, res: Response, next: NextFunction) => void;
+    updateEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    disableEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    deleteEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
     // eventSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
     // eventUpdateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
     // eventDeleteSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
@@ -207,4 +208,63 @@ export const PlanController: ICRUDController & {
                 next(new HttpError(500, err.message));
             });
     },
+    getOneEventPlan: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const planId = Number(req.params.id);
+
+        planServices
+            .getOneEventPlan(planId)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(404, err.message));
+            });
+    },
+    getAllEventPlans: function (req: RequestMod, res: Response, next: NextFunction): void {
+        planServices
+            .getAllEventPlans()
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(404, err.message));
+            });
+    },
+    updateEventPlan: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const enevntPlanId = Number(req.params.id);
+        const body: UpdateEventPlanDto = req.body;
+
+        planServices
+            .updateEventPlan(enevntPlanId, body)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    // desableEventPlan
+    disableEventPlan: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const enevntPlanId = Number(req.params.id);
+
+        planServices
+            .disableEventPlan(enevntPlanId)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    // deleteEventPlan
+    deleteEventPlan: function (req: RequestMod, res: Response, next: NextFunction): void {
+        const enevntPlanId = Number(req.params.id);
+
+        planServices
+            .deleteEventPlan(enevntPlanId)
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.error(err);
+                next(new HttpError(500, err.message));
+            });
+    },
+    // eventSubscribe
+    // eventUpdateSubscribe
+    // eventDeleteSubscribe
 };

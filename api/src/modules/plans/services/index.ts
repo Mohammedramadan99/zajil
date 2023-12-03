@@ -387,3 +387,61 @@ export const createEventPlan = async (createEventPlanDto: CreateEventPlanDto, re
 
     return eventPlan;
 };
+
+export const getOneEventPlan = async (eventPlanId: number): Promise<any> => {
+    const eventPlan = await EventPlan.findOne({ where: { id: eventPlanId } });
+
+    if (!eventPlan) {
+        throw new HttpError(404, 'Event plan not found');
+    }
+
+    return eventPlan;
+};
+
+export const getAllEventPlans = async (): Promise<any[]> => {
+    const eventPlans = await EventPlan.findAll();
+
+    return eventPlans;
+};
+
+export const updateEventPlan = async (eventPlanId: number, body: UpdateEventPlanDto): Promise<any> => {
+    const eventPlan = await getOneEventPlan(eventPlanId);
+
+    if (!eventPlan) {
+        throw new HttpError(404, 'Event plan not found');
+    }
+
+    const data = {
+        ...body,
+    };
+
+    const updatedEventPlan = await eventPlan.update(data);
+
+    return updatedEventPlan;
+};
+
+export const disableEventPlan = async (eventPlanId: number): Promise<any> => {
+    const eventPlan = await getOneEventPlan(eventPlanId);
+
+    if (!eventPlan) {
+        throw new HttpError(404, 'Event plan not found');
+    }
+
+    const data = {
+        active: false,
+    };
+
+    const updatedEventPlan = await eventPlan.update(data);
+
+    return updatedEventPlan;
+};
+
+export const deleteEventPlan = async (eventPlanId: number): Promise<void> => {
+    const eventPlan = await getOneEventPlan(eventPlanId);
+
+    if (!eventPlan) {
+        throw new HttpError(404, 'Event plan not found');
+    }
+
+    return await eventPlan.destroy();
+};
