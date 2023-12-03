@@ -2,21 +2,6 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { Business } from '../../businesses/models/business.model';
 import { EventPlan } from './eventPlan.model';
 
-/**
- * number of total cards
- * number basics event card
- * price of basic event card
- * number vip event card
- * price of vip event card
- * number vvip event card
- * price of vvip event card
- *
- * planId
- * businessId
- *
- * total Price
- */
-
 export class EventSubscription extends Model {
     public declare id: number;
     public planId: number;

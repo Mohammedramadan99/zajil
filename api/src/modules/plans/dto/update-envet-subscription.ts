@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional } from 'class-validator';
 
-export class CreateEventSubscriptionDto {
+export class UpdateEventSubscriptionDto {
     @IsNumber()
     @IsOptional()
     planId: number;

@@ -2,14 +2,6 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { User } from '../../users/models/user.model';
 import { EventSubscription } from './eventSubscription.model';
 
-/**
- * min cards
- * max cards
- * basic presintage
- * vip presintage
- * vvip presintage
- */
-
 export class EventPlan extends Model {
     public declare id: number;
     public name!: string;

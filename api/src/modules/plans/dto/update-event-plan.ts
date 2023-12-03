@@ -5,7 +5,7 @@ import {
     IsString,
 } from 'class-validator';
 
-export class UpdateEventPlan {
+export class UpdateEventPlanDto {
     // name
     @IsOptional()
     @IsString()
