@@ -264,11 +264,11 @@ export const PlanController: ICRUDController & {
     },
     eventSubscribe: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreateEventSubscriptionDto = req.body;
-        const eventId = Number(req.params.id);
+        const eventPlanId = Number(req.params.planId);
         const businessId = Number(req.params.businessId);
 
         planServices
-            .eventSubscribe(eventId, businessId, body)
+            .eventSubscribe(eventPlanId, businessId, body)
             .then((data) => res.json(data))
             .catch((err) => {
                 console.error(err);

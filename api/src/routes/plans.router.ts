@@ -21,5 +21,13 @@ plansRouter.get('/subscribe/get-one-subscription/:businessId', PlanController.ge
 plansRouter.get('/subscribe/get-one-subscription-by-id/:id', PlanController.getOneSubscriptionById);
 plansRouter.get('/subscribe/get-all-subscriptions', PlanController.getAllSubscriptions);
 plansRouter.post('/create-event-plan', PlanController.createEventPlan);
+plansRouter.get('/get-all-event-plans', PlanController.getAllEventPlans);
+plansRouter.get('/get-one-event-plan/:id', PlanController.getOneEventPlan);
+plansRouter.put('/update-event-plan/:id', PlanController.updateEventPlan);
+plansRouter.patch('/update-event-plan/:id', PlanController.disableEventPlan);
+plansRouter.delete('/delete-event-plan/:id', PlanController.deleteEventPlan);
+plansRouter.post('/subscribe-event-plan/:planId/:businessId', PlanController.eventSubscribe);
+plansRouter.put('/subscribe-event-plan/:id', PlanController.eventUpdateSubscribe);
+plansRouter.delete('/subscribe-event-plan/:id', PlanController.eventDeleteSubscribe);
 
 export default plansRouter;
