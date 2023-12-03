@@ -53,7 +53,7 @@ export default function PlaygroundSpeedDial() {
       navigate("/auth/login");
     }
     if (action.id === 2) {
-      navigate("/admin/scan");
+      navigate("/dashboard/scan");
     }
     if (action.id === 3) {
       dispatch(setMode());
@@ -83,11 +83,11 @@ export default function PlaygroundSpeedDial() {
       icon={<Avatar sx={{ color: theme.palette.grey[900] }}></Avatar>}
       direction={direction}
       sx={{
-        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-1930fky-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab,.css-tbbtms-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab":
+        ".MuiButtonBase-root":
           {
             background: "transparent",
           },
-        ".css-1a3kk93-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab:hover": {
+        ".MuiButtonBase-root:hover": {
           background: "transparent",
         },
       }}>

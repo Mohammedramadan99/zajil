@@ -24,7 +24,7 @@ function Login() {
   useEffect(() => {
     dispatch(reset());
     if (user) {
-      navigate("/admin/business/new");
+      navigate("/dashboard/business/new");
     }
   }, [user]);
 

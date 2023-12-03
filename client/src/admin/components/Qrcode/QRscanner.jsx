@@ -14,6 +14,7 @@ const QRScanner = (props) => {
   }, [cardId, navigate]);
 
   const handleScan = (result) => {
+    console.log({result})
     if (result) {
       setCardId(result.text);
     }
@@ -26,7 +27,7 @@ const QRScanner = (props) => {
   return (
     <>
       <QrReader
-        onScan={handleScan}
+        onResult={handleScan}
         onError={handleError}
         style={{ width: "100%" }}
       />

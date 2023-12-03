@@ -1,5 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "../../index.scss";
 import {
   ThemeProvider,
@@ -12,19 +12,24 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { themeSettings } from "../../theme";
 import "./Layout.scss";
 import MobileSidebar from "./MobileSidebar/MobileSidebar";
 import MainSidebar from "./MainSidebar";
 import UserInfo from "../../components/UserInfo/UserInfo";
+import { profileAction } from "../../../store/authSlice";
 const RootLayout = () => {
+  const dispatch = useDispatch()
   const isNonMobile = useMediaQuery("(min-width: 600px)");
   const { mode } = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const { user } = useSelector((state) => state.auth);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("0", "600"));
-
+  useEffect(() => {
+    dispatch(profileAction())
+  }, [])
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
