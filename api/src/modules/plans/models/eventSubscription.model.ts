@@ -27,7 +27,7 @@ export const init = (sequelize: Sequelize) =>
                 autoIncrement: true,
                 primaryKey: true,
             },
-            planId: {
+            eventPlanId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -64,7 +64,7 @@ export const init = (sequelize: Sequelize) =>
                 allowNull: false,
             },
             totalPrice: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.DOUBLE,
                 allowNull: false,
             },
         },
@@ -83,7 +83,7 @@ export const associate = () => {
 
     // EventSubscription | EventPlan
     EventSubscription.belongsTo(EventPlan, {
-        foreignKey: 'planId',
-        as: 'plan',
+        foreignKey: 'eventPlanId',
+        as: 'eventPlan',
     });
 };

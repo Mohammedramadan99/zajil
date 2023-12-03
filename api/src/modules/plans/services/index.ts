@@ -447,8 +447,8 @@ export const deleteEventPlan = async (eventPlanId: number): Promise<void> => {
 };
 
 export const eventSubscribe = async (
-    businessId: number,
     eventPlanId: number,
+    businessId: number,
     createEventSubscriptionDto: CreateEventSubscriptionDto,
 ): Promise<any> => {
     const eventPlan = await getOneEventPlan(eventPlanId);
@@ -474,9 +474,9 @@ export const eventSubscribe = async (
         createEventSubscriptionDto.vipCards +
         createEventSubscriptionDto.vvipCards;
 
-    const totalPriceBasics = createEventSubscriptionDto.basicCards * eventPlan.basicPrice;
-    const totalPriceVips = createEventSubscriptionDto.vipCards * eventPlan.vipPrice;
-    const totalPriceVvips = createEventSubscriptionDto.vvipCards * eventPlan.vvipPrice;
+    const totalPriceBasics = createEventSubscriptionDto.basicCards * createEventSubscriptionDto.basicPrice;
+    const totalPriceVips = createEventSubscriptionDto.vipCards * createEventSubscriptionDto.vipPrice;
+    const totalPriceVvips = createEventSubscriptionDto.vvipCards * createEventSubscriptionDto.vvipPrice;
 
     const totalPrice =
         totalPriceBasics * (eventPlan.basicPresintage / 100) +
@@ -485,10 +485,10 @@ export const eventSubscribe = async (
 
     const data = {
         ...createEventSubscriptionDto,
-        totalCards,
-        totalPrice,
         businessId,
         eventPlanId,
+        totalCards,
+        totalPrice,
     };
 
     return await EventSubscription.create(data);
@@ -520,9 +520,9 @@ export const eventUpdateSubscribe = async (
             updateEventSubscriptionDto.vipCards +
             updateEventSubscriptionDto.vvipCards;
 
-        const totalPriceBasics = updateEventSubscriptionDto.basicCards * eventPlan.basicPrice;
-        const totalPriceVips = updateEventSubscriptionDto.vipCards * eventPlan.vipPrice;
-        const totalPriceVvips = updateEventSubscriptionDto.vvipCards * eventPlan.vvipPrice;
+        const totalPriceBasics = updateEventSubscriptionDto.basicCards * updateEventSubscriptionDto.basicPrice;
+        const totalPriceVips = updateEventSubscriptionDto.vipCards * updateEventSubscriptionDto.vipPrice;
+        const totalPriceVvips = updateEventSubscriptionDto.vvipCards * updateEventSubscriptionDto.vvipPrice;
 
         const totalPrice =
             totalPriceBasics * (eventPlan.basicPresintage / 100) +
