@@ -7,6 +7,10 @@ import { UpdatePlanDto } from '../dto/update-plan';
 import { createSubscribeDto } from '../dto/add-subscribe';
 import { UpdateSubscribeDto } from '../dto/update-subscribe';
 import * as planServices from '../services';
+import { CreateEventPlanDto } from '../dto/create-event-plan';
+import { UpdateEventPlanDto } from '../dto/update-event-plan';
+import { CreateEventSubscriptionDto } from '../dto/create-envet-subscription';
+import { UpdateEventSubscriptionDto } from '../dto/update-envet-subscription';
 
 export const PlanController: ICRUDController & {
     addUpgradedPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
@@ -18,6 +22,14 @@ export const PlanController: ICRUDController & {
     getOneSubscriptionByBusinessId: (req: RequestMod, res: Response, next: NextFunction) => void;
     getAllSubscriptions: (req: RequestMod, res: Response, next: NextFunction) => void;
     getOneSubscriptionById: (req: RequestMod, res: Response, next: NextFunction) => void;
+    createEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getOneEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    getAllEventPlans: (req: RequestMod, res: Response, next: NextFunction) => void;
+    updateEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    deleteEventPlan: (req: RequestMod, res: Response, next: NextFunction) => void;
+    eventSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
+    eventUpgrateSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
+    eventDeleteSubscribe: (req: RequestMod, res: Response, next: NextFunction) => void;
 } = {
     create: function (req: RequestMod, res: Response, next: NextFunction): void {
         const body: CreatePlanDto = req.body;
