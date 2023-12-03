@@ -240,31 +240,36 @@ function CardControlForm({ activeSticker, setActiveSticker }) {
           </Stack>
         </Box>
       )}
-      <Stack
-        direction="row"
-        spacing={2}
-        mt={2}
-        justifyContent={"space-between"}>
-        <div className="stickers-icons">
-          {card?.cardTemplate?.stickers?.map((item) => {
-            const isActive = activeSticker[0]?.imageUrl === item?.imageUrl;
-            return (
-              <div
-                className={isActive ? "icon active" : "icon"}
-                style={{ padding: "10px" }}
-                onClick={() => addStickerHandler(item)}
-                key={item?.imageUrl}>
-                <img src={item?.imageUrl} alt="sticker" width={20} />
-              </div>
-            );
-          })}
-        </div>
-        {card?.cardTemplate?.cardType == "ITEMS_SUBSCRIPTION" && (
-          <Button variant="outlined" onClick={useHandler} disabled={activeSticker.length <= 0}>
-            use
-          </Button>
-        )}
-      </Stack>
+      {card?.cardTemplate?.cardType === "ITEMS_SUBSCRIPTION" && (
+        <Stack
+          direction="row"
+          spacing={2}
+          mt={2}
+          justifyContent={"space-between"}>
+          <div className="stickers-icons">
+            {card?.cardTemplate?.stickers?.map((item) => {
+              const isActive = activeSticker[0]?.imageUrl === item?.imageUrl;
+              return (
+                <div
+                  className={isActive ? "icon active" : "icon"}
+                  style={{ padding: "10px" }}
+                  onClick={() => addStickerHandler(item)}
+                  key={item?.imageUrl}>
+                  <img src={item?.imageUrl} alt="sticker" width={20} />
+                </div>
+              );
+            })}
+          </div>
+          {card?.cardTemplate?.cardType == "ITEMS_SUBSCRIPTION" && (
+            <Button
+              variant="outlined"
+              onClick={useHandler}
+              disabled={activeSticker.length <= 0}>
+              use
+            </Button>
+          )}
+        </Stack>
+      )}
     </Box>
   );
 }

@@ -75,10 +75,10 @@ const initialState = {
   cardType: "LOYALTY",
   sharedProps: {
     textLogo: "",
-    tempPhoto: "",
+    // tempPhoto: "",
     logoImg: null,
-    labelColor: "",
-    textColor: "",
+    labelColor: "rgb(0,0,0)",
+    textColor: "rgb()",
     backgroundColor: "#ffffff",
     headerFieldValue: "",
     headerFieldLabel: "",
@@ -90,7 +90,7 @@ const initialState = {
     barcode: "",
     activeScanType: {
       icon: "/src/assets/images/stickers/qrCode_icon-1.png",
-      type: "PKBarcodeFormatCode128",
+      type: "PKBarcodeFormatQR",
       url: "/src/assets/images/qrcode.png",
     },
   },

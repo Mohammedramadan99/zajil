@@ -15,6 +15,8 @@ import { CreateEventSubscriptionDto } from '../dto/create-envet-subscription';
 import { UpdateEventSubscriptionDto } from '../dto/update-envet-subscription';
 
 const reformatPlan = (plan: Plan) => {
+    // Coupon_Templates : {type: "coupon", templates: n }
+    // maxItemSubscriptionCards => Subscription_Cards : {type: "subscription", cards: n }
     const planNewFormat = {
         id: plan.id,
         name: plan.name,

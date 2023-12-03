@@ -4,30 +4,44 @@ import {
   Outlet,
   RouterProvider,
 } from "react-router-dom";
-
-import Home from "./pages/Home/Home";
-import DashboardHome from "./admin/pages/home/Home";
+import { useTranslation } from "react-i18next";
+import { lazy, Suspense, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import RootLayout from "./components/Layouts/RootLayout";
 import DashboardLayout from "./admin/components/Layout/Layout";
-import { useTranslation } from "react-i18next";
-import { useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import Templates from "./admin/pages/templates/Templates";
-import Location from "./admin/pages/Location/Location";
-import CreateBusiness from "./admin/pages/CreateBusiness/CreateBusiness";
-import CreateBranch from "./admin/pages/CreateBranch/CreateBranch";
-import Business from "./admin/pages/business/Business";
-import CreateTemplate from "./admin/pages/createTemplate/CreateTemplate";
-import CardControl from "./admin/pages/cardControl/CardControl";
-import CreateCard from "./admin/pages/controlCard/CreateCard";
-import Cards from "./admin/pages/cards/Cards";
-import CardDetails from "./admin/pages/cardDetails/CardDetails";
-import Scan from "./admin/pages/Scan/Scan";
+
+const Home = lazy(() => import("./pages/Home/Home"));
+const DashboardHome = lazy(() => import("./admin/pages/home/Home"));
+
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Register = lazy(() => import("./pages/Auth/Register"));
+const Templates = lazy(() => import("./admin/pages/templates/Templates"));
+const Location = lazy(() => import("./admin/pages/Location/Location"));
+const CreateBusiness = lazy(() =>
+  import("./admin/pages/CreateBusiness/CreateBusiness")
+);
+const CreateBranch = lazy(() =>
+  import("./admin/pages/CreateBranch/CreateBranch")
+);
+const Business = lazy(() => import("./admin/pages/business/Business"));
+const CreateTemplate = lazy(() =>
+  import("./admin/pages/createTemplate/CreateTemplate")
+);
+const CardControl = lazy(() => import("./admin/pages/cardControl/CardControl"));
+const CreateCard = lazy(() => import("./admin/pages/controlCard/CreateCard"));
+const Cards = lazy(() => import("./admin/pages/cards/Cards"));
+const CardDetails = lazy(() => import("./admin/pages/cardDetails/CardDetails"));
+const Scan = lazy(() => import("./admin/pages/Scan/Scan"));
+const Notifications = lazy(() =>
+  import("./admin/pages/notifications/Notifications")
+);
+const Plans = lazy(() => import("./admin/pages/plans/Plans"));
+const Tickets = lazy(() => import("./dashboard/pages/Tickets/Tickets"));
+const Ticket = lazy(() => import("./dashboard/pages/Ticket/Ticket"));
+
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Notifications from "./admin/pages/notifications/Notifications";
+import { CircularProgress } from "@mui/material";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -74,16 +88,16 @@ function App() {
       ],
     },
     {
-      path: "/admin",
+      path: "/dashboard",
       element: user ? <DashboardLayout /> : <Navigate to={"/auth/login"} />,
       children: [
         {
-          path: "/admin",
+          path: "/dashboard",
           element:
             businesses?.length > 0 ? (
               <DashboardHome />
             ) : (
-              <Navigate to={"/admin/business/new"} />
+              <Navigate to={"/dashboard/business/new"} />
             ),
         },
         {
@@ -91,8 +105,20 @@ function App() {
           element: <Templates />,
         },
         {
+          path: "tickets",
+          element: <Tickets />,
+        },
+        {
+          path: "ticket",
+          element: <Ticket />,
+        },
+        {
           path: "location",
           element: <Location />,
+        },
+        {
+          path: "plans",
+          element: <Plans />,
         },
         {
           path: "business",
@@ -152,7 +178,9 @@ function App() {
   }, []);
   return (
     <>
-      <RouterProvider router={router} />
+      <Suspense fallback={<div className="page-loading"><CircularProgress color="inherit" /></div>}>
+        <RouterProvider router={router} />
+      </Suspense>
     </>
   );
 }
