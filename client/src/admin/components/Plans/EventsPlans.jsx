@@ -21,13 +21,13 @@ import { useEffect, useState } from "react";
 import BusinessesDialog from "../common/BusinessesDialog";
 import { toast } from "react-toastify";
 
-function PlansItems() {
+function EventsPlans() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
   const [selectedPlan, setSelectedPlan] = useState();
-  const { allPlans } = useSelector((state) => state.plans);
+  const { eventsPlans } = useSelector((state) => state.plans);
   const { success } = useSelector((state) => state.subscriptions);
   const handleClickListItem = (planId) => {
     setOpen(true);
@@ -55,22 +55,27 @@ function PlansItems() {
     <>
       <Typography
         sx={{
+          mt: 4,
           mb: 2,
           fontSize: 60,
           fontWeight: 200,
           textAlign: "center",
         }}>
-        <Typography sx={{
-          mb: 2,
-          fontSize: 60,
-          fontWeight: 500,
-          color: theme.palette.primary.light,
-          mr:1  
-        }} component={"span"} >Card-based</Typography>
-        Business Plans
+        <Typography
+          sx={{
+            mb: 2,
+            fontSize: 60,
+            fontWeight: 500,
+            color: theme.palette.primary.light,
+            mr: 1,
+          }}
+          component={"span"}>
+          Event-Based
+        </Typography>
+        Subscription Plans
       </Typography>
       <Grid container spacing={2}>
-        {allPlans?.map((item) => {
+        {eventsPlans?.map((item) => {
           const {
             id,
             name,
@@ -81,9 +86,18 @@ function PlansItems() {
             charts,
             ...rest
           } = item;
-          const allActivitiesArr = Object.keys(allActivetie).map((key) => {
-            return { label: key.replace("_", " "), value: allActivetie[key] };
-          });
+          const feats = [
+            { label: "min Cards", value: item.minCards, type: "count" },
+            { label: "max Cards", value: item.maxCards, type: "count" },
+            {
+              label: "basic Presintage",
+              value: item.basicPresintage,
+              type: "%",
+            },
+            { label: "vip Presintage", value: item.vipPresintage, type: "%" },
+            { label: "vvip Presintage", value: item.vvipPresintage, type: "%" },
+          ];
+          console.log({ item });
           return (
             <Grid key={item.id} item xs={12} md={4}>
               <Card
@@ -111,11 +125,13 @@ function PlansItems() {
                         sx={{
                           textAlign: "center",
                           fontWeight: "600",
+                          textTransform: "capitalize",
+                          pb:2
                         }}>
                         {item.name} Plan
                       </Typography>
                     </Stack>
-                    <Stack
+                    {/* <Stack
                       direction={"row"}
                       alignItems={"center"}
                       justifyContent={"center"}
@@ -127,22 +143,13 @@ function PlansItems() {
                         {item.price}
                       </Typography>
                       <span>/mo</span>
-                    </Stack>
+                    </Stack> */}
                     <Stack spacing={4}>
-                      {allActivitiesArr?.map((feat, i) => {
+                      {feats?.map((feat, i) => {
                         return (
-                          feat.label !== "Branches" && (
-                            <div key={i}>
-                              <Grid
-                                container
-                                sx={{
-                                  opacity:
-                                    feat.value.cards > 0 ||
-                                    feat.value.templates > 0
-                                      ? 1
-                                      : 0.2,
-                                }}>
-                                <Grid item xs={2} sx={{ textAlign: "center" }}>
+                          <div key={i}>
+                            <Grid container>
+                              {/* <Grid item xs={2} sx={{ textAlign: "center" }}>
                                   {feat.value.cards > 0 ||
                                   feat.value.templates > 0 ? (
                                     <DoneAllIcon />
@@ -167,13 +174,22 @@ function PlansItems() {
                                       )}
                                     </strong>
                                   )}
-                                </Grid>
-                                <Grid item xs={8}>
-                                  {feat.label}
-                                </Grid>
+                                </Grid> */}
+                              <Grid item xs={2} sx={{ textAlign: "center" }}>
+                                <DoneAllIcon />
                               </Grid>
-                            </div>
-                          )
+                              <Grid item xs={2} sx={{ textAlign: "center" }}>
+                                {feat.type === "%" && "%"}
+                                {feat.value}
+                              </Grid>
+                              <Grid
+                                item
+                                xs={8}
+                                sx={{ pl: 2, textTransform: "capitalize" }}>
+                                {feat.label}
+                              </Grid>
+                            </Grid>
+                          </div>
                         );
                       })}
                     </Stack>
@@ -203,4 +219,4 @@ function PlansItems() {
   );
 }
 
-export default PlansItems;
+export default EventsPlans;

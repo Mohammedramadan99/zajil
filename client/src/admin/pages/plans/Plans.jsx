@@ -3,16 +3,20 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 import PlansItems from "../../components/Plans/PlansItems";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPlans } from "../../../store/PlansSlice";
+import { getEventsPlans, getPlans } from "../../../store/PlansSlice";
 import { toast } from "react-toastify";
 import { reset } from "../../../store/SubscriptionSlice";
+import EventsPlans from "../../components/Plans/EventsPlans";
+import BackdropSpinner from "../../../components/Loading/BackdropSpinner";
 function Plans() {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.plans);
   const { errorMessage } = useSelector((state) => state.subscriptions);
 
   useEffect(() => {
     dispatch(getPlans());
+    dispatch(getEventsPlans());
   }, []);
   useEffect(() => {
     if (errorMessage) {
@@ -30,7 +34,14 @@ function Plans() {
       }}>
       <Container sx={{ pb: 20 }}>
         <PageHeader title={"Plans"} subTitle={"Our Plans"} />
-        <PlansItems />
+        {loading ? (
+          <BackdropSpinner />
+        ) : (
+          <>
+            <PlansItems />
+            <EventsPlans />
+          </>
+        )}
       </Container>
     </Box>
   );

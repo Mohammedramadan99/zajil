@@ -151,7 +151,7 @@ const authSlice = createSlice({
     },
     updateBusinesses: (state,{payload}) => {
       state.profile.businesses.push(payload)
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(registerAction.pending, (state, action) => {

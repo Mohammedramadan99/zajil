@@ -1,0 +1,45 @@
+/* styles.css (or your preferred styling approach) */
+
+.room-design {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+  }
+  
+  .room-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+  }
+  
+  .room-square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    // background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .room-square:hover {
+    // background-color: #d0d0d0;
+  }
+  
+  .room-square.seat {
+    // background-color: #a0a0a0;
+  }
+  
+  .room-square.theater {
+    // background-color: #6084c5;
+    // color: #000;
+  }
+  /* Add this style to your CSS */
+  .room-square.selected {
+    /* Your styles for selected squares */
+    background-color: yellow; /* Adjust this to your desired selected background color */
+  }
+  
+  /* Add more styling based on your design */
+  

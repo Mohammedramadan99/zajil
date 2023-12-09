@@ -32,7 +32,7 @@ function Login() {
     <div className="auth_page">
       <div className="square-box">
         <div className="square"></div>
-        <div classNam e="square"></div>
+        <div className="square"></div>
         <div className="square"></div>
         <div className="square"></div>
         <div className="square"></div>

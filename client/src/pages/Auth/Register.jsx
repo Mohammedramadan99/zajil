@@ -42,10 +42,13 @@ function Register() {
     },
   });
 
-  if (successMessage) {
-    navigate("/auth/login");
-    dispatch(reset());
-  }
+  useEffect(() => {
+    if (successMessage) {
+      navigate("/auth/login");
+      dispatch(reset());
+    }
+  }, [successMessage])
+  
   return (
     <div className="auth_page">
       <SquareAnimation />

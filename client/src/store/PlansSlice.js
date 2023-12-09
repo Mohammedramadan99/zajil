@@ -42,8 +42,37 @@ export const getPlans = createAsyncThunk(
     try {
       const { auth } = getState();
       const { user } = auth;
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/plans`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        return rejectWithValue({
+          message: errorData?.data.message || "An unknown error occurred.",
+        });
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
+export const getEventsPlans = createAsyncThunk(
+  "plan/events-plans",
+  async (id, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/plans`,
+        `${import.meta.env.VITE_API_URL}/plans/event/get-all-plans`,
         {
           method: "GET",
           headers: {
@@ -169,6 +198,7 @@ export const deletePlan = createAsyncThunk(
 
 const initialState = {
   allPlans: null,
+  eventsPlans: null,
   planDetails: null,
   deleted: false,
   updated: false,
@@ -216,6 +246,23 @@ const planSlice = createSlice({
       state.allPlans = action.payload.data;
     });
     builder.addCase(getPlans.rejected, (state, action) => {
+      state.loading = false;
+      state.errors = action.payload?.errors;
+      state.user = null;
+      state.errorMessage =
+        action.payload.message ||
+        "An unknown error occurred. Please try again later.";
+    });
+    builder.addCase(getEventsPlans.pending, (state, action) => {
+      state.loading = true;
+      state.errors = null;
+    });
+    builder.addCase(getEventsPlans.fulfilled, (state, action) => {
+      state.loading = false;
+      state.errors = null;
+      state.eventsPlans = action.payload.data;
+    });
+    builder.addCase(getEventsPlans.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.payload?.errors;
       state.user = null;
