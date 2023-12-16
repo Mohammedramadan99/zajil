@@ -13,7 +13,7 @@
 
 .grid-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
 }
 
 .grid-cell {
@@ -23,5 +23,5 @@
 }
 
 .selected {
-  background-color: #ccc;
+  background-color: #444;
 }

@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import SectionForm from './SectionForm';
-import SeatLayout from './SeatLayout';
+import React, { useState } from "react";
+import SectionForm from "./SectionForm";
+import SeatLayout from "./SeatLayout";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Container,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import PageHeader from "../../admin/components/PageHeader/PageHeader";
 
 const RoomSections = () => {
+  const theme = useTheme();
   const [sections, setSections] = useState([]);
+  const [sectionsCount, setSectionsCount] = useState(1);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [markAs,setMarkAs] = useState("")
 
   const handleSectionSave = (section) => {
     setSections([...sections, section]);
@@ -12,7 +26,6 @@ const RoomSections = () => {
   };
 
   const handleSeatToggle = (row, col, isSelected) => {
-    // Update the seat status in the current section
     const updatedSections = [...sections];
     const currentSection = updatedSections[currentSectionIndex];
     currentSection.seats = currentSection.seats || {};
@@ -21,38 +34,49 @@ const RoomSections = () => {
     setSections(updatedSections);
   };
 
-  
-
   const handleFinish = () => {
-    // Send all section information to the backend or perform any necessary actions
-    console.log('All sections saved:', sections);
+    console.log("All sections saved:", sections);
   };
   const handleBulkSeatToggle = (selectedSeats) => {
-    // Do something with the selected seats, e.g., update the UI or send to the backend
-    console.log('Selected seats:', selectedSeats);
+    console.log("Selected seats:", selectedSeats);
   };
   return (
-    <div>
-      <h1>Admin Panel</h1>
-      {sections.map((section, index) => (
-        <div key={index}>
-          <h3>Section {index + 1}</h3>
-          <p>Name: {section.sectionName}</p>
-          <p>Rows: {section.rows}</p>
-          <p>Columns: {section.columns}</p>
-          <SeatLayout
-            rows={section.rows}
-            columns={section.columns}
-            onSeatToggle={handleSeatToggle}
-            onBulkSeatToggle={handleBulkSeatToggle}
-          />
-        </div>
-      ))}
-      <SectionForm onSave={handleSectionSave} />
-      <button type="button" onClick={handleFinish}>
-        Finish
-      </button>
-    </div>
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.alt,
+        minHeight: "100vh",
+        paddingBlock: 2,
+      }}>
+      <Container sx={{ pb: 20 }}>
+        <PageHeader title={"Event Room"} subTitle={"Designing The Room"} />
+        <SectionForm onSave={handleSectionSave} />
+        <Stack direction="row" alignItems={"center"} spacing={2}>
+          <Typography>Mark As</Typography>
+          <ButtonGroup>
+            <Button variant={markAs === "empty" ? "contained" : "outlined"} onClick={() => setMarkAs("empty")} color="secondary">
+              empty
+            </Button>
+            <Button variant={markAs === "Seat" ? "contained" : "outlined"} onClick={() => setMarkAs("Seat")} color="success">
+              Seat
+            </Button>
+          </ButtonGroup>
+        </Stack>
+        {sections.map((section, index) => (
+          <div key={index}>
+            {/* <h3>Section {index + 1}</h3>
+            <p>Name: {section.sectionName}</p>
+            <p>Rows: {section.rows}</p>
+            <p>Columns: {section.columns}</p> */}
+            <SeatLayout
+              rows={section.rows}
+              columns={section.columns}
+              onSeatToggle={handleSeatToggle}
+              onBulkSeatToggle={handleBulkSeatToggle}
+            />
+          </div>
+        ))}
+      </Container>
+    </Box>
   );
 };
 

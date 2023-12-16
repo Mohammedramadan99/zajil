@@ -62,9 +62,9 @@ function Login() {
             <Alert severity="error" sx={{ marginBottom: 4 }}>
               {errors?.map((error) => {
                 return Object.keys(error).map((key) => {
-                  return error[key].map((errorerrorMessage, index) => (
+                  return error[key].map((errorMessage, index) => (
                     <div className="error" key={`${key}-${index}`}>
-                      <strong>{key}:</strong> {errorerrorMessage}
+                      <strong>{key}:</strong> {errorMessage}
                     </div>
                   ));
                 });
