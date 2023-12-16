@@ -16,7 +16,11 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
 import { useDispatch, useSelector } from "react-redux";
-import { createSubscription, reset } from "../../../store/SubscriptionSlice";
+import {
+  createEventsSubscription,
+  createSubscription,
+  reset,
+} from "../../../store/SubscriptionSlice";
 import { useEffect, useState } from "react";
 import BusinessesDialog from "../common/BusinessesDialog";
 import { toast } from "react-toastify";
@@ -38,10 +42,17 @@ function EventsPlans() {
 
     if (newValue) {
       const actionData = {
-        params: { businessId: newValue },
-        data: { planId: selectedPlan, numberOfMonths: 2 },
+        params: { planId: selectedPlan, businessId: newValue },
+        data: {
+          basicCards: selectedPlan.basicCards,
+          basicPrice: selectedPlan.basicPrice,
+          vipCards: selectedPlan.vipCards,
+          vipPrice: selectedPlan.vipPrice,
+          vvipCards: selectedPlan.vvipCards,
+          vvipPrice: selectedPlan.vvipPrice,
+        },
       };
-      dispatch(createSubscription(actionData));
+      dispatch(createEventsSubscription(actionData));
     }
   };
   useEffect(() => {
@@ -126,7 +137,7 @@ function EventsPlans() {
                           textAlign: "center",
                           fontWeight: "600",
                           textTransform: "capitalize",
-                          pb:2
+                          pb: 2,
                         }}>
                         {item.name} Plan
                       </Typography>

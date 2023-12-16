@@ -43,6 +43,42 @@ export const createSubscription = createAsyncThunk(
     }
   }
 );
+export const createEventsSubscription = createAsyncThunk(
+  "subscription/create",
+  async (actionData, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { auth } = getState();
+      const { user } = auth;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/plans/event/subscribe-plan/${
+          actionData.params.planId
+        }/${actionData.params.businessId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        return rejectWithValue({
+          message: errorData?.data.message || "An unknown error occurred.",
+        });
+      }
+      const data = await response.json();
+      dispatch(updateBusinesses(data.data));
+      return data;
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue({
+        message: "An unknown error occurred. Please try again later.",
+      });
+    }
+  }
+);
 export const getSubscriptions = createAsyncThunk(
   "Subscription/all",
   async (id, { rejectWithValue, getState }) => {

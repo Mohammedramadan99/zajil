@@ -9,6 +9,7 @@ import { lazy, startTransition, Suspense, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import RootLayout from "./components/Layouts/RootLayout";
 import DashboardLayout from "./admin/components/Layout/Layout";
+import RequireAuth from "./components/common/RequireAuth/RequireAuth";
 
 const Home = lazy(() => import("./pages/Home/Home"));
 const DashboardHome = lazy(() => import("./admin/pages/home/Home"));
@@ -43,6 +44,7 @@ const Event = lazy(() => import("./dashboard/pages/Event/Event"));
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { CircularProgress } from "@mui/material";
+import Loading from "./components/common/Loading/Loading";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -59,10 +61,6 @@ function App() {
           element: <Home />,
         },
       ],
-    },
-    {
-      path: "/register",
-      element: <Home />,
     },
     {
       path: "/auth",
@@ -90,222 +88,132 @@ function App() {
     },
     {
       path: "/dashboard",
-      element: user ? (
-        <DashboardLayout />
-      ) : (
-        <Suspense
-          fallback={
-            <div className="page-loading">
-              <CircularProgress color="inherit" />
-            </div>
-          }>
-          <Navigate to={"/auth/login"} />
-        </Suspense>
-      ),
+      element: <DashboardLayout />,
       children: [
         {
-          path: "/dashboard",
-          element:
-            businesses?.length > 0 ? (
-              <DashboardHome />
-            ) : (
-              <Navigate to={"/dashboard/business/new"} />
-            ),
-        },
-        {
-          path: "templates",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Templates />
-            </Suspense>
-          ),
-        },
-        {
-          path: "tickets",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Tickets />
-            </Suspense>
-          ),
-        },
-        {
-          path: "ticket",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Ticket />
-            </Suspense>
-          ),
-        },
-        {
-          path: "Event",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Event />
-            </Suspense>
-          ),
-        },
-        {
-          path: "location",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Location />
-            </Suspense>
-          ),
-        },
-        {
-          path: "plans",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Plans />
-            </Suspense>
-          ),
-        },
-        {
-          path: "business",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Business />
-            </Suspense>
-          ),
-        },
-        {
-          path: "business/new",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <CreateBusiness />
-            </Suspense>
-          ),
-        },
-        {
-          path: "branch/new",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <CreateBranch />
-            </Suspense>
-          ),
-        },
-        {
-          path: "templates/new",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <CreateTemplate />
-            </Suspense>
-          ),
-        },
-        {
-          path: "cards",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Cards />
-            </Suspense>
-          ),
-        },
-        {
-          path: "cards/:businessId/:cardId",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <CardDetails />
-            </Suspense>
-          ),
-        },
-        {
-          path: "cards/control/:cardId",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <CardControl />
-            </Suspense>
-          ),
-        },
-        {
-          path: "scan",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Scan />
-            </Suspense>
-          ),
-        },
-        {
-          path: "notifications",
-          element: (
-            <Suspense
-              fallback={
-                <div className="page-loading">
-                  <CircularProgress color="inherit" />
-                </div>
-              }>
-              <Notifications />
-            </Suspense>
-          ),
+          element: <RequireAuth allowedRole={["business_owner"]} />,
+          children: [
+            {
+              path: "templates",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Templates />
+                </Suspense>
+              ),
+            },
+            {
+              path: "tickets",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Tickets />
+                </Suspense>
+              ),
+            },
+            {
+              path: "ticket",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Ticket />
+                </Suspense>
+              ),
+            },
+            {
+              path: "event",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Event />
+                </Suspense>
+              ),
+            },
+            {
+              path: "location",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Location />
+                </Suspense>
+              ),
+            },
+            {
+              path: "plans",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Plans />
+                </Suspense>
+              ),
+            },
+            {
+              path: "business",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Business />
+                </Suspense>
+              ),
+            },
+            {
+              path: "business/new",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <CreateBusiness />
+                </Suspense>
+              ),
+            },
+            {
+              path: "branch/new",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <CreateBranch />
+                </Suspense>
+              ),
+            },
+            {
+              path: "templates/new",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <CreateTemplate />
+                </Suspense>
+              ),
+            },
+            {
+              path: "cards",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Cards />
+                </Suspense>
+              ),
+            },
+            {
+              path: "cards/:businessId/:cardId",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <CardDetails />
+                </Suspense>
+              ),
+            },
+            {
+              path: "cards/control/:cardId",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <CardControl />
+                </Suspense>
+              ),
+            },
+            {
+              path: "scan",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Scan />
+                </Suspense>
+              ),
+            },
+            {
+              path: "notifications",
+              element: (
+                <Suspense fallback={<Loading />}>
+                  <Notifications />
+                </Suspense>
+              ),
+            },
+          ],
         },
       ],
     },

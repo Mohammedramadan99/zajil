@@ -20,16 +20,16 @@ import MainSidebar from "./MainSidebar";
 import UserInfo from "../../components/UserInfo/UserInfo";
 import { profileAction } from "../../../store/authSlice";
 const RootLayout = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
   const { mode } = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const { user } = useSelector((state) => state.auth);
   const isSmallScreen = useMediaQuery(theme.breakpoints.between("0", "600"));
   useEffect(() => {
-    dispatch(profileAction())
-  }, [])
-  
+    dispatch(profileAction());
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -46,8 +46,7 @@ const RootLayout = () => {
               textTransform={"capitalize"}
               fontSize={10}
               fontWeight={600}>
-              {" "}
-              {user.firstName}
+              {user?.firstName}
             </Typography>
           </div>
         </Box>

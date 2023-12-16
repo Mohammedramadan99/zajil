@@ -1,0 +1,27 @@
+.selected {
+  background-color: #ccc; /* or any other color to indicate selection */
+}
+
+.seat-layout {
+  text-align: center;
+}
+
+.grid-container {
+  display: grid;
+  gap: 4px;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+}
+
+.grid-cell {
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: #ccc;
+}

@@ -31,18 +31,18 @@ function CreateBusinessForm() {
   const formik = useFormik({
     initialValues: {
       name: "",
-      type: "CARD",
+      type: "",
     },
     validationSchema: yup.object({
       name: yup.string().required(),
-      type: yup.string().required().oneOf(["CARD", "EVENT"]), 
+      type: yup.string().required().oneOf(["EVENT","CARD"]), 
     }),
     onSubmit(values) {
+      // console.log(values)
       handleSubmit(values);
     },
   });
   const { setFieldValue, setValues, values, resetForm } = formik;
-
   const handleSubmit = (values) => {
     dispatch(createBusiness(values));
   };
@@ -105,8 +105,8 @@ function CreateBusinessForm() {
             sx={{ width: "100%",mb:2 }}
           />
           <UniSelect
-            name="Enter your Business Type"
-            value={formik.values.status}
+            name="type"
+            value={formik.values.type}
             items={items}
             selectTitle="status"
             handleChange={formik.handleChange}
