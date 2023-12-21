@@ -1,22 +1,60 @@
 import React, { useState } from "react";
-import { Modal, Button, IconButton, Grid } from "@mui/material";
+import { Modal, Button, IconButton, Grid, Box } from "@mui/material";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
+import stage1 from "../../assets/images/icons/stage1.png";
+import stage2 from "../../assets/images/icons/stage2.png";
 import "./Style.scss"; // Import your CSS file for styling
 
-const SeatLayout = ({ rows, columns, onSeatToggle, onBulkSeatToggle }) => {
+const SeatLayout = ({
+  rows,
+  columns,
+  section,
+  onSeatToggle,
+  onBulkSeatToggle,
+  markAs,
+  selectedSeat,
+  setSelectedSeat,
+  sections,
+  setSections,
+  currentSectionIndex,
+  setCurrentSectionIndex
+}) => {
   const [seatStatus, setSeatStatus] = useState({}); // Object to store seat status
-  const [selectedSeat, setSelectedSeat] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleSeatClick = (row, col) => {
     const seatKey = `${row}-${col}`;
     setSelectedSeat(seatKey);
-    onSeatToggle(row, col, !seatStatus[seatKey]); // Toggle the seat status
+    console.log({currentSectionIndex})
+    // Use the "items" array to determine the type of the clicked seat
+    const seatType = sections[currentSectionIndex]?.items[row][col];
+    const currSection = sections.findIndex(item => item.id === section.id)
+    console.log({currSection})
+    setCurrentSectionIndex(currSection)
+
+    onSeatToggle(row, col, seatType !== markAs);
     setSeatStatus((prevStatus) => ({
       ...prevStatus,
-      [seatKey]: !prevStatus[seatKey],
+      [seatKey]: markAs,
     }));
+    // Update the "items" array of the current section to reflect the selected value
+    setSections((prevSections) => {
+      const updatedSections = [...prevSections];
+      const currentSection = updatedSections[currentSectionIndex];
+
+      if (currentSection) {
+        const updatedItems = currentSection.items.map((rowArray, rowIndex) =>
+          rowArray.map((colValue, colIndex) =>
+            rowIndex === row - 1 && colIndex === col - 1 ? +markAs : colValue
+          )
+        );
+
+        currentSection.items = updatedItems;
+      }
+
+      return updatedSections;
+    });
   };
 
   const handleOpenModal = (status) => {
@@ -51,11 +89,20 @@ const SeatLayout = ({ rows, columns, onSeatToggle, onBulkSeatToggle }) => {
                 <IconButton
                   onClick={() => handleSeatClick(rowIndex + 1, colIndex + 1)}
                   className={`${
-                    seatStatus[`${rowIndex + 1}-${colIndex + 1}`] ? "selected" : ""
+                    seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "1"
+                      ? "selected"
+                      : ""
                   }`}
-                  sx={{ marginY: 1, marginX: 1 }}
-                >
-                  <EventSeatIcon />
+                  sx={{ marginY: 1, marginX: 1 }}>
+                  {seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "1" ? (
+                    <EventSeatIcon />
+                  ) : seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "0" ? (
+                    <img src={stage1} alt="stage1" width={19} />
+                  ) : seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "-1" ? (
+                    <EventSeatIcon sx={{ color: "transparent" }} />
+                  ) : (
+                    <EventSeatIcon sx={{ color: "white" }} />
+                  )}
                 </IconButton>
               </Grid>
             ))}
@@ -71,8 +118,7 @@ const SeatLayout = ({ rows, columns, onSeatToggle, onBulkSeatToggle }) => {
             <select
               id="statusSelect"
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
+              onChange={(e) => setSelectedStatus(e.target.value)}>
               <option value="">Select Status</option>
               <option value="occupied">Occupied</option>
               <option value="empty">Empty</option>

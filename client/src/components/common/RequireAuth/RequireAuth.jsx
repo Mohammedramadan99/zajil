@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, Navigate, Outlet, useNavigate } from "react-router-dom";
@@ -11,7 +10,7 @@ const RequireAuth = ({ allowedRole }) => {
   const location = useLocation();
 
   useEffect(() => {
-    dispatch(profileAction())
+    dispatch(profileAction());
   }, []);
   useEffect(() => {
     if (!user) {
@@ -19,12 +18,18 @@ const RequireAuth = ({ allowedRole }) => {
     }
   }, [user]);
 
-  return allowedRole.includes(user?.roles[0]) ? (
-    <>
-      <Outlet />
-    </>
-  ) : user ? (
-    <Navigate to="/unauthorized" state={{ from: location }} replace />
+  return user?.roles ? (
+    allowedRole.includes(user?.roles[0]) ? (
+      <>
+        <Outlet />
+      </>
+    ) : user ? (
+      <Navigate to="/unauthorized" state={{ from: location }} replace />
+    ) : (
+      <>
+        <Navigate to="/" state={{ from: location }} replace />
+      </>
+    )
   ) : (
     <>
       <Navigate to="/" state={{ from: location }} replace />

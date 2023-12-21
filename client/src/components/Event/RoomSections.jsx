@@ -18,20 +18,41 @@ const RoomSections = () => {
   const [sections, setSections] = useState([]);
   const [sectionsCount, setSectionsCount] = useState(1);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [markAs,setMarkAs] = useState("")
+  const [selectedSeat, setSelectedSeat] = useState(null);
+
+  const [markAs, setMarkAs] = useState("");
 
   const handleSectionSave = (section) => {
+    // Initialize the "items" property as a 2D array
+    const items = Array.from({ length: section.rows }, () =>
+      Array.from({ length: section.columns }, () => 1)
+    );
+
+    // Add the "items" property to the section
+    section.items = items;
+    // section.items = items;
+    section.id = Math.floor(Math.random() * 100000000000) + 1;
+
+    // Update the sections state
     setSections([...sections, section]);
     setCurrentSectionIndex(sections.length);
   };
 
   const handleSeatToggle = (row, col, isSelected) => {
     const updatedSections = [...sections];
+    console.log({updatedSections})
+    console.log({currentSectionIndex})
+    console.log("problem",updatedSections[currentSectionIndex])
     const currentSection = updatedSections[currentSectionIndex];
-    currentSection.seats = currentSection.seats || {};
-    currentSection.seats[`${row}-${col}`] = isSelected;
+    currentSection.items = currentSection?.items || {};
+    currentSection.items[`${row}-${col}`] = isSelected;
 
     setSections(updatedSections);
+
+    console.log(
+      "🚀 ~ file: RoomSections.jsx:39 ~ handleSeatToggle ~ setSections:",
+      sections
+    );
   };
 
   const handleFinish = () => {
@@ -53,11 +74,23 @@ const RoomSections = () => {
         <Stack direction="row" alignItems={"center"} spacing={2}>
           <Typography>Mark As</Typography>
           <ButtonGroup>
-            <Button variant={markAs === "empty" ? "contained" : "outlined"} onClick={() => setMarkAs("empty")} color="secondary">
+            <Button
+              variant={markAs === "-1" ? "contained" : "outlined"}
+              onClick={() => setMarkAs("-1")}
+              color="secondary">
               empty
             </Button>
-            <Button variant={markAs === "Seat" ? "contained" : "outlined"} onClick={() => setMarkAs("Seat")} color="success">
+            <Button
+              variant={markAs === "1" ? "contained" : "outlined"}
+              onClick={() => setMarkAs("1")}
+              color="success">
               Seat
+            </Button>
+            <Button
+              variant={markAs === "0" ? "contained" : "outlined"}
+              onClick={() => setMarkAs("0")}
+              color="warning">
+              Stage
             </Button>
           </ButtonGroup>
         </Stack>
@@ -70,8 +103,16 @@ const RoomSections = () => {
             <SeatLayout
               rows={section.rows}
               columns={section.columns}
+              section={section}
               onSeatToggle={handleSeatToggle}
               onBulkSeatToggle={handleBulkSeatToggle}
+              markAs={markAs}
+              selectedSeat={selectedSeat}
+              setSelectedSeat={setSelectedSeat}
+              sections={sections}
+              setSections={setSections}
+              currentSectionIndex={currentSectionIndex}
+              setCurrentSectionIndex={setCurrentSectionIndex}
             />
           </div>
         ))}

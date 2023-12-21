@@ -23,7 +23,7 @@ function Login() {
   });
   useEffect(() => {
     dispatch(reset());
-    if (user) {
+    if (user?.id && user?.token) {
       navigate("/dashboard/business/new");
     }
   }, [user]);
