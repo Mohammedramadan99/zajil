@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import PageHeader from "../../admin/components/PageHeader/PageHeader";
+import UniSlider from "../common/Slider/Slider";
 
 const RoomSections = () => {
   const theme = useTheme();
@@ -19,6 +20,7 @@ const RoomSections = () => {
   const [sectionsCount, setSectionsCount] = useState(1);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [selectedSeat, setSelectedSeat] = useState(null);
+  const [sectionsGap, setSectionsGap] = useState(10);
 
   const [markAs, setMarkAs] = useState("");
 
@@ -40,9 +42,9 @@ const RoomSections = () => {
 
   const handleSeatToggle = (row, col, isSelected) => {
     const updatedSections = [...sections];
-    console.log({updatedSections})
-    console.log({currentSectionIndex})
-    console.log("problem",updatedSections[currentSectionIndex])
+    console.log({ updatedSections });
+    console.log({ currentSectionIndex });
+    console.log("problem", updatedSections[currentSectionIndex]);
     const currentSection = updatedSections[currentSectionIndex];
     currentSection.items = currentSection?.items || {};
     currentSection.items[`${row}-${col}`] = isSelected;
@@ -71,6 +73,13 @@ const RoomSections = () => {
       <Container sx={{ pb: 20 }}>
         <PageHeader title={"Event Room"} subTitle={"Designing The Room"} />
         <SectionForm onSave={handleSectionSave} />
+        <Stack sx={{ display: "flex", justifyContent: "center",width: "100%",textAlign:"center"}}>
+          <UniSlider
+            sectionsGap={sectionsGap}
+            setSectionsGap={setSectionsGap}
+            title={"Space between sections"}
+          />
+        </Stack>
         <Stack direction="row" alignItems={"center"} spacing={2}>
           <Typography>Mark As</Typography>
           <ButtonGroup>
@@ -94,28 +103,41 @@ const RoomSections = () => {
             </Button>
           </ButtonGroup>
         </Stack>
-        {sections.map((section, index) => (
-          <div key={index}>
-            {/* <h3>Section {index + 1}</h3>
-            <p>Name: {section.sectionName}</p>
+        <Stack
+          direction="row"
+          mt={2}
+          columnGap={sectionsGap}
+          rowGap={10}
+          sx={{ flexWrap: "wrap" }}>
+          {sections.map((section, index) => (
+            <Box key={index} sx={{ borderTop: `1px solid #888` }}>
+              <Typography
+                sx={{ transform: "translate(21px,-10px)", fontWeight: 300 }}>
+                Section {section.sectionName}
+              </Typography>
+              {/* <h3>Section {index + 1}</h3>
+            <p>Name: {section.sectionName}</p> 
             <p>Rows: {section.rows}</p>
             <p>Columns: {section.columns}</p> */}
-            <SeatLayout
-              rows={section.rows}
-              columns={section.columns}
-              section={section}
-              onSeatToggle={handleSeatToggle}
-              onBulkSeatToggle={handleBulkSeatToggle}
-              markAs={markAs}
-              selectedSeat={selectedSeat}
-              setSelectedSeat={setSelectedSeat}
-              sections={sections}
-              setSections={setSections}
-              currentSectionIndex={currentSectionIndex}
-              setCurrentSectionIndex={setCurrentSectionIndex}
-            />
-          </div>
-        ))}
+              <SeatLayout
+                rows={section.rows}
+                columns={section.columns}
+                section={section}
+                onSeatToggle={handleSeatToggle}
+                onBulkSeatToggle={handleBulkSeatToggle}
+                markAs={markAs}
+                selectedSeat={selectedSeat}
+                setSelectedSeat={setSelectedSeat}
+                sectionsGap={sectionsGap}
+                setSectionsGap={setSectionsGap}
+                sections={sections}
+                setSections={setSections}
+                currentSectionIndex={currentSectionIndex}
+                setCurrentSectionIndex={setCurrentSectionIndex}
+              />
+            </Box>
+          ))}
+        </Stack>
       </Container>
     </Box>
   );

@@ -6,21 +6,29 @@ const loggedIn = () => {
     const payload = token?.split(".")[1];
     const payloadObj = JSON.parse(atob(payload));
 
-    const exp = new Date(payloadObj.exp * 1000);
-    const now = new Date();
+    if (payloadObj.exp && typeof payloadObj.exp === "number") {
+      const exp = new Date(payloadObj.exp * 1000);
+      const now = new Date();
 
-    if (now.getTime() > exp.getTime()) {
-      return null;
+      if (now.getTime() > exp.getTime()) {
+        console.error("Token has expired.");
+        return null;
+      } else {
+        const { iat, exp, ...props } = payloadObj;
+        const user = { ...props, token };
+        return user;
+      }
     } else {
-      const { iat, exp, ...props } = payloadObj;
-      const user = { ...props, token };
-
-      return user;
+      console.error("Invalid or missing expiration time in the token payload.");
+      return null;
     }
   } else {
     return null;
   }
 };
+
+
+
 
 export const registerAction = createAsyncThunk(
   "user/register",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, IconButton, Grid, Box } from "@mui/material";
+import { Modal, Button, IconButton, Grid, Box, Stack } from "@mui/material";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import stage1 from "../../assets/images/icons/stage1.png";
 import stage2 from "../../assets/images/icons/stage2.png";
@@ -17,7 +17,9 @@ const SeatLayout = ({
   sections,
   setSections,
   currentSectionIndex,
-  setCurrentSectionIndex
+  setCurrentSectionIndex,
+  sectionsGap,
+  setSectionsGap,
 }) => {
   const [seatStatus, setSeatStatus] = useState({}); // Object to store seat status
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,18 +28,27 @@ const SeatLayout = ({
   const handleSeatClick = (row, col) => {
     const seatKey = `${row}-${col}`;
     setSelectedSeat(seatKey);
-    console.log({currentSectionIndex})
+
+    // Find the index of the current section based on the seat's ID
+    const currSectionIndex = sections.findIndex(
+      (item) => item.id === section.id
+    );
+    setCurrentSectionIndex(currSectionIndex);
+
+    console.log({ currentSectionIndex });
+    console.log(row, col);
+    console.log(sections[currentSectionIndex]?.items);
+
     // Use the "items" array to determine the type of the clicked seat
-    const seatType = sections[currentSectionIndex]?.items[row][col];
-    const currSection = sections.findIndex(item => item.id === section.id)
-    console.log({currSection})
-    setCurrentSectionIndex(currSection)
+    const seatType = sections[currentSectionIndex]?.items[row - 1][col - 1];
+    console.log({ seatType });
 
     onSeatToggle(row, col, seatType !== markAs);
     setSeatStatus((prevStatus) => ({
       ...prevStatus,
       [seatKey]: markAs,
     }));
+
     // Update the "items" array of the current section to reflect the selected value
     setSections((prevSections) => {
       const updatedSections = [...prevSections];
@@ -80,8 +91,8 @@ const SeatLayout = ({
   };
 
   return (
-    <div>
-      <div className="grid-container">
+    <>
+      <Stack> 
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <Grid container key={rowIndex}>
             {Array.from({ length: columns }).map((_, colIndex) => (
@@ -108,7 +119,7 @@ const SeatLayout = ({
             ))}
           </Grid>
         ))}
-      </div>
+      </Stack>
 
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <div className="modal-content">
@@ -129,7 +140,7 @@ const SeatLayout = ({
           </form>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 
