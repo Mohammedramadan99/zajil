@@ -18,56 +18,51 @@ const SeatLayout = ({
   setSections,
   currentSectionIndex,
   setCurrentSectionIndex,
-  sectionsGap,
-  setSectionsGap,
+  seatStatus,
+  setSeatStatus,
 }) => {
-  const [seatStatus, setSeatStatus] = useState({}); // Object to store seat status
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleSeatClick = (row, col) => {
     const seatKey = `${row}-${col}`;
     setSelectedSeat(seatKey);
-
+  
     // Find the index of the current section based on the seat's ID
-    const currSectionIndex = sections.findIndex(
-      (item) => item.id === section.id
-    );
+    const currSectionIndex = sections.findIndex((item) => item.id === section.id);
     setCurrentSectionIndex(currSectionIndex);
-
-    console.log({ currentSectionIndex });
-    console.log(row, col);
-    console.log(sections[currentSectionIndex]?.items);
-
+  
     // Use the "items" array to determine the type of the clicked seat
-    const seatType = sections[currentSectionIndex]?.items[row - 1][col - 1];
-    console.log({ seatType });
-
-    onSeatToggle(row, col, seatType !== markAs);
-    setSeatStatus((prevStatus) => ({
-      ...prevStatus,
-      [seatKey]: markAs,
-    }));
-
+    const seatType = sections[currSectionIndex]?.items[row - 1][col - 1];
+  
     // Update the "items" array of the current section to reflect the selected value
     setSections((prevSections) => {
       const updatedSections = [...prevSections];
-      const currentSection = updatedSections[currentSectionIndex];
-
+      const currentSection = updatedSections[currSectionIndex];
+  
       if (currentSection) {
         const updatedItems = currentSection.items.map((rowArray, rowIndex) =>
           rowArray.map((colValue, colIndex) =>
             rowIndex === row - 1 && colIndex === col - 1 ? +markAs : colValue
           )
         );
-
+  
         currentSection.items = updatedItems;
       }
-
+  
       return updatedSections;
     });
+  
+    // Delayed update to ensure currentSectionIndex is updated
+    setTimeout(() => {
+      onSeatToggle(row, col, seatType !== markAs);
+      setSeatStatus((prevStatus) => ({
+        ...prevStatus,
+        [seatKey]: markAs,
+      }));
+    }, 0);
   };
-
+  
   const handleOpenModal = (status) => {
     setIsModalOpen(true);
     setSelectedStatus(status);
@@ -92,7 +87,7 @@ const SeatLayout = ({
 
   return (
     <>
-      <Stack> 
+      <Stack>
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <Grid container key={rowIndex}>
             {Array.from({ length: columns }).map((_, colIndex) => (
@@ -100,16 +95,14 @@ const SeatLayout = ({
                 <IconButton
                   onClick={() => handleSeatClick(rowIndex + 1, colIndex + 1)}
                   className={`${
-                    seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "1"
-                      ? "selected"
-                      : ""
+                    section.items[rowIndex]?.[colIndex] === 1 ? "selected" : ""
                   }`}
                   sx={{ marginY: 1, marginX: 1 }}>
-                  {seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "1" ? (
+                  {section.items[rowIndex]?.[colIndex] === 1 ? (
                     <EventSeatIcon />
-                  ) : seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "0" ? (
+                  ) : section.items[rowIndex]?.[colIndex] === 0 ? (
                     <img src={stage1} alt="stage1" width={19} />
-                  ) : seatStatus[`${rowIndex + 1}-${colIndex + 1}`] === "-1" ? (
+                  ) : section.items[rowIndex]?.[colIndex] === -1 ? (
                     <EventSeatIcon sx={{ color: "transparent" }} />
                   ) : (
                     <EventSeatIcon sx={{ color: "white" }} />

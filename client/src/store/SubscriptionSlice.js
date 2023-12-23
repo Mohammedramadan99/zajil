@@ -59,6 +59,7 @@ export const createEventsSubscription = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
+          body: JSON.stringify(actionData.data),
         }
       );
       if (!response.ok) {
